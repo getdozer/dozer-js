@@ -1,6 +1,8 @@
 {
+  "version": "0.0.2",
   "dependencies": {
-    "nice-grpc": "^2.1.1",
+    "google-protobuf": "^3.21.2",
+    "grpc-web": "^1.4.2",
     "rxjs": "^7.8.0",
     "ts-proto": "^1.140.0"
   }

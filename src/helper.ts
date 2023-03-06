@@ -1,34 +1,34 @@
-import {FieldDefinition, Type, Value} from "../generated/protos/types";
+import {FieldDefinition, Type, Value} from "../generated/protos/types_pb";
 
 function convertValue(typ: Type, object: Value): any {
     switch (typ) {
-        case Type.UInt:
-            return object.uintValue;
-        case Type.Int:
-            return object.intValue;
-        case Type.Float:
-            return object.floatValue;
-        case Type.Boolean:
-            return object.boolValue;
-        case Type.String:
-            return object.stringValue;
-        case Type.Text:
-            return object.stringValue;
-        case Type.Binary:
-            return object.bytesValue;
-        case Type.Decimal:
-            return object.decimalValue;
-        case Type.Timestamp:
-            return object.timestampValue;
-        case Type.Date:
-            return object.dateValue;
-        case Type.Bson:
-            return object.bytesValue;
-        case Type.Point:
-            return object.pointValue;
-        case Type.UNRECOGNIZED:
-            return undefined;
+        case Type.UINT:
+            return object.getUintValue();
+        case Type.INT:
+            return object.getIntValue();
+        case Type.FLOAT:
+            return object.getFloatValue();
+        case Type.BOOLEAN:
+            return object.getBoolValue();
+        case Type.STRING:
+            return object.getStringValue();
+        case Type.TEXT:
+            return object.getStringValue();
+        case Type.BINARY:
+            return object.getBytesValue();
+        case Type.DECIMAL:
+            return object.getDecimalValue();
+        case Type.TIMESTAMP:
+            return object.getTimestampValue();
+        case Type.DATE:
+            return object.getDateValue();
+        case Type.BSON:
+            return object.getBytesValue();
+        case Type.POINT:
+            return object.getPointValue();
     }
+
+    return undefined;
 }
 
 export class RecordMapper {
@@ -38,10 +38,10 @@ export class RecordMapper {
         this.fields = fields;
     }
 
-     mapRecord(values: Object[]): Object {
+     mapRecord(values: Value[]): Object {
          let result = {};
          values.forEach((v, index) => {
-             result[this.fields[index].name] = convertValue(this.fields[index].typ, values[index]);
+             result[this.fields[index].getName()] = convertValue(this.fields[index].getTyp(), values[index]);
          });
          return result;
      }

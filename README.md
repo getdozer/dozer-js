@@ -10,6 +10,17 @@ protos/health.proto \
 protos/ingest.proto
 ```
 
+```bash
+protoc --plugin=./node_modules/ts-proto/protoc-gen-ts_proto \
+--ts_proto_out="./generated" \
+--js_out=import_style=commonjs,binary:"./generated" \
+--grpc-web_out=import_style=typescript,mode=grpcweb:"./generated" \
+protos/types.proto \
+protos/common.proto \
+protos/health.proto \
+protos/ingest.proto
+```
+
 Simple usage of count/query messages
 ```typescript
 import {DozerClient} from "./src/client";

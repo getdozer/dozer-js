@@ -1,44 +1,29 @@
-import {
-    CommonGrpcServiceClient,
-    CommonGrpcServiceDefinition, GetFieldsRequest,
-    OnEventRequest,
-    QueryRequest
-} from "../generated/protos/common";
-import {createChannel, createClient} from "nice-grpc";
+import {CommonGrpcServiceClient} from "../generated/protos/CommonServiceClientPb";
+import {GetFieldsRequest, OnEventRequest, QueryRequest} from "../generated/protos/common_pb";
 
 
 export class DozerClient {
     private readonly endpoint: string;
-    private client: CommonGrpcServiceClient;
+    private service: CommonGrpcServiceClient;
 
     constructor(endpoint: string, server_address: string = 'localhost:50051') {
         this.endpoint = endpoint;
-
-        const channel = createChannel(server_address);
-        this.client = createClient(CommonGrpcServiceDefinition, channel);
+        this.service = new CommonGrpcServiceClient('http://localhost:50051');
     }
 
     async count() {
-        let request = QueryRequest.fromPartial({endpoint: this.endpoint});
-
-        return await this.client.count(request);
+        return await this.service.count(new QueryRequest().setEndpoint(this.endpoint), null);
     }
 
     async query() {
-        let request = QueryRequest.fromPartial({endpoint: this.endpoint});
-
-        return await this.client.query(request);
+        return await this.service.query(new QueryRequest().setEndpoint(this.endpoint), null);
     }
 
     async onEvent() {
-        let request = OnEventRequest.fromPartial({endpoint: this.endpoint});
-
-        return this.client.onEvent(request);
+        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint), null);
     }
 
     async getFields() {
-        let request = GetFieldsRequest.fromPartial({endpoint: this.endpoint});
-
-        return await this.client.getFields(request);
+        return await this.service.getFields(new GetFieldsRequest().setEndpoint(this.endpoint), null);
     }
 }

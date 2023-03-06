@@ -1,32 +1,20 @@
-import {createChannel, createClient} from "nice-grpc";
-import {
-    IngestArrowRequest,
-    IngestRequest,
-    IngestServiceClient,
-    IngestServiceDefinition
-} from "../generated/protos/ingest";
-
+import {IngestServiceClient} from "../generated/protos/IngestServiceClientPb";
+import {IngestArrowRequest, IngestRequest} from "../generated/protos/ingest_pb";
 
 export class DozerIngestClient {
     private readonly endpoint: string;
-    private client: IngestServiceClient;
+    private service: IngestServiceClient;
 
     constructor(endpoint: string, server: string = 'localhost:8085') {
         this.endpoint = endpoint;
-
-        const channel = createChannel(server);
-        this.client = createClient(IngestServiceDefinition, channel);
+        this.service = new IngestServiceClient(server);
     }
 
     async ingest_raw(request: IngestRequest) {
-        return await this.client.ingest(request);
+        return await this.service.ingest(request, null);
     }
 
     async ingest_arrow(request: IngestArrowRequest) {
-        return await this.client.ingest_arrow(request);
-    }
-
-    async ingest_arrow_stream(request: AsyncIterable<IngestArrowRequest>) {
-        return await this.client.ingest_arrow_stream(request);
+        return await this.service.ingest_arrow(request, null);
     }
 }
