@@ -1,9 +1,26 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.1",
   "dependencies": {
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",
     "rxjs": "^7.8.0",
     "ts-proto": "^1.140.0"
-  }
+  },
+  "name": "@getdozer/dozer-js",
+  "description": "<div align=\"center\">     <a target=\"_blank\" href=\"https://getdozer.io/\">         <br><img src=\"https://dozer-assets.s3.ap-southeast-1.amazonaws.com/logo-blue.svg\" width=40%><br>     </a> </div>",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getdozer/dozer-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/getdozer/dozer-js/issues"
+  },
+  "homepage": "https://github.com/getdozer/dozer-js#readme"
 }
