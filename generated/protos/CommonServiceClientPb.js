@@ -37,7 +37,7 @@ var CommonGrpcServiceClient = /** @class */ (function () {
             options = {};
         if (!credentials)
             credentials = {};
-        options['format'] = 'binary';
+        options['format'] = 'text';
         this.client_ = new grpcWeb.GrpcWebClientBase(options);
         this.hostname_ = hostname.replace(/\/+$/, '');
         this.credentials_ = credentials;
