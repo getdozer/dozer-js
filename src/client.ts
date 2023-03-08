@@ -1,9 +1,10 @@
 import {CommonGrpcServiceClient} from "../generated/protos/CommonServiceClientPb";
 import {GetFieldsRequest, OnEventRequest, QueryRequest} from "../generated/protos/common_pb";
 import {EventType} from "../generated/protos/types_pb";
+import {RecordMapper} from "./helper";
 
 
-export class DozerClient {
+export class ApiClient {
     private readonly endpoint: string;
     private service: CommonGrpcServiceClient;
 
@@ -13,11 +14,18 @@ export class DozerClient {
     }
 
     async count() {
-        return await this.service.count(new QueryRequest().setEndpoint(this.endpoint), null);
+        return this.service.count(new QueryRequest().setEndpoint(this.endpoint), null);
     }
 
     async query() {
-        return await this.service.query(new QueryRequest().setEndpoint(this.endpoint), null);
+        return await this.service.query(new QueryRequest().setEndpoint(this.endpoint), null).then((response) => {
+            let mapper = new RecordMapper(response.getFieldsList());
+
+            return [
+                response.getFieldsList(),
+                response.getRecordsList().map(v => mapper.mapRecord(v.getRecord().getValuesList()))
+            ];
+        });
     }
 
     onEvent(eventType = EventType.ALL) {
