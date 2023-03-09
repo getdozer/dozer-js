@@ -1,7 +1,7 @@
 import {CommonGrpcServiceClient} from "./generated/protos/CommonServiceClientPb";
-import {GetFieldsRequest, OnEventRequest, QueryRequest} from "./generated/protos/common_pb";
 import {EventType} from "./generated/protos/types_pb";
 import {RecordMapper} from "./helper";
+import {GetFieldsRequest, OnEventRequest, QueryRequest} from "./generated/protos/common_pb";
 
 export class ApiClient {
     private readonly endpoint: string;

@@ -12,9 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
-    "outDir": "lib",
-    "sourceMap": true,
-    "declaration": true
+    "outDir": "lib"
   },
 
   "include": ["src/*", "src/**/*"]

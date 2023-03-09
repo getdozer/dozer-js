@@ -17,7 +17,7 @@ protoc --plugin=./node_modules/ts-proto/protoc-gen-ts_proto \
 --ts_proto_out="./src/generated" \
 --ts_proto_opt=esModuleInterop=true \
 --js_out=import_style=commonjs,binary:"./src/generated" \
---grpc-web_out=import_style=typescript,mode=grpcwebtext:"./src/generated" \
+--grpc-web_out=import_style=commonjs,mode=grpcwebtext:"./src/generated" \
 protos/types.proto \
 protos/common.proto \
 protos/health.proto \
