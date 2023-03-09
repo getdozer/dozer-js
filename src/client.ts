@@ -1,8 +1,7 @@
-import {CommonGrpcServiceClient} from "../generated/protos/CommonServiceClientPb";
-import {GetFieldsRequest, OnEventRequest, QueryRequest} from "../generated/protos/common_pb";
-import {EventType} from "../generated/protos/types_pb";
+import {CommonGrpcServiceClient} from "./generated/protos/CommonServiceClientPb";
+import {GetFieldsRequest, OnEventRequest, QueryRequest} from "./generated/protos/common_pb";
+import {EventType} from "./generated/protos/types_pb";
 import {RecordMapper} from "./helper";
-
 
 export class ApiClient {
     private readonly endpoint: string;
@@ -23,13 +22,13 @@ export class ApiClient {
 
             return [
                 response.getFieldsList(),
-                response.getRecordsList().map(v => mapper.mapRecord(v.getRecord().getValuesList()))
+                response.getRecordsList().map(v => mapper.mapRecord(v.getRecord()?.getValuesList() ?? []))
             ];
         });
     }
 
     onEvent(eventType = EventType.ALL) {
-        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint).setType(eventType), null);
+        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint).setType(eventType), undefined);
     }
 
     async getFields() {

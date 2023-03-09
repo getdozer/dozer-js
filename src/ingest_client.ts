@@ -1,5 +1,5 @@
-import {IngestServiceClient} from "../generated/protos/IngestServiceClientPb";
-import {IngestArrowRequest, IngestRequest} from "../generated/protos/ingest_pb";
+import {IngestServiceClient} from "./generated/protos/IngestServiceClientPb";
+import {IngestArrowRequest, IngestRequest} from "./generated/protos/ingest_pb";
 
 export class DozerIngestClient {
     private readonly endpoint: string;

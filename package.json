@@ -6,12 +6,15 @@
     "rxjs": "^7.8.0",
     "ts-proto": "^1.140.0"
   },
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  },
   "name": "@getdozer/dozer-js",
   "description": "<div align=\"center\">     <a target=\"_blank\" href=\"https://getdozer.io/\">         <br><img src=\"https://dozer-assets.s3.ap-southeast-1.amazonaws.com/logo-blue.svg\" width=40%><br>     </a> </div>",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "build-ts-from-proto": "sh scripts/build_ts_from_proto.sh"
   },
   "repository": {
     "type": "git",

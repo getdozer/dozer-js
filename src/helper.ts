@@ -1,4 +1,4 @@
-import {FieldDefinition, Type, Value} from "../generated/protos/types_pb";
+import {FieldDefinition, Type, Value} from "./generated/protos/types_pb";
 
 function convertValue(typ: Type, object: Value): any {
     switch (typ) {
@@ -39,7 +39,7 @@ export class RecordMapper {
     }
 
      mapRecord(values: Value[]): Object {
-         let result = {};
+         let result: any = {};
          values.forEach((v, index) => {
              result[this.fields[index].getName()] = convertValue(this.fields[index].getTyp(), values[index]);
          });
