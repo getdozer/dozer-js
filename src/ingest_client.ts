@@ -2,6 +2,7 @@ import {IngestServiceClient} from "./generated/protos/IngestServiceClientPb";
 import {IngestArrowRequest, IngestRequest} from "./generated/protos/ingest_pb";
 
 export class DozerIngestClient {
+    // @ts-ignore
     private readonly endpoint: string;
     private service: IngestServiceClient;
 
