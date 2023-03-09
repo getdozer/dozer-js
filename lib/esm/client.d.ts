@@ -5,7 +5,7 @@ export declare class ApiClient {
     private service;
     constructor(endpoint: string, server_address?: string);
     count(): Promise<import("./generated/protos/common_pb").CountResponse>;
-    query(): Promise<Object[][]>;
+    query(query?: string | null): Promise<Object[][]>;
     onEvent(eventType?: EventType): import("grpc-web").ClientReadableStream<import("./generated/protos/types_pb").Operation>;
     getFields(): Promise<import("./generated/protos/common_pb").GetFieldsResponse>;
 }

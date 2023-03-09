@@ -16,8 +16,13 @@ export class ApiClient {
         return this.service.count(new QueryRequest().setEndpoint(this.endpoint), null);
     }
 
-    async query() {
-        return await this.service.query(new QueryRequest().setEndpoint(this.endpoint), null).then((response) => {
+    async query(query: string | null = null) {
+        let request = new QueryRequest().setEndpoint(this.endpoint);
+        if (query !== null) {
+            request.setQuery(query);
+        }
+
+        return await this.service.query(request, null).then((response) => {
             let mapper = new RecordMapper(response.getFieldsList());
 
             return [
