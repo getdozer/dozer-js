@@ -4,7 +4,8 @@
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",
     "rxjs": "^7.8.0",
-    "ts-proto": "^1.140.0"
+    "ts-proto": "^1.140.0",
+    "typescript": "^4.8.2"
   },
   "name": "@getdozer/dozer-js",
   "description": "<div align=\"center\">     <a target=\"_blank\" href=\"https://getdozer.io/\">         <br><img src=\"https://dozer-assets.s3.ap-southeast-1.amazonaws.com/logo-blue.svg\" width=40%><br>     </a> </div>",
