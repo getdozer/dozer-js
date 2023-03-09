@@ -23,13 +23,13 @@ export class ApiClient {
 
             return [
                 response.getFieldsList(),
-                response.getRecordsList().map(v => mapper.mapRecord(v.getRecord().getValuesList()))
+                response.getRecordsList().map(v => mapper.mapRecord(v.getRecord()!.getValuesList()))
             ];
         });
     }
 
     onEvent(eventType = EventType.ALL) {
-        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint).setType(eventType), null);
+        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint).setType(eventType), undefined);
     }
 
     async getFields() {

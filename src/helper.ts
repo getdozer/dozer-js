@@ -39,7 +39,7 @@ export class RecordMapper {
     }
 
      mapRecord(values: Value[]): Object {
-         let result = {};
+         let result: Record<string, any>= {};
          values.forEach((v, index) => {
              result[this.fields[index].getName()] = convertValue(this.fields[index].getTyp(), values[index]);
          });
