@@ -24,49 +24,59 @@
 <br>
 
 ## Overview
-This repository is a typescript wrapper over gRPC APIs that are automatically when you run [Dozer](https://github.com/getdozer/dozer).
+This repository is a typescript wrapper over gRPC APIs that are automatically generated when you run [Dozer](https://github.com/getdozer/dozer).
 
 ## Installation
 
 ```bash
 
 ```
-Simple usage of count/query messages
+
+### `Count()`
+Count query returns number of records in particular source. 
 
 ```typescript
-import {DozerClient} from "dozer-client/src/client";
-import {RecordMapper} from "dozer-client/src/helper";
+import { ApiClient } from "@getdozer/dozer-js";
 
-const FlightsComponent = () => {
-    let [count, setCount] = useState(0);
-    let [records, setRecords] = useState([]);
-    let flightsClient = new DozerClient("flights");
-    flightsClient.count().then(setCount);
-    flightsClient.query().then((r) => {
-        let mapper = new RecordMapper(r.fields);
-        let records = r.records.map(v => mapper.mapRecord(v.record.values));
-    });
-}
+const flightsClient = new ApiClient('flights');
+flightsClient.count().then(count => {
+    console.log(count);
+});
 ```
 
-Other available option is to use events streams method `onEvent`
+
+### `Query(query = string | null)`
+
+Query method is used to fetch records from cache. Reference to gRPC method is [here](https://getdozer.io/docs/api/grpc/common)
 
 ```typescript
-import {DozerClient} from "dozer-client/src/client";
-import {RecordMapper} from "dozer-client/src/helper";
-import {EventType} from "dozer-client/generated/protos/types_pb";
+import { ApiClient } from "@getdozer/dozer-js";
 
-const FlightsComponent = () => {
-    let [count, setCount] = useState(0);
-    let [records, setRecords] = useState([]);
-    
-    let flightsClient = new DozerClient("flights");
-    flightsClient.getFields().then(fieldsResponse => {
-        let mapper = new RecordMapper(fieldsResponse.getFields());
-        let stream = flightsClient.onEvent(EventType.INSERT_ONLY);
-        stream.on('data', (response) => {
-            setRecords([...records, mapper.mapRecord(response.getNew().getValuesList())]);
-        });
-    });
-}
+const flightsClient = new ApiClient('flights');
+flightsClient.query().then(([fields, records]) => {
+    console.log(fields, records);
+});
+```
+
+Also, client supports query parameter, which allows to filter, sort and paginate. More about you can find [here](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest)
+```typescript
+flightsClient.query('{"$oder_by":{"start":"asc"}}').then(([fields, records]) => {
+    console.log(fields, records);
+});
+```
+
+### OnEvent(eventType: EventType = EventType.ALL)
+Other available option is to use events streams method `onEvent`.
+It connects to the gRPC stream and sends changes to the client. This method has `eventType` parameter, which is used to determine what type of changes will be streamed.
+Available options are `ALL`, `INSERT_ONLY`, `UPDATE_ONLY`, `DELETE_ONLY`.
+
+```typescript
+import { ApiClient } from "@getdozer/dozer-js";
+import { EventType } from "@getdozer/dozer-js/lib/esm/generated/protos/types";
+
+let flightsClient = new ApiClient("flights");
+let stream = flightsClient.onEvent(EventType.INSERT_ONLY);
+stream.on('data', (response) => {
+    console.log(response);
+});
 ```
