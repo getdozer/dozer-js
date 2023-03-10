@@ -29,8 +29,10 @@ This repository is a typescript wrapper over gRPC APIs that are automatically ge
 ## Installation
 
 ```bash
-
+yarn add @getdozer/dozer-js
 ```
+
+## Methods 
 
 ### `Count()`
 Count query returns number of records in particular source. 
@@ -65,7 +67,7 @@ flightsClient.query('{"$oder_by":{"start":"asc"}}').then(([fields, records]) => 
 });
 ```
 
-### OnEvent(eventType: EventType = EventType.ALL)
+### `OnEvent(eventType: EventType = EventType.ALL)`
 Other available option is to use events streams method `onEvent`.
 It connects to the gRPC stream and sends changes to the client. This method has `eventType` parameter, which is used to determine what type of changes will be streamed.
 Available options are `ALL`, `INSERT_ONLY`, `UPDATE_ONLY`, `DELETE_ONLY`.
