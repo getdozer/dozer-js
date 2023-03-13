@@ -1,13 +1,13 @@
 {
   "version": "0.0.1",
   "dependencies": {
+    "@types/google-protobuf": "^3.15.6",
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",
     "rxjs": "^7.8.0",
     "ts-proto": "^1.140.0"
   },
   "devDependencies": {
-    "@types/google-protobuf": "^3.15.6",
     "typescript": "^4.7.3"
   },
   "name": "@getdozer/dozer-js",
