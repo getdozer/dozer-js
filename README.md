@@ -29,7 +29,7 @@ This repository is a typescript wrapper over gRPC APIs that are automatically ge
 ## Installation
 
 ```bash
-yarn add @getdozer/dozer-js
+yarn add ssh://git@github.com:getdozer/dozer-js.git
 ```
 
 ## Methods 
