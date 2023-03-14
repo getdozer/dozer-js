@@ -62,7 +62,12 @@ flightsClient.query().then(([fields, records]) => {
 
 Also, client supports query parameter, which allows to filter, sort and paginate. More about you can find [here](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest)
 ```typescript
-flightsClient.query('{"$oder_by":{"start":"asc"}}').then(([fields, records]) => {
+let query = {
+    orderBy: {
+        start: Order.ASC
+    }
+}
+flightsClient.query(query).then(([fields, records]) => {
     console.log(fields, records);
 });
 ```

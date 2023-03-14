@@ -2,6 +2,7 @@ import {CommonGrpcServiceClient} from "./generated/protos/CommonServiceClientPb"
 import {EventType} from "./generated/protos/types_pb";
 import {RecordMapper} from "./helper";
 import {GetFieldsRequest, OnEventRequest, QueryRequest} from "./generated/protos/common_pb";
+import {DozerQuery, QueryHelper} from "./query_helper";
 
 export class ApiClient {
     private readonly endpoint: string;
@@ -12,14 +13,18 @@ export class ApiClient {
         this.service = new CommonGrpcServiceClient(server_address);
     }
 
-    async count() {
-        return this.service.count(new QueryRequest().setEndpoint(this.endpoint), null);
-    }
-
-    async query(query: string | null = null) {
+    async count(query: DozerQuery | null = null) {
         let request = new QueryRequest().setEndpoint(this.endpoint);
         if (query !== null) {
-            request.setQuery(query);
+            request.setQuery(QueryHelper.convertSchema(query))
+        }
+        return this.service.count(request, null);
+    }
+
+    async query(query: DozerQuery | null = null) {
+        let request = new QueryRequest().setEndpoint(this.endpoint);
+        if (query !== null) {
+            request.setQuery(QueryHelper.convertSchema(query))
         }
 
         return await this.service.query(request, null).then((response) => {
