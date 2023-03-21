@@ -29,7 +29,7 @@ This repository is a typescript wrapper over gRPC APIs that are automatically ge
 ## Installation
 
 ```bash
-yarn add ssh://git@github.com:getdozer/dozer-js.git
+yarn add @dozerjs/dozer
 ```
 
 ## Methods 
@@ -38,7 +38,7 @@ yarn add ssh://git@github.com:getdozer/dozer-js.git
 Count query returns number of records in particular source. 
 
 ```typescript
-import { ApiClient } from "@getdozer/dozer-js";
+import { ApiClient } from "@dozerjs/dozer";
 
 const flightsClient = new ApiClient('flights');
 flightsClient.count().then(count => {
@@ -52,7 +52,7 @@ flightsClient.count().then(count => {
 Query method is used to fetch records from cache. Reference to gRPC method is [here](https://getdozer.io/docs/api/grpc/common)
 
 ```typescript
-import { ApiClient } from "@getdozer/dozer-js";
+import { ApiClient } from "@dozerjs/dozer";
 
 const flightsClient = new ApiClient('flights');
 flightsClient.query().then(([fields, records]) => {
@@ -78,8 +78,8 @@ It connects to the gRPC stream and sends changes to the client. This method has 
 Available options are `ALL`, `INSERT_ONLY`, `UPDATE_ONLY`, `DELETE_ONLY`.
 
 ```typescript
-import { ApiClient } from "@getdozer/dozer-js";
-import { EventType } from "@getdozer/dozer-js/lib/esm/generated/protos/types";
+import { ApiClient } from "@dozerjs/dozer";
+import { EventType } from "@dozerjs/dozer/lib/esm/generated/protos/types";
 
 let flightsClient = new ApiClient("flights");
 let stream = flightsClient.onEvent(EventType.INSERT_ONLY);
