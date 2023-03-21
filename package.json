@@ -30,8 +30,8 @@
     "type": "git",
     "url": "git+https://github.com/getdozer/dozer-js.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "getdozer/dozer-dev",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/getdozer/dozer-js/issues"
   },
