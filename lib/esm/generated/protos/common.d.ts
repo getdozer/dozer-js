@@ -2,10 +2,7 @@ import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
 import { EventType, FieldDefinition, Operation, RecordWithId } from "./types";
 export declare const protobufPackage = "dozer.common";
-/**
- * The _common_ gRPC API handles Pull and Push queries of all endpoints with a
- * single service, `CommonGrpcService`.
- */
+/** The _common_ gRPC API handles Pull and Push queries of all endpoints with a single service, `CommonGrpcService`. */
 /** Request for `count` and `query`. */
 export interface QueryRequest {
     /** The name of the endpoint to query. */
@@ -701,17 +698,13 @@ export declare const GetEndpointsResponse: {
 /**
  * CommonGrpcService allows developers to query data from various endpoints.
  *
- * The service supports both Pull and Push queries. It provides methods to
- * return metadata about the fields that can be used to construct the data types
- * dynamically.
+ * The service supports both Pull and Push queries. It provides methods to return metadata about the fields that can be used to construct the data types dynamically.
  *
- * This is preferred while working with libraries or in the case of dynamic
- * scenarios and interpreted languages.
+ * This is preferred while working with libraries or in the case of dynamic scenarios and interpreted languages.
  */
 export interface CommonGrpcService {
     /**
-     * Counts the number of records satisfying the given query. See
-     * [Query](../query) for the query format.
+     * Counts the number of records satisfying the given query. See [Query](../query) for the query format.
      *
      * If no query is specified, total number of records will be returned.
      */
@@ -723,8 +716,7 @@ export interface CommonGrpcService {
      */
     query(request: QueryRequest): Promise<QueryResponse>;
     /**
-     * Subscribes to the Dozer event stream, optionally applies a filter. See
-     * [Query](../query) for the filter format.
+     * Subscribes to the Dozer event stream, optionally applies a filter. See [Query](../query) for the filter format.
      *
      * This API is unstable and may change in the future.
      */
