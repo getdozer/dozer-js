@@ -203,7 +203,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -219,6 +221,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -247,7 +253,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -263,6 +271,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -272,7 +284,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -288,6 +302,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -297,7 +315,9 @@ export declare const QueryResponse: {
             record?: ({
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -313,13 +333,19 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
             } & {
                 values?: ({
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -335,10 +361,16 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] & ({
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -355,9 +387,15 @@ export declare const QueryResponse: {
                         x?: number | undefined;
                         y?: number | undefined;
                     } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } | undefined;
                 } & {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -382,9 +420,18 @@ export declare const QueryResponse: {
                         x?: number | undefined;
                         y?: number | undefined;
                     } & { [K_3 in Exclude<keyof I["records"][number]["record"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-                } & { [K_4 in Exclude<keyof I["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_5 in Exclude<keyof I["records"][number]["record"]["values"], keyof {
+                    durationValue?: ({
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } & {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } & { [K_4 in Exclude<keyof I["records"][number]["record"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                } & { [K_5 in Exclude<keyof I["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_6 in Exclude<keyof I["records"][number]["record"]["values"], keyof {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -401,15 +448,21 @@ export declare const QueryResponse: {
                         x?: number | undefined;
                         y?: number | undefined;
                     } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } | undefined;
                 }[]>]: never; }) | undefined;
                 version?: number | undefined;
-            } & { [K_6 in Exclude<keyof I["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
-        } & { [K_7 in Exclude<keyof I["records"][number], keyof RecordWithId>]: never; })[] & { [K_8 in Exclude<keyof I["records"], keyof {
+            } & { [K_7 in Exclude<keyof I["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
+        } & { [K_8 in Exclude<keyof I["records"][number], keyof RecordWithId>]: never; })[] & { [K_9 in Exclude<keyof I["records"], keyof {
             id?: number | undefined;
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -425,12 +478,16 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
         }[]>]: never; }) | undefined;
-    } & { [K_9 in Exclude<keyof I, keyof QueryResponse>]: never; }>(base?: I | undefined): QueryResponse;
+    } & { [K_10 in Exclude<keyof I, keyof QueryResponse>]: never; }>(base?: I | undefined): QueryResponse;
     fromPartial<I_1 extends {
         fields?: {
             typ?: import("./types").Type | undefined;
@@ -442,7 +499,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -458,6 +517,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -476,7 +539,7 @@ export declare const QueryResponse: {
             typ?: import("./types").Type | undefined;
             name?: string | undefined;
             nullable?: boolean | undefined;
-        } & { [K_10 in Exclude<keyof I_1["fields"][number], keyof FieldDefinition>]: never; })[] & { [K_11 in Exclude<keyof I_1["fields"], keyof {
+        } & { [K_11 in Exclude<keyof I_1["fields"][number], keyof FieldDefinition>]: never; })[] & { [K_12 in Exclude<keyof I_1["fields"], keyof {
             typ?: import("./types").Type | undefined;
             name?: string | undefined;
             nullable?: boolean | undefined;
@@ -486,7 +549,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -502,6 +567,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -511,7 +580,9 @@ export declare const QueryResponse: {
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -527,6 +598,10 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
@@ -536,7 +611,9 @@ export declare const QueryResponse: {
             record?: ({
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -552,13 +629,19 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
             } & {
                 values?: ({
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -574,10 +657,16 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] & ({
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -594,9 +683,15 @@ export declare const QueryResponse: {
                         x?: number | undefined;
                         y?: number | undefined;
                     } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } | undefined;
                 } & {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -611,7 +706,7 @@ export declare const QueryResponse: {
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
-                    } & { [K_12 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
+                    } & { [K_13 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
                     pointValue?: ({
@@ -620,10 +715,19 @@ export declare const QueryResponse: {
                     } & {
                         x?: number | undefined;
                         y?: number | undefined;
-                    } & { [K_13 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-                } & { [K_14 in Exclude<keyof I_1["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_15 in Exclude<keyof I_1["records"][number]["record"]["values"], keyof {
+                    } & { [K_14 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
+                    durationValue?: ({
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } & {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } & { [K_15 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                } & { [K_16 in Exclude<keyof I_1["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["records"][number]["record"]["values"], keyof {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -640,15 +744,21 @@ export declare const QueryResponse: {
                         x?: number | undefined;
                         y?: number | undefined;
                     } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
+                    } | undefined;
                 }[]>]: never; }) | undefined;
                 version?: number | undefined;
-            } & { [K_16 in Exclude<keyof I_1["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
-        } & { [K_17 in Exclude<keyof I_1["records"][number], keyof RecordWithId>]: never; })[] & { [K_18 in Exclude<keyof I_1["records"], keyof {
+            } & { [K_18 in Exclude<keyof I_1["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
+        } & { [K_19 in Exclude<keyof I_1["records"][number], keyof RecordWithId>]: never; })[] & { [K_20 in Exclude<keyof I_1["records"], keyof {
             id?: number | undefined;
             record?: {
                 values?: {
                     uintValue?: number | undefined;
+                    uint128Value?: string | undefined;
                     intValue?: number | undefined;
+                    int128Value?: string | undefined;
                     floatValue?: number | undefined;
                     boolValue?: boolean | undefined;
                     stringValue?: string | undefined;
@@ -664,12 +774,16 @@ export declare const QueryResponse: {
                     pointValue?: {
                         x?: number | undefined;
                         y?: number | undefined;
+                    } | undefined;
+                    durationValue?: {
+                        value?: string | undefined;
+                        timeUnit?: string | undefined;
                     } | undefined;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
         }[]>]: never; }) | undefined;
-    } & { [K_19 in Exclude<keyof I_1, keyof QueryResponse>]: never; }>(object: I_1): QueryResponse;
+    } & { [K_21 in Exclude<keyof I_1, keyof QueryResponse>]: never; }>(object: I_1): QueryResponse;
 };
 export declare const GetEndpointsRequest: {
     encode(_: GetEndpointsRequest, writer?: _m0.Writer): _m0.Writer;

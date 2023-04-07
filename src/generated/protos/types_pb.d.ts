@@ -183,6 +183,28 @@ export namespace PointType {
   }
 }
 
+export class DurationType extends jspb.Message {
+  getValue(): string;
+  setValue(value: string): DurationType;
+
+  getTimeUnit(): string;
+  setTimeUnit(value: string): DurationType;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DurationType.AsObject;
+  static toObject(includeInstance: boolean, msg: DurationType): DurationType.AsObject;
+  static serializeBinaryToWriter(message: DurationType, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DurationType;
+  static deserializeBinaryFromReader(message: DurationType, reader: jspb.BinaryReader): DurationType;
+}
+
+export namespace DurationType {
+  export type AsObject = {
+    value: string,
+    timeUnit: string,
+  }
+}
+
 export class RustDecimal extends jspb.Message {
   getFlags(): number;
   setFlags(value: number): RustDecimal;
@@ -217,8 +239,14 @@ export class Value extends jspb.Message {
   getUintValue(): number;
   setUintValue(value: number): Value;
 
+  getUint128Value(): string;
+  setUint128Value(value: string): Value;
+
   getIntValue(): number;
   setIntValue(value: number): Value;
+
+  getInt128Value(): string;
+  setInt128Value(value: string): Value;
 
   getFloatValue(): number;
   setFloatValue(value: number): Value;
@@ -252,6 +280,11 @@ export class Value extends jspb.Message {
   hasPointValue(): boolean;
   clearPointValue(): Value;
 
+  getDurationValue(): DurationType | undefined;
+  setDurationValue(value?: DurationType): Value;
+  hasDurationValue(): boolean;
+  clearDurationValue(): Value;
+
   getValueCase(): Value.ValueCase;
 
   serializeBinary(): Uint8Array;
@@ -265,7 +298,9 @@ export class Value extends jspb.Message {
 export namespace Value {
   export type AsObject = {
     uintValue: number,
+    uint128Value: string,
     intValue: number,
+    int128Value: string,
     floatValue: number,
     boolValue: boolean,
     stringValue: string,
@@ -274,20 +309,24 @@ export namespace Value {
     timestampValue?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     dateValue: string,
     pointValue?: PointType.AsObject,
+    durationValue?: DurationType.AsObject,
   }
 
   export enum ValueCase { 
     VALUE_NOT_SET = 0,
     UINT_VALUE = 1,
-    INT_VALUE = 2,
-    FLOAT_VALUE = 3,
-    BOOL_VALUE = 4,
-    STRING_VALUE = 5,
-    BYTES_VALUE = 7,
-    DECIMAL_VALUE = 8,
-    TIMESTAMP_VALUE = 9,
-    DATE_VALUE = 10,
-    POINT_VALUE = 11,
+    UINT_128_VALUE = 2,
+    INT_VALUE = 3,
+    INT_128_VALUE = 4,
+    FLOAT_VALUE = 5,
+    BOOL_VALUE = 6,
+    STRING_VALUE = 7,
+    BYTES_VALUE = 8,
+    DECIMAL_VALUE = 9,
+    TIMESTAMP_VALUE = 10,
+    DATE_VALUE = 11,
+    POINT_VALUE = 12,
+    DURATION_VALUE = 13,
   }
 }
 
@@ -304,15 +343,18 @@ export enum OperationType {
 }
 export enum Type { 
   UINT = 0,
-  INT = 1,
-  FLOAT = 2,
-  BOOLEAN = 3,
-  STRING = 4,
-  TEXT = 5,
-  BINARY = 6,
-  DECIMAL = 7,
-  TIMESTAMP = 8,
-  DATE = 9,
-  BSON = 10,
-  POINT = 11,
+  U128 = 1,
+  INT = 2,
+  I128 = 3,
+  FLOAT = 4,
+  BOOLEAN = 5,
+  STRING = 6,
+  TEXT = 7,
+  BINARY = 8,
+  DECIMAL = 9,
+  TIMESTAMP = 10,
+  DATE = 11,
+  BSON = 12,
+  POINT = 13,
+  DURATION = 14,
 }

@@ -57,7 +57,9 @@ export declare const IngestRequest: {
         old?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -73,6 +75,10 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -80,7 +86,9 @@ export declare const IngestRequest: {
         new?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -96,6 +104,10 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -107,7 +119,9 @@ export declare const IngestRequest: {
         old?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -123,13 +137,19 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -145,10 +165,16 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -165,9 +191,15 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -192,9 +224,18 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } & { [K_1 in Exclude<keyof I["old"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-            } & { [K_2 in Exclude<keyof I["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_3 in Exclude<keyof I["old"]["values"], keyof {
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_2 in Exclude<keyof I["old"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+            } & { [K_3 in Exclude<keyof I["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_4 in Exclude<keyof I["old"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -210,14 +251,20 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_4 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
+        } & { [K_5 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
         new?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -233,13 +280,19 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -255,10 +308,16 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -275,9 +334,15 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -292,7 +357,7 @@ export declare const IngestRequest: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_5 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
+                } & { [K_6 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -301,10 +366,19 @@ export declare const IngestRequest: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_6 in Exclude<keyof I["new"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-            } & { [K_7 in Exclude<keyof I["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_8 in Exclude<keyof I["new"]["values"], keyof {
+                } & { [K_7 in Exclude<keyof I["new"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_8 in Exclude<keyof I["new"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+            } & { [K_9 in Exclude<keyof I["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_10 in Exclude<keyof I["new"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -321,18 +395,24 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_9 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
+        } & { [K_11 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
         seqNo?: number | undefined;
-    } & { [K_10 in Exclude<keyof I, keyof IngestRequest>]: never; }>(base?: I | undefined): IngestRequest;
+    } & { [K_12 in Exclude<keyof I, keyof IngestRequest>]: never; }>(base?: I | undefined): IngestRequest;
     fromPartial<I_1 extends {
         schemaName?: string | undefined;
         typ?: OperationType1 | undefined;
         old?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -348,6 +428,10 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -355,7 +439,9 @@ export declare const IngestRequest: {
         new?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -371,6 +457,10 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -382,7 +472,9 @@ export declare const IngestRequest: {
         old?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -398,13 +490,19 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -420,10 +518,16 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -440,9 +544,15 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -457,7 +567,7 @@ export declare const IngestRequest: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_11 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
+                } & { [K_13 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -466,10 +576,19 @@ export declare const IngestRequest: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_12 in Exclude<keyof I_1["old"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-            } & { [K_13 in Exclude<keyof I_1["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_14 in Exclude<keyof I_1["old"]["values"], keyof {
+                } & { [K_14 in Exclude<keyof I_1["old"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_15 in Exclude<keyof I_1["old"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+            } & { [K_16 in Exclude<keyof I_1["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["old"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -486,13 +605,19 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_15 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
+        } & { [K_18 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
         new?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -508,13 +633,19 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -530,10 +661,16 @@ export declare const IngestRequest: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -550,9 +687,15 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -567,7 +710,7 @@ export declare const IngestRequest: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_16 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
+                } & { [K_19 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -576,10 +719,19 @@ export declare const IngestRequest: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_17 in Exclude<keyof I_1["new"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
-            } & { [K_18 in Exclude<keyof I_1["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_19 in Exclude<keyof I_1["new"]["values"], keyof {
+                } & { [K_20 in Exclude<keyof I_1["new"]["values"][number]["pointValue"], keyof import("./types").PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_21 in Exclude<keyof I_1["new"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+            } & { [K_22 in Exclude<keyof I_1["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_23 in Exclude<keyof I_1["new"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -596,11 +748,15 @@ export declare const IngestRequest: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_20 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;
+        } & { [K_24 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;
         seqNo?: number | undefined;
-    } & { [K_21 in Exclude<keyof I_1, keyof IngestRequest>]: never; }>(object: I_1): IngestRequest;
+    } & { [K_25 in Exclude<keyof I_1, keyof IngestRequest>]: never; }>(object: I_1): IngestRequest;
 };
 export declare const IngestResponse: {
     encode(message: IngestResponse, writer?: _m0.Writer): _m0.Writer;

@@ -30,28 +30,34 @@ export declare function operationTypeToJSON(object: OperationType): string;
 export declare enum Type {
     /** UInt - Unsigned 64 bit integer. */
     UInt = 0,
+    /** U128 - Unsigned 128 bit integer. */
+    U128 = 1,
     /** Int - Signed 64 bit integer. */
-    Int = 1,
+    Int = 2,
+    /** I128 - Signed 128 bit integer. */
+    I128 = 3,
     /** Float - 64 bit floating point number. */
-    Float = 2,
+    Float = 4,
     /** Boolean - Boolean. */
-    Boolean = 3,
+    Boolean = 5,
     /** String - UTF-8 string. */
-    String = 4,
+    String = 6,
     /** Text - UTF-8 string. */
-    Text = 5,
+    Text = 7,
     /** Binary - Binary data. */
-    Binary = 6,
+    Binary = 8,
     /** Decimal - Decimal number. */
-    Decimal = 7,
+    Decimal = 9,
     /** Timestamp - ISO 8601 combined date and time with time zone. */
-    Timestamp = 8,
+    Timestamp = 10,
     /** Date - ISO 8601 calendar date without timezone. */
-    Date = 9,
+    Date = 11,
     /** Bson - BSON data. */
-    Bson = 10,
+    Bson = 12,
     /** Point - Geo Point type. */
-    Point = 11,
+    Point = 13,
+    /** Duration - Duration type. */
+    Duration = 14,
     UNRECOGNIZED = -1
 }
 export declare function typeFromJSON(object: any): Type;
@@ -102,6 +108,12 @@ export interface PointType {
     x: number;
     y: number;
 }
+export interface DurationType {
+    /** up to u128 */
+    value: string;
+    /** nanoseconds by default */
+    timeUnit: string;
+}
 /** rust-decimal as a message */
 export interface RustDecimal {
     /** the sign of the Decimal value, 0 meaning positive and 1 meaning negative */
@@ -118,9 +130,13 @@ export interface RustDecimal {
 export interface Value {
     /** Unsigned 64 bit integer. */
     uintValue?: number | undefined;
+    /** Unsigned 128 bit integer. */
+    uint128Value?: string | undefined;
     /** Signed 64 bit integer. */
     intValue?: number | undefined;
-    /** 32 bit floating point number. */
+    /** Signed 128 bit integer. */
+    int128Value?: string | undefined;
+    /** 64 bit floating point number. */
     floatValue?: number | undefined;
     /** Boolean. */
     boolValue?: boolean | undefined;
@@ -136,6 +152,8 @@ export interface Value {
     dateValue?: string | undefined;
     /** Point type. */
     pointValue?: PointType | undefined;
+    /** Duration type. */
+    durationValue?: DurationType | undefined;
 }
 export declare const Operation: {
     encode(message: Operation, writer?: _m0.Writer): _m0.Writer;
@@ -147,7 +165,9 @@ export declare const Operation: {
         old?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -163,6 +183,10 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -170,7 +194,9 @@ export declare const Operation: {
         new?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -186,6 +212,10 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -197,7 +227,9 @@ export declare const Operation: {
         old?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -213,13 +245,19 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -235,10 +273,16 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -255,9 +299,15 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -282,9 +332,18 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } & { [K_1 in Exclude<keyof I["old"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_2 in Exclude<keyof I["old"]["values"][number], keyof Value>]: never; })[] & { [K_3 in Exclude<keyof I["old"]["values"], keyof {
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_2 in Exclude<keyof I["old"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_3 in Exclude<keyof I["old"]["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["old"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -300,14 +359,20 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_4 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
+        } & { [K_5 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
         new?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -323,13 +388,19 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -345,10 +416,16 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -365,9 +442,15 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -382,7 +465,7 @@ export declare const Operation: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_5 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+                } & { [K_6 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -391,10 +474,19 @@ export declare const Operation: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_6 in Exclude<keyof I["new"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_7 in Exclude<keyof I["new"]["values"][number], keyof Value>]: never; })[] & { [K_8 in Exclude<keyof I["new"]["values"], keyof {
+                } & { [K_7 in Exclude<keyof I["new"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_8 in Exclude<keyof I["new"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_9 in Exclude<keyof I["new"]["values"][number], keyof Value>]: never; })[] & { [K_10 in Exclude<keyof I["new"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -411,18 +503,24 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_9 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
+        } & { [K_11 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
         newId?: number | undefined;
         endpointName?: string | undefined;
-    } & { [K_10 in Exclude<keyof I, keyof Operation>]: never; }>(base?: I | undefined): Operation;
+    } & { [K_12 in Exclude<keyof I, keyof Operation>]: never; }>(base?: I | undefined): Operation;
     fromPartial<I_1 extends {
         typ?: OperationType | undefined;
         old?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -438,6 +536,10 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -445,7 +547,9 @@ export declare const Operation: {
         new?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -461,6 +565,10 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -472,7 +580,9 @@ export declare const Operation: {
         old?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -488,13 +598,19 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -510,10 +626,16 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -530,9 +652,15 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -547,7 +675,7 @@ export declare const Operation: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_11 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+                } & { [K_13 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -556,10 +684,19 @@ export declare const Operation: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_12 in Exclude<keyof I_1["old"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_13 in Exclude<keyof I_1["old"]["values"][number], keyof Value>]: never; })[] & { [K_14 in Exclude<keyof I_1["old"]["values"], keyof {
+                } & { [K_14 in Exclude<keyof I_1["old"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_15 in Exclude<keyof I_1["old"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_16 in Exclude<keyof I_1["old"]["values"][number], keyof Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["old"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -576,13 +713,19 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_15 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
+        } & { [K_18 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
         new?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -598,13 +741,19 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -620,10 +769,16 @@ export declare const Operation: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -640,9 +795,15 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -657,7 +818,7 @@ export declare const Operation: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_16 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+                } & { [K_19 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -666,10 +827,19 @@ export declare const Operation: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_17 in Exclude<keyof I_1["new"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_18 in Exclude<keyof I_1["new"]["values"][number], keyof Value>]: never; })[] & { [K_19 in Exclude<keyof I_1["new"]["values"], keyof {
+                } & { [K_20 in Exclude<keyof I_1["new"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_21 in Exclude<keyof I_1["new"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_22 in Exclude<keyof I_1["new"]["values"][number], keyof Value>]: never; })[] & { [K_23 in Exclude<keyof I_1["new"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -686,12 +856,16 @@ export declare const Operation: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_20 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;
+        } & { [K_24 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;
         newId?: number | undefined;
         endpointName?: string | undefined;
-    } & { [K_21 in Exclude<keyof I_1, keyof Operation>]: never; }>(object: I_1): Operation;
+    } & { [K_25 in Exclude<keyof I_1, keyof Operation>]: never; }>(object: I_1): Operation;
 };
 export declare const Record: {
     encode(message: Record, writer?: _m0.Writer): _m0.Writer;
@@ -701,7 +875,9 @@ export declare const Record: {
     create<I extends {
         values?: {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -717,13 +893,19 @@ export declare const Record: {
             pointValue?: {
                 x?: number | undefined;
                 y?: number | undefined;
+            } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
             } | undefined;
         }[] | undefined;
         version?: number | undefined;
     } & {
         values?: ({
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -739,10 +921,16 @@ export declare const Record: {
             pointValue?: {
                 x?: number | undefined;
                 y?: number | undefined;
+            } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
             } | undefined;
         }[] & ({
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -759,9 +947,15 @@ export declare const Record: {
                 x?: number | undefined;
                 y?: number | undefined;
             } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } | undefined;
         } & {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -786,9 +980,18 @@ export declare const Record: {
                 x?: number | undefined;
                 y?: number | undefined;
             } & { [K_1 in Exclude<keyof I["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-        } & { [K_2 in Exclude<keyof I["values"][number], keyof Value>]: never; })[] & { [K_3 in Exclude<keyof I["values"], keyof {
+            durationValue?: ({
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } & {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } & { [K_2 in Exclude<keyof I["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+        } & { [K_3 in Exclude<keyof I["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["values"], keyof {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -804,14 +1007,20 @@ export declare const Record: {
             pointValue?: {
                 x?: number | undefined;
                 y?: number | undefined;
+            } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
             } | undefined;
         }[]>]: never; }) | undefined;
         version?: number | undefined;
-    } & { [K_4 in Exclude<keyof I, keyof Record>]: never; }>(base?: I | undefined): Record;
+    } & { [K_5 in Exclude<keyof I, keyof Record>]: never; }>(base?: I | undefined): Record;
     fromPartial<I_1 extends {
         values?: {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -827,13 +1036,19 @@ export declare const Record: {
             pointValue?: {
                 x?: number | undefined;
                 y?: number | undefined;
+            } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
             } | undefined;
         }[] | undefined;
         version?: number | undefined;
     } & {
         values?: ({
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -849,10 +1064,16 @@ export declare const Record: {
             pointValue?: {
                 x?: number | undefined;
                 y?: number | undefined;
+            } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
             } | undefined;
         }[] & ({
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -869,9 +1090,15 @@ export declare const Record: {
                 x?: number | undefined;
                 y?: number | undefined;
             } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } | undefined;
         } & {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -886,7 +1113,7 @@ export declare const Record: {
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
-            } & { [K_5 in Exclude<keyof I_1["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+            } & { [K_6 in Exclude<keyof I_1["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
             pointValue?: ({
@@ -895,10 +1122,19 @@ export declare const Record: {
             } & {
                 x?: number | undefined;
                 y?: number | undefined;
-            } & { [K_6 in Exclude<keyof I_1["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-        } & { [K_7 in Exclude<keyof I_1["values"][number], keyof Value>]: never; })[] & { [K_8 in Exclude<keyof I_1["values"], keyof {
+            } & { [K_7 in Exclude<keyof I_1["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
+            durationValue?: ({
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } & {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } & { [K_8 in Exclude<keyof I_1["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+        } & { [K_9 in Exclude<keyof I_1["values"][number], keyof Value>]: never; })[] & { [K_10 in Exclude<keyof I_1["values"], keyof {
             uintValue?: number | undefined;
+            uint128Value?: string | undefined;
             intValue?: number | undefined;
+            int128Value?: string | undefined;
             floatValue?: number | undefined;
             boolValue?: boolean | undefined;
             stringValue?: string | undefined;
@@ -915,9 +1151,13 @@ export declare const Record: {
                 x?: number | undefined;
                 y?: number | undefined;
             } | undefined;
+            durationValue?: {
+                value?: string | undefined;
+                timeUnit?: string | undefined;
+            } | undefined;
         }[]>]: never; }) | undefined;
         version?: number | undefined;
-    } & { [K_9 in Exclude<keyof I_1, keyof Record>]: never; }>(object: I_1): Record;
+    } & { [K_11 in Exclude<keyof I_1, keyof Record>]: never; }>(object: I_1): Record;
 };
 export declare const RecordWithId: {
     encode(message: RecordWithId, writer?: _m0.Writer): _m0.Writer;
@@ -929,7 +1169,9 @@ export declare const RecordWithId: {
         record?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -945,6 +1187,10 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -954,7 +1200,9 @@ export declare const RecordWithId: {
         record?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -970,13 +1218,19 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -992,10 +1246,16 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1012,9 +1272,15 @@ export declare const RecordWithId: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1039,9 +1305,18 @@ export declare const RecordWithId: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } & { [K_1 in Exclude<keyof I["record"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_2 in Exclude<keyof I["record"]["values"][number], keyof Value>]: never; })[] & { [K_3 in Exclude<keyof I["record"]["values"], keyof {
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_2 in Exclude<keyof I["record"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_3 in Exclude<keyof I["record"]["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["record"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1058,16 +1333,22 @@ export declare const RecordWithId: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_4 in Exclude<keyof I["record"], keyof Record>]: never; }) | undefined;
-    } & { [K_5 in Exclude<keyof I, keyof RecordWithId>]: never; }>(base?: I | undefined): RecordWithId;
+        } & { [K_5 in Exclude<keyof I["record"], keyof Record>]: never; }) | undefined;
+    } & { [K_6 in Exclude<keyof I, keyof RecordWithId>]: never; }>(base?: I | undefined): RecordWithId;
     fromPartial<I_1 extends {
         id?: number | undefined;
         record?: {
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1083,6 +1364,10 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
@@ -1092,7 +1377,9 @@ export declare const RecordWithId: {
         record?: ({
             values?: {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1108,13 +1395,19 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
             values?: ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1130,10 +1423,16 @@ export declare const RecordWithId: {
                 pointValue?: {
                     x?: number | undefined;
                     y?: number | undefined;
+                } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
                 } | undefined;
             }[] & ({
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1150,9 +1449,15 @@ export declare const RecordWithId: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             } & {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1167,7 +1472,7 @@ export declare const RecordWithId: {
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
-                } & { [K_6 in Exclude<keyof I_1["record"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+                } & { [K_7 in Exclude<keyof I_1["record"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
                 pointValue?: ({
@@ -1176,10 +1481,19 @@ export declare const RecordWithId: {
                 } & {
                     x?: number | undefined;
                     y?: number | undefined;
-                } & { [K_7 in Exclude<keyof I_1["record"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
-            } & { [K_8 in Exclude<keyof I_1["record"]["values"][number], keyof Value>]: never; })[] & { [K_9 in Exclude<keyof I_1["record"]["values"], keyof {
+                } & { [K_8 in Exclude<keyof I_1["record"]["values"][number]["pointValue"], keyof PointType>]: never; }) | undefined;
+                durationValue?: ({
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } & { [K_9 in Exclude<keyof I_1["record"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            } & { [K_10 in Exclude<keyof I_1["record"]["values"][number], keyof Value>]: never; })[] & { [K_11 in Exclude<keyof I_1["record"]["values"], keyof {
                 uintValue?: number | undefined;
+                uint128Value?: string | undefined;
                 intValue?: number | undefined;
+                int128Value?: string | undefined;
                 floatValue?: number | undefined;
                 boolValue?: boolean | undefined;
                 stringValue?: string | undefined;
@@ -1196,10 +1510,14 @@ export declare const RecordWithId: {
                     x?: number | undefined;
                     y?: number | undefined;
                 } | undefined;
+                durationValue?: {
+                    value?: string | undefined;
+                    timeUnit?: string | undefined;
+                } | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
-        } & { [K_10 in Exclude<keyof I_1["record"], keyof Record>]: never; }) | undefined;
-    } & { [K_11 in Exclude<keyof I_1, keyof RecordWithId>]: never; }>(object: I_1): RecordWithId;
+        } & { [K_12 in Exclude<keyof I_1["record"], keyof Record>]: never; }) | undefined;
+    } & { [K_13 in Exclude<keyof I_1, keyof RecordWithId>]: never; }>(object: I_1): RecordWithId;
 };
 export declare const SchemaEvent: {
     encode(message: SchemaEvent, writer?: _m0.Writer): _m0.Writer;
@@ -1313,6 +1631,26 @@ export declare const PointType: {
         y?: number | undefined;
     } & { [K_1 in Exclude<keyof I_1, keyof PointType>]: never; }>(object: I_1): PointType;
 };
+export declare const DurationType: {
+    encode(message: DurationType, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number): DurationType;
+    fromJSON(object: any): DurationType;
+    toJSON(message: DurationType): unknown;
+    create<I extends {
+        value?: string | undefined;
+        timeUnit?: string | undefined;
+    } & {
+        value?: string | undefined;
+        timeUnit?: string | undefined;
+    } & { [K in Exclude<keyof I, keyof DurationType>]: never; }>(base?: I | undefined): DurationType;
+    fromPartial<I_1 extends {
+        value?: string | undefined;
+        timeUnit?: string | undefined;
+    } & {
+        value?: string | undefined;
+        timeUnit?: string | undefined;
+    } & { [K_1 in Exclude<keyof I_1, keyof DurationType>]: never; }>(object: I_1): DurationType;
+};
 export declare const RustDecimal: {
     encode(message: RustDecimal, writer?: _m0.Writer): _m0.Writer;
     decode(input: _m0.Reader | Uint8Array, length?: number): RustDecimal;
@@ -1348,7 +1686,9 @@ export declare const Value: {
     toJSON(message: Value): unknown;
     create<I extends {
         uintValue?: number | undefined;
+        uint128Value?: string | undefined;
         intValue?: number | undefined;
+        int128Value?: string | undefined;
         floatValue?: number | undefined;
         boolValue?: boolean | undefined;
         stringValue?: string | undefined;
@@ -1365,9 +1705,15 @@ export declare const Value: {
             x?: number | undefined;
             y?: number | undefined;
         } | undefined;
+        durationValue?: {
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } | undefined;
     } & {
         uintValue?: number | undefined;
+        uint128Value?: string | undefined;
         intValue?: number | undefined;
+        int128Value?: string | undefined;
         floatValue?: number | undefined;
         boolValue?: boolean | undefined;
         stringValue?: string | undefined;
@@ -1392,10 +1738,19 @@ export declare const Value: {
             x?: number | undefined;
             y?: number | undefined;
         } & { [K_1 in Exclude<keyof I["pointValue"], keyof PointType>]: never; }) | undefined;
-    } & { [K_2 in Exclude<keyof I, keyof Value>]: never; }>(base?: I | undefined): Value;
+        durationValue?: ({
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } & {
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } & { [K_2 in Exclude<keyof I["durationValue"], keyof DurationType>]: never; }) | undefined;
+    } & { [K_3 in Exclude<keyof I, keyof Value>]: never; }>(base?: I | undefined): Value;
     fromPartial<I_1 extends {
         uintValue?: number | undefined;
+        uint128Value?: string | undefined;
         intValue?: number | undefined;
+        int128Value?: string | undefined;
         floatValue?: number | undefined;
         boolValue?: boolean | undefined;
         stringValue?: string | undefined;
@@ -1412,9 +1767,15 @@ export declare const Value: {
             x?: number | undefined;
             y?: number | undefined;
         } | undefined;
+        durationValue?: {
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } | undefined;
     } & {
         uintValue?: number | undefined;
+        uint128Value?: string | undefined;
         intValue?: number | undefined;
+        int128Value?: string | undefined;
         floatValue?: number | undefined;
         boolValue?: boolean | undefined;
         stringValue?: string | undefined;
@@ -1429,7 +1790,7 @@ export declare const Value: {
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
-        } & { [K_3 in Exclude<keyof I_1["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
+        } & { [K_4 in Exclude<keyof I_1["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
         timestampValue?: Date | undefined;
         dateValue?: string | undefined;
         pointValue?: ({
@@ -1438,8 +1799,15 @@ export declare const Value: {
         } & {
             x?: number | undefined;
             y?: number | undefined;
-        } & { [K_4 in Exclude<keyof I_1["pointValue"], keyof PointType>]: never; }) | undefined;
-    } & { [K_5 in Exclude<keyof I_1, keyof Value>]: never; }>(object: I_1): Value;
+        } & { [K_5 in Exclude<keyof I_1["pointValue"], keyof PointType>]: never; }) | undefined;
+        durationValue?: ({
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } & {
+            value?: string | undefined;
+            timeUnit?: string | undefined;
+        } & { [K_6 in Exclude<keyof I_1["durationValue"], keyof DurationType>]: never; }) | undefined;
+    } & { [K_7 in Exclude<keyof I_1, keyof Value>]: never; }>(object: I_1): Value;
 };
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 export type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

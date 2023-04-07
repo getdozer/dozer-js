@@ -102,28 +102,34 @@ export function operationTypeToJSON(object: OperationType): string {
 export enum Type {
   /** UInt - Unsigned 64 bit integer. */
   UInt = 0,
+  /** U128 - Unsigned 128 bit integer. */
+  U128 = 1,
   /** Int - Signed 64 bit integer. */
-  Int = 1,
+  Int = 2,
+  /** I128 - Signed 128 bit integer. */
+  I128 = 3,
   /** Float - 64 bit floating point number. */
-  Float = 2,
+  Float = 4,
   /** Boolean - Boolean. */
-  Boolean = 3,
+  Boolean = 5,
   /** String - UTF-8 string. */
-  String = 4,
+  String = 6,
   /** Text - UTF-8 string. */
-  Text = 5,
+  Text = 7,
   /** Binary - Binary data. */
-  Binary = 6,
+  Binary = 8,
   /** Decimal - Decimal number. */
-  Decimal = 7,
+  Decimal = 9,
   /** Timestamp - ISO 8601 combined date and time with time zone. */
-  Timestamp = 8,
+  Timestamp = 10,
   /** Date - ISO 8601 calendar date without timezone. */
-  Date = 9,
+  Date = 11,
   /** Bson - BSON data. */
-  Bson = 10,
+  Bson = 12,
   /** Point - Geo Point type. */
-  Point = 11,
+  Point = 13,
+  /** Duration - Duration type. */
+  Duration = 14,
   UNRECOGNIZED = -1,
 }
 
@@ -133,38 +139,47 @@ export function typeFromJSON(object: any): Type {
     case "UInt":
       return Type.UInt;
     case 1:
+    case "U128":
+      return Type.U128;
+    case 2:
     case "Int":
       return Type.Int;
-    case 2:
+    case 3:
+    case "I128":
+      return Type.I128;
+    case 4:
     case "Float":
       return Type.Float;
-    case 3:
+    case 5:
     case "Boolean":
       return Type.Boolean;
-    case 4:
+    case 6:
     case "String":
       return Type.String;
-    case 5:
+    case 7:
     case "Text":
       return Type.Text;
-    case 6:
+    case 8:
     case "Binary":
       return Type.Binary;
-    case 7:
+    case 9:
     case "Decimal":
       return Type.Decimal;
-    case 8:
+    case 10:
     case "Timestamp":
       return Type.Timestamp;
-    case 9:
+    case 11:
     case "Date":
       return Type.Date;
-    case 10:
+    case 12:
     case "Bson":
       return Type.Bson;
-    case 11:
+    case 13:
     case "Point":
       return Type.Point;
+    case 14:
+    case "Duration":
+      return Type.Duration;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -176,8 +191,12 @@ export function typeToJSON(object: Type): string {
   switch (object) {
     case Type.UInt:
       return "UInt";
+    case Type.U128:
+      return "U128";
     case Type.Int:
       return "Int";
+    case Type.I128:
+      return "I128";
     case Type.Float:
       return "Float";
     case Type.Boolean:
@@ -198,6 +217,8 @@ export function typeToJSON(object: Type): string {
       return "Bson";
     case Type.Point:
       return "Point";
+    case Type.Duration:
+      return "Duration";
     case Type.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -262,6 +283,13 @@ export interface PointType {
   y: number;
 }
 
+export interface DurationType {
+  /** up to u128 */
+  value: string;
+  /** nanoseconds by default */
+  timeUnit: string;
+}
+
 /** rust-decimal as a message */
 export interface RustDecimal {
   /** the sign of the Decimal value, 0 meaning positive and 1 meaning negative */
@@ -281,11 +309,19 @@ export interface Value {
   uintValue?:
     | number
     | undefined;
+  /** Unsigned 128 bit integer. */
+  uint128Value?:
+    | string
+    | undefined;
   /** Signed 64 bit integer. */
   intValue?:
     | number
     | undefined;
-  /** 32 bit floating point number. */
+  /** Signed 128 bit integer. */
+  int128Value?:
+    | string
+    | undefined;
+  /** 64 bit floating point number. */
   floatValue?:
     | number
     | undefined;
@@ -314,7 +350,11 @@ export interface Value {
     | string
     | undefined;
   /** Point type. */
-  pointValue?: PointType | undefined;
+  pointValue?:
+    | PointType
+    | undefined;
+  /** Duration type. */
+  durationValue?: DurationType | undefined;
 }
 
 function createBaseOperation(): Operation {
@@ -763,6 +803,68 @@ export const PointType = {
   },
 };
 
+function createBaseDurationType(): DurationType {
+  return { value: "", timeUnit: "" };
+}
+
+export const DurationType = {
+  encode(message: DurationType, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.value !== "") {
+      writer.uint32(10).string(message.value);
+    }
+    if (message.timeUnit !== "") {
+      writer.uint32(18).string(message.timeUnit);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DurationType {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDurationType();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.value = reader.string();
+          break;
+        case 2:
+          message.timeUnit = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DurationType {
+    return {
+      value: isSet(object.value) ? String(object.value) : "",
+      timeUnit: isSet(object.timeUnit) ? String(object.timeUnit) : "",
+    };
+  },
+
+  toJSON(message: DurationType): unknown {
+    const obj: any = {};
+    message.value !== undefined && (obj.value = message.value);
+    message.timeUnit !== undefined && (obj.timeUnit = message.timeUnit);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DurationType>, I>>(base?: I): DurationType {
+    return DurationType.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DurationType>, I>>(object: I): DurationType {
+    const message = createBaseDurationType();
+    message.value = object.value ?? "";
+    message.timeUnit = object.timeUnit ?? "";
+    return message;
+  },
+};
+
 function createBaseRustDecimal(): RustDecimal {
   return { flags: 0, lo: 0, mid: 0, hi: 0 };
 }
@@ -846,7 +948,9 @@ export const RustDecimal = {
 function createBaseValue(): Value {
   return {
     uintValue: undefined,
+    uint128Value: undefined,
     intValue: undefined,
+    int128Value: undefined,
     floatValue: undefined,
     boolValue: undefined,
     stringValue: undefined,
@@ -855,6 +959,7 @@ function createBaseValue(): Value {
     timestampValue: undefined,
     dateValue: undefined,
     pointValue: undefined,
+    durationValue: undefined,
   };
 }
 
@@ -863,32 +968,41 @@ export const Value = {
     if (message.uintValue !== undefined) {
       writer.uint32(8).uint64(message.uintValue);
     }
+    if (message.uint128Value !== undefined) {
+      writer.uint32(18).string(message.uint128Value);
+    }
     if (message.intValue !== undefined) {
-      writer.uint32(16).int64(message.intValue);
+      writer.uint32(24).int64(message.intValue);
+    }
+    if (message.int128Value !== undefined) {
+      writer.uint32(34).string(message.int128Value);
     }
     if (message.floatValue !== undefined) {
-      writer.uint32(25).double(message.floatValue);
+      writer.uint32(41).double(message.floatValue);
     }
     if (message.boolValue !== undefined) {
-      writer.uint32(32).bool(message.boolValue);
+      writer.uint32(48).bool(message.boolValue);
     }
     if (message.stringValue !== undefined) {
-      writer.uint32(42).string(message.stringValue);
+      writer.uint32(58).string(message.stringValue);
     }
     if (message.bytesValue !== undefined) {
-      writer.uint32(58).bytes(message.bytesValue);
+      writer.uint32(66).bytes(message.bytesValue);
     }
     if (message.decimalValue !== undefined) {
-      RustDecimal.encode(message.decimalValue, writer.uint32(66).fork()).ldelim();
+      RustDecimal.encode(message.decimalValue, writer.uint32(74).fork()).ldelim();
     }
     if (message.timestampValue !== undefined) {
-      Timestamp.encode(toTimestamp(message.timestampValue), writer.uint32(74).fork()).ldelim();
+      Timestamp.encode(toTimestamp(message.timestampValue), writer.uint32(82).fork()).ldelim();
     }
     if (message.dateValue !== undefined) {
-      writer.uint32(82).string(message.dateValue);
+      writer.uint32(90).string(message.dateValue);
     }
     if (message.pointValue !== undefined) {
-      PointType.encode(message.pointValue, writer.uint32(90).fork()).ldelim();
+      PointType.encode(message.pointValue, writer.uint32(98).fork()).ldelim();
+    }
+    if (message.durationValue !== undefined) {
+      DurationType.encode(message.durationValue, writer.uint32(106).fork()).ldelim();
     }
     return writer;
   },
@@ -904,31 +1018,40 @@ export const Value = {
           message.uintValue = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.intValue = longToNumber(reader.int64() as Long);
+          message.uint128Value = reader.string();
           break;
         case 3:
-          message.floatValue = reader.double();
+          message.intValue = longToNumber(reader.int64() as Long);
           break;
         case 4:
-          message.boolValue = reader.bool();
+          message.int128Value = reader.string();
           break;
         case 5:
-          message.stringValue = reader.string();
+          message.floatValue = reader.double();
+          break;
+        case 6:
+          message.boolValue = reader.bool();
           break;
         case 7:
-          message.bytesValue = reader.bytes();
+          message.stringValue = reader.string();
           break;
         case 8:
-          message.decimalValue = RustDecimal.decode(reader, reader.uint32());
+          message.bytesValue = reader.bytes();
           break;
         case 9:
-          message.timestampValue = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.decimalValue = RustDecimal.decode(reader, reader.uint32());
           break;
         case 10:
-          message.dateValue = reader.string();
+          message.timestampValue = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 11:
+          message.dateValue = reader.string();
+          break;
+        case 12:
           message.pointValue = PointType.decode(reader, reader.uint32());
+          break;
+        case 13:
+          message.durationValue = DurationType.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -941,7 +1064,9 @@ export const Value = {
   fromJSON(object: any): Value {
     return {
       uintValue: isSet(object.uintValue) ? Number(object.uintValue) : undefined,
+      uint128Value: isSet(object.uint128Value) ? String(object.uint128Value) : undefined,
       intValue: isSet(object.intValue) ? Number(object.intValue) : undefined,
+      int128Value: isSet(object.int128Value) ? String(object.int128Value) : undefined,
       floatValue: isSet(object.floatValue) ? Number(object.floatValue) : undefined,
       boolValue: isSet(object.boolValue) ? Boolean(object.boolValue) : undefined,
       stringValue: isSet(object.stringValue) ? String(object.stringValue) : undefined,
@@ -950,13 +1075,16 @@ export const Value = {
       timestampValue: isSet(object.timestampValue) ? fromJsonTimestamp(object.timestampValue) : undefined,
       dateValue: isSet(object.dateValue) ? String(object.dateValue) : undefined,
       pointValue: isSet(object.pointValue) ? PointType.fromJSON(object.pointValue) : undefined,
+      durationValue: isSet(object.durationValue) ? DurationType.fromJSON(object.durationValue) : undefined,
     };
   },
 
   toJSON(message: Value): unknown {
     const obj: any = {};
     message.uintValue !== undefined && (obj.uintValue = Math.round(message.uintValue));
+    message.uint128Value !== undefined && (obj.uint128Value = message.uint128Value);
     message.intValue !== undefined && (obj.intValue = Math.round(message.intValue));
+    message.int128Value !== undefined && (obj.int128Value = message.int128Value);
     message.floatValue !== undefined && (obj.floatValue = message.floatValue);
     message.boolValue !== undefined && (obj.boolValue = message.boolValue);
     message.stringValue !== undefined && (obj.stringValue = message.stringValue);
@@ -968,6 +1096,8 @@ export const Value = {
     message.dateValue !== undefined && (obj.dateValue = message.dateValue);
     message.pointValue !== undefined &&
       (obj.pointValue = message.pointValue ? PointType.toJSON(message.pointValue) : undefined);
+    message.durationValue !== undefined &&
+      (obj.durationValue = message.durationValue ? DurationType.toJSON(message.durationValue) : undefined);
     return obj;
   },
 
@@ -978,7 +1108,9 @@ export const Value = {
   fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
     const message = createBaseValue();
     message.uintValue = object.uintValue ?? undefined;
+    message.uint128Value = object.uint128Value ?? undefined;
     message.intValue = object.intValue ?? undefined;
+    message.int128Value = object.int128Value ?? undefined;
     message.floatValue = object.floatValue ?? undefined;
     message.boolValue = object.boolValue ?? undefined;
     message.stringValue = object.stringValue ?? undefined;
@@ -990,6 +1122,9 @@ export const Value = {
     message.dateValue = object.dateValue ?? undefined;
     message.pointValue = (object.pointValue !== undefined && object.pointValue !== null)
       ? PointType.fromPartial(object.pointValue)
+      : undefined;
+    message.durationValue = (object.durationValue !== undefined && object.durationValue !== null)
+      ? DurationType.fromPartial(object.durationValue)
       : undefined;
     return message;
   },
