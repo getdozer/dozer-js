@@ -32,10 +32,10 @@ This repository is a typescript wrapper over gRPC APIs that are automatically ge
 yarn add @dozerjs/dozer
 ```
 
-## Methods 
+## Methods
 
 ### `Count()`
-Count query returns number of records in particular source. 
+Count query returns number of records in particular source.
 
 ```typescript
 import { ApiClient } from "@dozerjs/dozer";
@@ -62,6 +62,8 @@ flightsClient.query().then(([fields, records]) => {
 
 Also, client supports query parameter, which allows to filter, sort and paginate. More about you can find [here](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest)
 ```typescript
+import { Order } from "@dozerjs/dozer/lib/esm/query_helper";
+
 let query = {
     orderBy: {
         start: Order.ASC
