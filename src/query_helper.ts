@@ -34,6 +34,9 @@ export enum FilterOperator {
 }
 
 export class QueryHelper {
+    static convertFilter(filter: DozerFilter): string {
+        return JSON.stringify(filter);
+    }
     static convertSchema(query: DozerQuery): string {
         let jsonObject = {};
         if (query.filter) {
