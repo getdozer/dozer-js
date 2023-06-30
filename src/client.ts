@@ -8,7 +8,7 @@ import {
     OnEventRequest,
     QueryRequest
 } from "./generated/protos/common_pb";
-import {DozerQuery, QueryHelper} from "./query_helper";
+import {DozerFilter, DozerQuery, QueryHelper} from "./query_helper";
 import {HealthGrpcServiceClient} from "./generated/protos/HealthServiceClientPb";
 import {HealthCheckRequest, HealthCheckResponse} from "./generated/protos/health_pb";
 import {ClientReadableStream, Metadata} from "grpc-web";
@@ -65,8 +65,15 @@ export class ApiClient {
         });
     }
 
-    onEvent(eventType = EventType.ALL): ClientReadableStream<Operation> {
-        return this.service.onEvent(new OnEventRequest().setEndpoint(this.endpoint).setType(eventType), this.authMetadata);
+    onEvent(eventType = EventType.ALL, filter: DozerFilter | null = null): ClientReadableStream<Operation> {
+        const onEventRequest = new OnEventRequest()
+        .setEndpoint(this.endpoint)
+        .setType(eventType);
+        if (filter) {
+            onEventRequest.setFilter(QueryHelper.convertFilter(filter));
+        }
+
+        return this.service.onEvent(onEventRequest, this.authMetadata);
     }
 
     async getFields(): Promise<GetFieldsResponse> {

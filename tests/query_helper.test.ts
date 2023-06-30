@@ -22,6 +22,7 @@ describe('Query helper', () => {
          }
       };
       expect(QueryHelper.convertSchema(query)).toBe('{"$filter":{"id":{"$gt":100}}}');
+      expect(QueryHelper.convertFilter(query.filter)).toBe('{"id":{"$gt":100}}');
    });
    it('should order by filter correctly', () => {
       let query = {
