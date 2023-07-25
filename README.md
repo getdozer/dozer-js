@@ -32,18 +32,20 @@ This repository is a typescript wrapper over gRPC APIs that are automatically ge
 yarn add @dozerjs/dozer
 ```
 
+## Instance
+
+```typescript
+  const client = new DozerClient();
+  const endpoint = client.getEndpoint('flights');
+```
+
 ## Methods
 
 ### `Count()`
 Count query returns number of records in particular source.
 
 ```typescript
-import { ApiClient } from "@dozerjs/dozer";
-
-const flightsClient = new ApiClient('flights');
-flightsClient.count().then(count => {
-    console.log(count);
-});
+  const count = await endpoint.count();
 ```
 
 
@@ -52,26 +54,20 @@ flightsClient.count().then(count => {
 Query method is used to fetch records from cache. Reference to gRPC method is [here](https://getdozer.io/docs/api/grpc/common)
 
 ```typescript
-import { ApiClient } from "@dozerjs/dozer";
-
-const flightsClient = new ApiClient('flights');
-flightsClient.query().then(([fields, records]) => {
-    console.log(fields, records);
-});
+  const [fields, records] = await endpoint.query();
 ```
 
 Also, client supports query parameter, which allows to filter, sort and paginate. More about you can find [here](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest)
 ```typescript
-import { Order } from "@dozerjs/dozer/lib/esm/query_helper";
+import { Order } from "@dozerjs/dozer";
 
-let query = {
+const query = {
     orderBy: {
         start: Order.ASC
     }
 }
-flightsClient.query(query).then(([fields, records]) => {
-    console.log(fields, records);
-});
+
+const [fields, records] = await endpoint.query(query);
 ```
 
 ### `OnEvent(eventType: EventType = EventType.ALL)`
@@ -80,12 +76,15 @@ It connects to the gRPC stream and sends changes to the client. This method has 
 Available options are `ALL`, `INSERT_ONLY`, `UPDATE_ONLY`, `DELETE_ONLY`.
 
 ```typescript
-import { ApiClient } from "@dozerjs/dozer";
-import { EventType } from "@dozerjs/dozer/lib/esm/generated/protos/types";
+import { EventType, DozerEndpointEvent, DozerFilter } from "@dozerjs/dozer";
 
-let flightsClient = new ApiClient("flights");
-let stream = flightsClient.onEvent(EventType.INSERT_ONLY);
-stream.on('data', (response) => {
-    console.log(response);
-});
+const filter: DozerFilter | null = null;
+
+endpoints.onEvent((evt: DozerEndpointEvent) => {
+  console.log(evt.data);
+  console.log(evt.fields);
+  console.log(evt.primaryIndexKeys);
+  console.log(evt.operation);
+  console.log(evt.mapper);
+}, EventType.INSERT_ONLY, filter);
 ```
