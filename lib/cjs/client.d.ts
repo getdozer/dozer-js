@@ -77,9 +77,13 @@ export declare class DozerClient {
 export declare class DozerEndpoint {
     private endpoint;
     private client;
+    private fieldsResponse?;
+    private fieldsResponseLoading;
+    private fieldsResponseCallback;
     constructor(endpoint: string, client: DozerClient);
     count(query?: DozerQuery): Promise<CountResponse>;
     query(query?: DozerQuery): Promise<[FieldDefinition[], Object[]]>;
     getFields(): Promise<GetFieldsResponse>;
+    ensureFields(): Promise<GetFieldsResponse>;
     onEvent(callback: (evt: DozerEndpointEvent) => void, eventType?: EventType, filter?: DozerFilter): ClientReadableStream<Operation> | null;
 }

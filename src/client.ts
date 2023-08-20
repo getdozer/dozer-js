@@ -182,13 +182,16 @@ export class DozerClient {
 export class DozerEndpoint {
   private endpoint: string;
   private client: DozerClient;
+  private fieldsResponse?: GetFieldsResponse;
+  private fieldsResponseLoading: boolean = false;
+  private fieldsResponseCallback: Function[] = [];
   constructor(endpoint: string, client: DozerClient) {
     this.endpoint = endpoint;
     this.client = client;
   }
 
   async count(query?: DozerQuery): Promise<CountResponse> {
-    await this.client.waitForHealthCheck();
+    // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
       request.setQuery(QueryHelper.convertSchema(query));
@@ -198,7 +201,7 @@ export class DozerEndpoint {
   }
 
   async query(query?: DozerQuery): Promise<[FieldDefinition[], Object[]]> {
-    await this.client.waitForHealthCheck();
+    // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
       request.setQuery(QueryHelper.convertSchema(query));
@@ -215,26 +218,45 @@ export class DozerEndpoint {
   }
 
   async getFields(): Promise<GetFieldsResponse> {
-    await this.client.waitForHealthCheck();
+    // await this.client.waitForHealthCheck();
     return this.client.service.getFields(new GetFieldsRequest().setEndpoint(this.endpoint), this.client.authMetadata);
+  }
+
+  async ensureFields(): Promise<GetFieldsResponse> {
+    if (this.fieldsResponse) {
+      return Promise.resolve(this.fieldsResponse);
+    }
+    if (this.fieldsResponseLoading) {
+      return new Promise((resolve) => {
+        this.fieldsResponseCallback.push(resolve);
+      });
+    }
+    this.fieldsResponseLoading = true;
+    return this.getFields().then((response) => {
+      this.fieldsResponse = response;
+      this.fieldsResponseLoading = false;
+      this.fieldsResponseCallback.forEach((cb) => cb(this.fieldsResponse));
+      return this.fieldsResponse;
+    });
   }
 
   onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> | null {
     let stream: ClientReadableStream<Operation> | null = null;
-    this.getFields().then((fieldsResponse) => {
-      const fields = fieldsResponse.getFieldsList();
-      const mapper = new RecordMapper(fields);
-      const primaryIndexKeys = fieldsResponse.getPrimaryIndexList().map(index => fields[index].getName());
-  
-      const onEventRequest = new OnEventRequest()
-        .setEndpoint(this.endpoint)
-        .setType(eventType);
-      if (filter) {
-        onEventRequest.setFilter(QueryHelper.convertFilter(filter));
-      }
-  
-      stream = this.client.service.onEvent(onEventRequest, this.client.authMetadata);
-      stream.on('data', (operation) => {
+    const onEventRequest = new OnEventRequest()
+      .setEndpoint(this.endpoint)
+      .setType(eventType);
+
+    if (filter) {
+      onEventRequest.setFilter(QueryHelper.convertFilter(filter));
+    }
+
+    stream = this.client.service.onEvent(onEventRequest, this.client.authMetadata);
+    stream.on('data', (operation) => {
+      this.ensureFields().then((fieldsResponse) => {
+        const fields = fieldsResponse.getFieldsList();
+        const mapper = new RecordMapper(fields);
+        const primaryIndexKeys = fieldsResponse.getPrimaryIndexList().map(index => fields[index].getName());
+    
         const oldValue = operation.getOld();
         const newValue = operation.getNew();
         
@@ -248,10 +270,10 @@ export class DozerEndpoint {
   
         callback({ data, fields, primaryIndexKeys, operation, mapper });
       });
-      stream.on('error', (err) => {
-        console.error(err);
-        stream?.cancel();
-      });
+    });
+    stream.on('error', (err) => {
+      console.error(err);
+      stream?.cancel();
     });
     return stream;
   }
