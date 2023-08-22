@@ -47,7 +47,7 @@ export declare class ApiClient {
 }
 export interface DozerClientOptions {
     serverAddress: string;
-    authToken?: string | null;
+    headers?: Record<string, string>;
 }
 export interface DozerEndpointEvent {
     data: DozerEndpointEventData;

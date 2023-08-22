@@ -108,7 +108,7 @@ export class ApiClient {
 
 export interface DozerClientOptions {
   serverAddress: string;
-  authToken?: string | null;
+  headers?: Record<string, string>;
 }
 
 export interface DozerEndpointEvent {
@@ -140,9 +140,7 @@ export class DozerClient {
 
   constructor(options: DozerClientOptions) {
     this.options = { ...defaultDozerClientOptions, ...options };
-    if (this.options.authToken) {
-      this.authMetadata.Authorization = "Bearer " + this.options.authToken;
-    }
+    Object.assign(this.authMetadata, this.options.headers);
     this.service = new CommonGrpcServiceClient(
       this.options.serverAddress,
       this.authMetadata
