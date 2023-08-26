@@ -108,6 +108,7 @@ export class ApiClient {
 
 export interface DozerClientOptions {
   serverAddress: string;
+  authToken?: string | null;
   headers?: Record<string, string>;
 }
 
@@ -130,6 +131,7 @@ export interface DozerEndpointEventData {
 const defaultDozerClientOptions = {
   serverAddress: "http://localhost:50051",
   authToken: null,
+  headers: {}
 };
 
 export class DozerClient {
@@ -140,6 +142,7 @@ export class DozerClient {
 
   constructor(options: DozerClientOptions) {
     this.options = { ...defaultDozerClientOptions, ...options };
+    this.authMetadata = (this.options.authToken ? {Authorization: 'Bearer ' + this.options.authToken} : {}) as Metadata;
     Object.assign(this.authMetadata, this.options.headers);
     this.service = new CommonGrpcServiceClient(
       this.options.serverAddress,
