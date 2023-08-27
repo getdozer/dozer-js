@@ -28,5 +28,6 @@ export declare enum FilterOperator {
     MATCHES_ALL = "$matches_all"
 }
 export declare class QueryHelper {
+    static convertFilter(filter: DozerFilter): string;
     static convertSchema(query: DozerQuery): string;
 }
