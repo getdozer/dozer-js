@@ -1,22 +1,22 @@
 import * as jspb from 'google-protobuf'
 
-import * as protos_types_pb from '../protos/types_pb';
+import * as types_pb from './types_pb';
 
 
 export class IngestRequest extends jspb.Message {
   getSchemaName(): string;
   setSchemaName(value: string): IngestRequest;
 
-  getTyp(): protos_types_pb.OperationType;
-  setTyp(value: protos_types_pb.OperationType): IngestRequest;
+  getTyp(): types_pb.OperationType;
+  setTyp(value: types_pb.OperationType): IngestRequest;
 
-  getOld(): protos_types_pb.Record | undefined;
-  setOld(value?: protos_types_pb.Record): IngestRequest;
+  getOld(): types_pb.Record | undefined;
+  setOld(value?: types_pb.Record): IngestRequest;
   hasOld(): boolean;
   clearOld(): IngestRequest;
 
-  getNew(): protos_types_pb.Record | undefined;
-  setNew(value?: protos_types_pb.Record): IngestRequest;
+  getNew(): types_pb.Record | undefined;
+  setNew(value?: types_pb.Record): IngestRequest;
   hasNew(): boolean;
   clearNew(): IngestRequest;
 
@@ -34,9 +34,9 @@ export class IngestRequest extends jspb.Message {
 export namespace IngestRequest {
   export type AsObject = {
     schemaName: string,
-    typ: protos_types_pb.OperationType,
-    old?: protos_types_pb.Record.AsObject,
-    pb_new?: protos_types_pb.Record.AsObject,
+    typ: types_pb.OperationType,
+    old?: types_pb.Record.AsObject,
+    pb_new?: types_pb.Record.AsObject,
     seqNo: number,
   }
 

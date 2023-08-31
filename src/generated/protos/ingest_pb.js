@@ -1,4 +1,4 @@
-// source: protos/ingest.proto
+// source: ingest.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -13,16 +13,10 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global =
-    (typeof globalThis !== 'undefined' && globalThis) ||
-    (typeof window !== 'undefined' && window) ||
-    (typeof global !== 'undefined' && global) ||
-    (typeof self !== 'undefined' && self) ||
-    (function () { return this; }).call(null) ||
-    Function('return this')();
+var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
 
-var protos_types_pb = require('../protos/types_pb.js');
-goog.object.extend(proto, protos_types_pb);
+var types_pb = require('./types_pb.js');
+goog.object.extend(proto, types_pb);
 goog.exportSymbol('proto.dozer.ingest.IngestArrowRequest', null, global);
 goog.exportSymbol('proto.dozer.ingest.IngestMetadata', null, global);
 goog.exportSymbol('proto.dozer.ingest.IngestRequest', null, global);
@@ -146,8 +140,8 @@ proto.dozer.ingest.IngestRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     schemaName: jspb.Message.getFieldWithDefault(msg, 1, ""),
     typ: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    old: (f = msg.getOld()) && protos_types_pb.Record.toObject(includeInstance, f),
-    pb_new: (f = msg.getNew()) && protos_types_pb.Record.toObject(includeInstance, f),
+    old: (f = msg.getOld()) && types_pb.Record.toObject(includeInstance, f),
+    pb_new: (f = msg.getNew()) && types_pb.Record.toObject(includeInstance, f),
     seqNo: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
@@ -194,13 +188,13 @@ proto.dozer.ingest.IngestRequest.deserializeBinaryFromReader = function(msg, rea
       msg.setTyp(value);
       break;
     case 3:
-      var value = new protos_types_pb.Record;
-      reader.readMessage(value,protos_types_pb.Record.deserializeBinaryFromReader);
+      var value = new types_pb.Record;
+      reader.readMessage(value,types_pb.Record.deserializeBinaryFromReader);
       msg.setOld(value);
       break;
     case 4:
-      var value = new protos_types_pb.Record;
-      reader.readMessage(value,protos_types_pb.Record.deserializeBinaryFromReader);
+      var value = new types_pb.Record;
+      reader.readMessage(value,types_pb.Record.deserializeBinaryFromReader);
       msg.setNew(value);
       break;
     case 5:
@@ -255,7 +249,7 @@ proto.dozer.ingest.IngestRequest.serializeBinaryToWriter = function(message, wri
     writer.writeMessage(
       3,
       f,
-      protos_types_pb.Record.serializeBinaryToWriter
+      types_pb.Record.serializeBinaryToWriter
     );
   }
   f = message.getNew();
@@ -263,7 +257,7 @@ proto.dozer.ingest.IngestRequest.serializeBinaryToWriter = function(message, wri
     writer.writeMessage(
       4,
       f,
-      protos_types_pb.Record.serializeBinaryToWriter
+      types_pb.Record.serializeBinaryToWriter
     );
   }
   f = message.getSeqNo();
@@ -318,7 +312,7 @@ proto.dozer.ingest.IngestRequest.prototype.setTyp = function(value) {
  */
 proto.dozer.ingest.IngestRequest.prototype.getOld = function() {
   return /** @type{?proto.dozer.types.Record} */ (
-    jspb.Message.getWrapperField(this, protos_types_pb.Record, 3));
+    jspb.Message.getWrapperField(this, types_pb.Record, 3));
 };
 
 
@@ -355,7 +349,7 @@ proto.dozer.ingest.IngestRequest.prototype.hasOld = function() {
  */
 proto.dozer.ingest.IngestRequest.prototype.getNew = function() {
   return /** @type{?proto.dozer.types.Record} */ (
-    jspb.Message.getWrapperField(this, protos_types_pb.Record, 4));
+    jspb.Message.getWrapperField(this, types_pb.Record, 4));
 };
 
 
@@ -778,8 +772,7 @@ proto.dozer.ingest.IngestArrowRequest.prototype.getMetadataMap = function(opt_no
  */
 proto.dozer.ingest.IngestArrowRequest.prototype.clearMetadataMap = function() {
   this.getMetadataMap().clear();
-  return this;
-};
+  return this;};
 
 
 

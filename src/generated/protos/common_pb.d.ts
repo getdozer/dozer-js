@@ -1,6 +1,6 @@
 import * as jspb from 'google-protobuf'
 
-import * as protos_types_pb from '../protos/types_pb';
+import * as types_pb from './types_pb';
 
 
 export class QueryRequest extends jspb.Message {
@@ -51,16 +51,8 @@ export namespace CountResponse {
 }
 
 export class OnEventRequest extends jspb.Message {
-  getType(): protos_types_pb.EventType;
-  setType(value: protos_types_pb.EventType): OnEventRequest;
-
-  getEndpoint(): string;
-  setEndpoint(value: string): OnEventRequest;
-
-  getFilter(): string;
-  setFilter(value: string): OnEventRequest;
-  hasFilter(): boolean;
-  clearFilter(): OnEventRequest;
+  getEndpointsMap(): jspb.Map<string, types_pb.EventFilter>;
+  clearEndpointsMap(): OnEventRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): OnEventRequest.AsObject;
@@ -72,14 +64,7 @@ export class OnEventRequest extends jspb.Message {
 
 export namespace OnEventRequest {
   export type AsObject = {
-    type: protos_types_pb.EventType,
-    endpoint: string,
-    filter?: string,
-  }
-
-  export enum FilterCase { 
-    _FILTER_NOT_SET = 0,
-    FILTER = 3,
+    endpointsMap: Array<[string, types_pb.EventFilter.AsObject]>,
   }
 }
 
@@ -107,10 +92,10 @@ export class GetFieldsResponse extends jspb.Message {
   clearPrimaryIndexList(): GetFieldsResponse;
   addPrimaryIndex(value: number, index?: number): GetFieldsResponse;
 
-  getFieldsList(): Array<protos_types_pb.FieldDefinition>;
-  setFieldsList(value: Array<protos_types_pb.FieldDefinition>): GetFieldsResponse;
+  getFieldsList(): Array<types_pb.FieldDefinition>;
+  setFieldsList(value: Array<types_pb.FieldDefinition>): GetFieldsResponse;
   clearFieldsList(): GetFieldsResponse;
-  addFields(value?: protos_types_pb.FieldDefinition, index?: number): protos_types_pb.FieldDefinition;
+  addFields(value?: types_pb.FieldDefinition, index?: number): types_pb.FieldDefinition;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetFieldsResponse.AsObject;
@@ -123,20 +108,20 @@ export class GetFieldsResponse extends jspb.Message {
 export namespace GetFieldsResponse {
   export type AsObject = {
     primaryIndexList: Array<number>,
-    fieldsList: Array<protos_types_pb.FieldDefinition.AsObject>,
+    fieldsList: Array<types_pb.FieldDefinition.AsObject>,
   }
 }
 
 export class QueryResponse extends jspb.Message {
-  getFieldsList(): Array<protos_types_pb.FieldDefinition>;
-  setFieldsList(value: Array<protos_types_pb.FieldDefinition>): QueryResponse;
+  getFieldsList(): Array<types_pb.FieldDefinition>;
+  setFieldsList(value: Array<types_pb.FieldDefinition>): QueryResponse;
   clearFieldsList(): QueryResponse;
-  addFields(value?: protos_types_pb.FieldDefinition, index?: number): protos_types_pb.FieldDefinition;
+  addFields(value?: types_pb.FieldDefinition, index?: number): types_pb.FieldDefinition;
 
-  getRecordsList(): Array<protos_types_pb.RecordWithId>;
-  setRecordsList(value: Array<protos_types_pb.RecordWithId>): QueryResponse;
+  getRecordsList(): Array<types_pb.RecordWithId>;
+  setRecordsList(value: Array<types_pb.RecordWithId>): QueryResponse;
   clearRecordsList(): QueryResponse;
-  addRecords(value?: protos_types_pb.RecordWithId, index?: number): protos_types_pb.RecordWithId;
+  addRecords(value?: types_pb.RecordWithId, index?: number): types_pb.RecordWithId;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): QueryResponse.AsObject;
@@ -148,8 +133,8 @@ export class QueryResponse extends jspb.Message {
 
 export namespace QueryResponse {
   export type AsObject = {
-    fieldsList: Array<protos_types_pb.FieldDefinition.AsObject>,
-    recordsList: Array<protos_types_pb.RecordWithId.AsObject>,
+    fieldsList: Array<types_pb.FieldDefinition.AsObject>,
+    recordsList: Array<types_pb.RecordWithId.AsObject>,
   }
 }
 

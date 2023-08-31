@@ -1,7 +1,37 @@
 import * as jspb from 'google-protobuf'
 
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+import * as google_protobuf_struct_pb from 'google-protobuf/google/protobuf/struct_pb';
 
+
+export class EventFilter extends jspb.Message {
+  getType(): EventType;
+  setType(value: EventType): EventFilter;
+
+  getFilter(): string;
+  setFilter(value: string): EventFilter;
+  hasFilter(): boolean;
+  clearFilter(): EventFilter;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): EventFilter.AsObject;
+  static toObject(includeInstance: boolean, msg: EventFilter): EventFilter.AsObject;
+  static serializeBinaryToWriter(message: EventFilter, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): EventFilter;
+  static deserializeBinaryFromReader(message: EventFilter, reader: jspb.BinaryReader): EventFilter;
+}
+
+export namespace EventFilter {
+  export type AsObject = {
+    type: EventType,
+    filter?: string,
+  }
+
+  export enum FilterCase { 
+    _FILTER_NOT_SET = 0,
+    FILTER = 3,
+  }
+}
 
 export class Operation extends jspb.Message {
   getTyp(): OperationType;
@@ -206,8 +236,8 @@ export namespace DurationType {
 }
 
 export class RustDecimal extends jspb.Message {
-  getFlags(): number;
-  setFlags(value: number): RustDecimal;
+  getScale(): number;
+  setScale(value: number): RustDecimal;
 
   getLo(): number;
   setLo(value: number): RustDecimal;
@@ -217,6 +247,9 @@ export class RustDecimal extends jspb.Message {
 
   getHi(): number;
   setHi(value: number): RustDecimal;
+
+  getNegative(): boolean;
+  setNegative(value: boolean): RustDecimal;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RustDecimal.AsObject;
@@ -228,10 +261,11 @@ export class RustDecimal extends jspb.Message {
 
 export namespace RustDecimal {
   export type AsObject = {
-    flags: number,
+    scale: number,
     lo: number,
     mid: number,
     hi: number,
+    negative: boolean,
   }
 }
 
@@ -285,6 +319,11 @@ export class Value extends jspb.Message {
   hasDurationValue(): boolean;
   clearDurationValue(): Value;
 
+  getJsonValue(): google_protobuf_struct_pb.Value | undefined;
+  setJsonValue(value?: google_protobuf_struct_pb.Value): Value;
+  hasJsonValue(): boolean;
+  clearJsonValue(): Value;
+
   getValueCase(): Value.ValueCase;
 
   serializeBinary(): Uint8Array;
@@ -310,6 +349,7 @@ export namespace Value {
     dateValue: string,
     pointValue?: PointType.AsObject,
     durationValue?: DurationType.AsObject,
+    jsonValue?: google_protobuf_struct_pb.Value.AsObject,
   }
 
   export enum ValueCase { 
@@ -327,6 +367,7 @@ export namespace Value {
     DATE_VALUE = 11,
     POINT_VALUE = 12,
     DURATION_VALUE = 13,
+    JSON_VALUE = 14,
   }
 }
 
@@ -354,7 +395,7 @@ export enum Type {
   DECIMAL = 9,
   TIMESTAMP = 10,
   DATE = 11,
-  BSON = 12,
+  JSON = 12,
   POINT = 13,
   DURATION = 14,
 }

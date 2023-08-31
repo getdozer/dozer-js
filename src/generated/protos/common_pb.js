@@ -1,4 +1,4 @@
-// source: protos/common.proto
+// source: common.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -13,16 +13,10 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global =
-    (typeof globalThis !== 'undefined' && globalThis) ||
-    (typeof window !== 'undefined' && window) ||
-    (typeof global !== 'undefined' && global) ||
-    (typeof self !== 'undefined' && self) ||
-    (function () { return this; }).call(null) ||
-    Function('return this')();
+var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
 
-var protos_types_pb = require('../protos/types_pb.js');
-goog.object.extend(proto, protos_types_pb);
+var types_pb = require('./types_pb.js');
+goog.object.extend(proto, types_pb);
 goog.exportSymbol('proto.dozer.common.CountResponse', null, global);
 goog.exportSymbol('proto.dozer.common.GetEndpointsRequest', null, global);
 goog.exportSymbol('proto.dozer.common.GetEndpointsResponse', null, global);
@@ -539,9 +533,7 @@ proto.dozer.common.OnEventRequest.prototype.toObject = function(opt_includeInsta
  */
 proto.dozer.common.OnEventRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    type: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    endpoint: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    filter: jspb.Message.getFieldWithDefault(msg, 3, "")
+    endpointsMap: (f = msg.getEndpointsMap()) ? f.toObject(includeInstance, proto.dozer.types.EventFilter.toObject) : []
   };
 
   if (includeInstance) {
@@ -579,16 +571,10 @@ proto.dozer.common.OnEventRequest.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!proto.dozer.types.EventType} */ (reader.readEnum());
-      msg.setType(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setEndpoint(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setFilter(value);
+      var value = msg.getEndpointsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readMessage, proto.dozer.types.EventFilter.deserializeBinaryFromReader, "", new proto.dozer.types.EventFilter());
+         });
       break;
     default:
       reader.skipField();
@@ -619,100 +605,33 @@ proto.dozer.common.OnEventRequest.prototype.serializeBinary = function() {
  */
 proto.dozer.common.OnEventRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getType();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      1,
-      f
-    );
-  }
-  f = message.getEndpoint();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
-  f = /** @type {string} */ (jspb.Message.getField(message, 3));
-  if (f != null) {
-    writer.writeString(
-      3,
-      f
-    );
+  f = message.getEndpointsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(1, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeMessage, proto.dozer.types.EventFilter.serializeBinaryToWriter);
   }
 };
 
 
 /**
- * optional dozer.types.EventType type = 1;
- * @return {!proto.dozer.types.EventType}
+ * map<string, dozer.types.EventFilter> endpoints = 1;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<string,!proto.dozer.types.EventFilter>}
  */
-proto.dozer.common.OnEventRequest.prototype.getType = function() {
-  return /** @type {!proto.dozer.types.EventType} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.dozer.common.OnEventRequest.prototype.getEndpointsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<string,!proto.dozer.types.EventFilter>} */ (
+      jspb.Message.getMapField(this, 1, opt_noLazyCreate,
+      proto.dozer.types.EventFilter));
 };
 
 
 /**
- * @param {!proto.dozer.types.EventType} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.dozer.common.OnEventRequest} returns this
  */
-proto.dozer.common.OnEventRequest.prototype.setType = function(value) {
-  return jspb.Message.setProto3EnumField(this, 1, value);
-};
-
-
-/**
- * optional string endpoint = 2;
- * @return {string}
- */
-proto.dozer.common.OnEventRequest.prototype.getEndpoint = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.dozer.common.OnEventRequest} returns this
- */
-proto.dozer.common.OnEventRequest.prototype.setEndpoint = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional string filter = 3;
- * @return {string}
- */
-proto.dozer.common.OnEventRequest.prototype.getFilter = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.dozer.common.OnEventRequest} returns this
- */
-proto.dozer.common.OnEventRequest.prototype.setFilter = function(value) {
-  return jspb.Message.setField(this, 3, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.dozer.common.OnEventRequest} returns this
- */
-proto.dozer.common.OnEventRequest.prototype.clearFilter = function() {
-  return jspb.Message.setField(this, 3, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.dozer.common.OnEventRequest.prototype.hasFilter = function() {
-  return jspb.Message.getField(this, 3) != null;
-};
+proto.dozer.common.OnEventRequest.prototype.clearEndpointsMap = function() {
+  this.getEndpointsMap().clear();
+  return this;};
 
 
 
@@ -886,7 +805,7 @@ proto.dozer.common.GetFieldsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     primaryIndexList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
     fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
-    protos_types_pb.FieldDefinition.toObject, includeInstance)
+    types_pb.FieldDefinition.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -930,8 +849,8 @@ proto.dozer.common.GetFieldsResponse.deserializeBinaryFromReader = function(msg,
       }
       break;
     case 2:
-      var value = new protos_types_pb.FieldDefinition;
-      reader.readMessage(value,protos_types_pb.FieldDefinition.deserializeBinaryFromReader);
+      var value = new types_pb.FieldDefinition;
+      reader.readMessage(value,types_pb.FieldDefinition.deserializeBinaryFromReader);
       msg.addFields(value);
       break;
     default:
@@ -975,7 +894,7 @@ proto.dozer.common.GetFieldsResponse.serializeBinaryToWriter = function(message,
     writer.writeRepeatedMessage(
       2,
       f,
-      protos_types_pb.FieldDefinition.serializeBinaryToWriter
+      types_pb.FieldDefinition.serializeBinaryToWriter
     );
   }
 };
@@ -1024,7 +943,7 @@ proto.dozer.common.GetFieldsResponse.prototype.clearPrimaryIndexList = function(
  */
 proto.dozer.common.GetFieldsResponse.prototype.getFieldsList = function() {
   return /** @type{!Array<!proto.dozer.types.FieldDefinition>} */ (
-    jspb.Message.getRepeatedWrapperField(this, protos_types_pb.FieldDefinition, 2));
+    jspb.Message.getRepeatedWrapperField(this, types_pb.FieldDefinition, 2));
 };
 
 
@@ -1096,9 +1015,9 @@ proto.dozer.common.QueryResponse.prototype.toObject = function(opt_includeInstan
 proto.dozer.common.QueryResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
-    protos_types_pb.FieldDefinition.toObject, includeInstance),
+    types_pb.FieldDefinition.toObject, includeInstance),
     recordsList: jspb.Message.toObjectList(msg.getRecordsList(),
-    protos_types_pb.RecordWithId.toObject, includeInstance)
+    types_pb.RecordWithId.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1136,13 +1055,13 @@ proto.dozer.common.QueryResponse.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new protos_types_pb.FieldDefinition;
-      reader.readMessage(value,protos_types_pb.FieldDefinition.deserializeBinaryFromReader);
+      var value = new types_pb.FieldDefinition;
+      reader.readMessage(value,types_pb.FieldDefinition.deserializeBinaryFromReader);
       msg.addFields(value);
       break;
     case 2:
-      var value = new protos_types_pb.RecordWithId;
-      reader.readMessage(value,protos_types_pb.RecordWithId.deserializeBinaryFromReader);
+      var value = new types_pb.RecordWithId;
+      reader.readMessage(value,types_pb.RecordWithId.deserializeBinaryFromReader);
       msg.addRecords(value);
       break;
     default:
@@ -1179,7 +1098,7 @@ proto.dozer.common.QueryResponse.serializeBinaryToWriter = function(message, wri
     writer.writeRepeatedMessage(
       1,
       f,
-      protos_types_pb.FieldDefinition.serializeBinaryToWriter
+      types_pb.FieldDefinition.serializeBinaryToWriter
     );
   }
   f = message.getRecordsList();
@@ -1187,7 +1106,7 @@ proto.dozer.common.QueryResponse.serializeBinaryToWriter = function(message, wri
     writer.writeRepeatedMessage(
       2,
       f,
-      protos_types_pb.RecordWithId.serializeBinaryToWriter
+      types_pb.RecordWithId.serializeBinaryToWriter
     );
   }
 };
@@ -1199,7 +1118,7 @@ proto.dozer.common.QueryResponse.serializeBinaryToWriter = function(message, wri
  */
 proto.dozer.common.QueryResponse.prototype.getFieldsList = function() {
   return /** @type{!Array<!proto.dozer.types.FieldDefinition>} */ (
-    jspb.Message.getRepeatedWrapperField(this, protos_types_pb.FieldDefinition, 1));
+    jspb.Message.getRepeatedWrapperField(this, types_pb.FieldDefinition, 1));
 };
 
 
@@ -1237,7 +1156,7 @@ proto.dozer.common.QueryResponse.prototype.clearFieldsList = function() {
  */
 proto.dozer.common.QueryResponse.prototype.getRecordsList = function() {
   return /** @type{!Array<!proto.dozer.types.RecordWithId>} */ (
-    jspb.Message.getRepeatedWrapperField(this, protos_types_pb.RecordWithId, 2));
+    jspb.Message.getRepeatedWrapperField(this, types_pb.RecordWithId, 2));
 };
 
 
