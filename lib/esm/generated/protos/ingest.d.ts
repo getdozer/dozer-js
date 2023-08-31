@@ -65,10 +65,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -80,6 +81,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -94,10 +96,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -109,6 +112,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -127,10 +131,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -142,6 +147,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -155,10 +161,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -170,6 +177,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -180,10 +188,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -195,6 +204,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -205,15 +215,17 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K in Exclude<keyof I["old"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -231,6 +243,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_2 in Exclude<keyof I["old"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                jsonValue?: any;
             } & { [K_3 in Exclude<keyof I["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_4 in Exclude<keyof I["old"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -241,10 +254,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -256,6 +270,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_5 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
@@ -270,10 +285,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -285,6 +301,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -298,10 +315,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -313,6 +331,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -323,10 +342,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -338,6 +358,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -348,15 +369,17 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_6 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -374,6 +397,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_8 in Exclude<keyof I["new"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                jsonValue?: any;
             } & { [K_9 in Exclude<keyof I["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_10 in Exclude<keyof I["new"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -384,10 +408,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -399,6 +424,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_11 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
@@ -418,10 +444,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -433,6 +460,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -447,10 +475,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -462,6 +491,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -480,10 +510,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -495,6 +526,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -508,10 +540,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -523,6 +556,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -533,10 +567,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -548,6 +583,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -558,15 +594,17 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_13 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -584,6 +622,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_15 in Exclude<keyof I_1["old"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                jsonValue?: any;
             } & { [K_16 in Exclude<keyof I_1["old"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["old"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -594,10 +633,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -609,6 +649,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_18 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
@@ -623,10 +664,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -638,6 +680,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -651,10 +694,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -666,6 +710,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -676,10 +721,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -691,6 +737,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -701,15 +748,17 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_19 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -727,6 +776,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_21 in Exclude<keyof I_1["new"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                jsonValue?: any;
             } & { [K_22 in Exclude<keyof I_1["new"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_23 in Exclude<keyof I_1["new"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -737,10 +787,11 @@ export declare const IngestRequest: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -752,6 +803,7 @@ export declare const IngestRequest: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_24 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;

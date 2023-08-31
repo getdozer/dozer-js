@@ -4,7 +4,7 @@
  * @public
  */
 import * as grpcWeb from 'grpc-web';
-import * as protos_auth_pb from '../protos/auth_pb';
+import * as auth_pb from './auth_pb';
 export declare class AuthGrpcServiceClient {
     client_: grpcWeb.AbstractClientBase;
     hostname_: string;
@@ -19,7 +19,7 @@ export declare class AuthGrpcServiceClient {
     }, options?: null | {
         [index: string]: any;
     });
-    methodDescriptorgetAuthToken: grpcWeb.MethodDescriptor<protos_auth_pb.GetAuthTokenRequest, protos_auth_pb.GetAuthTokenResponse>;
-    getAuthToken(request: protos_auth_pb.GetAuthTokenRequest, metadata: grpcWeb.Metadata | null): Promise<protos_auth_pb.GetAuthTokenResponse>;
-    getAuthToken(request: protos_auth_pb.GetAuthTokenRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: protos_auth_pb.GetAuthTokenResponse) => void): grpcWeb.ClientReadableStream<protos_auth_pb.GetAuthTokenResponse>;
+    methodDescriptorgetAuthToken: grpcWeb.MethodDescriptor<auth_pb.GetAuthTokenRequest, auth_pb.GetAuthTokenResponse>;
+    getAuthToken(request: auth_pb.GetAuthTokenRequest, metadata: grpcWeb.Metadata | null): Promise<auth_pb.GetAuthTokenResponse>;
+    getAuthToken(request: auth_pb.GetAuthTokenRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: auth_pb.GetAuthTokenResponse) => void): grpcWeb.ClientReadableStream<auth_pb.GetAuthTokenResponse>;
 }
