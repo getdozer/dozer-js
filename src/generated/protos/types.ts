@@ -1,7 +1,8 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Timestamp } from "../google/protobuf/timestamp";
+import { Value as Value1 } from "./google/protobuf/struct";
+import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "dozer.types";
 
@@ -124,8 +125,8 @@ export enum Type {
   Timestamp = 10,
   /** Date - ISO 8601 calendar date without timezone. */
   Date = 11,
-  /** Bson - BSON data. */
-  Bson = 12,
+  /** Json - JSON data. */
+  Json = 12,
   /** Point - Geo Point type. */
   Point = 13,
   /** Duration - Duration type. */
@@ -172,8 +173,8 @@ export function typeFromJSON(object: any): Type {
     case "Date":
       return Type.Date;
     case 12:
-    case "Bson":
-      return Type.Bson;
+    case "Json":
+      return Type.Json;
     case 13:
     case "Point":
       return Type.Point;
@@ -213,8 +214,8 @@ export function typeToJSON(object: Type): string {
       return "Timestamp";
     case Type.Date:
       return "Date";
-    case Type.Bson:
-      return "Bson";
+    case Type.Json:
+      return "Json";
     case Type.Point:
       return "Point";
     case Type.Duration:
@@ -223,6 +224,14 @@ export function typeToJSON(object: Type): string {
     default:
       return "UNRECOGNIZED";
   }
+}
+
+/** Event filter. */
+export interface EventFilter {
+  /** The event type to subscribe to. */
+  type: EventType;
+  /** JSON filter string. */
+  filter?: string | undefined;
 }
 
 /** A Dozer event. */
@@ -292,15 +301,15 @@ export interface DurationType {
 
 /** rust-decimal as a message */
 export interface RustDecimal {
-  /** the sign of the Decimal value, 0 meaning positive and 1 meaning negative */
-  flags: number;
   /**
    * the lo, mid, hi, and flags fields contain the representation of the Decimal
    * value as a 96-bit integer
    */
+  scale: number;
   lo: number;
   mid: number;
   hi: number;
+  negative: boolean;
 }
 
 /** A field value. */
@@ -354,8 +363,74 @@ export interface Value {
     | PointType
     | undefined;
   /** Duration type. */
-  durationValue?: DurationType | undefined;
+  durationValue?:
+    | DurationType
+    | undefined;
+  /** JSON type. */
+  jsonValue?: any | undefined;
 }
+
+function createBaseEventFilter(): EventFilter {
+  return { type: 0, filter: undefined };
+}
+
+export const EventFilter = {
+  encode(message: EventFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.type !== 0) {
+      writer.uint32(8).int32(message.type);
+    }
+    if (message.filter !== undefined) {
+      writer.uint32(26).string(message.filter);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): EventFilter {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEventFilter();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.type = reader.int32() as any;
+          break;
+        case 3:
+          message.filter = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): EventFilter {
+    return {
+      type: isSet(object.type) ? eventTypeFromJSON(object.type) : 0,
+      filter: isSet(object.filter) ? String(object.filter) : undefined,
+    };
+  },
+
+  toJSON(message: EventFilter): unknown {
+    const obj: any = {};
+    message.type !== undefined && (obj.type = eventTypeToJSON(message.type));
+    message.filter !== undefined && (obj.filter = message.filter);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<EventFilter>, I>>(base?: I): EventFilter {
+    return EventFilter.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<EventFilter>, I>>(object: I): EventFilter {
+    const message = createBaseEventFilter();
+    message.type = object.type ?? 0;
+    message.filter = object.filter ?? undefined;
+    return message;
+  },
+};
 
 function createBaseOperation(): Operation {
   return { typ: 0, old: undefined, new: undefined, newId: undefined, endpointName: "" };
@@ -866,13 +941,13 @@ export const DurationType = {
 };
 
 function createBaseRustDecimal(): RustDecimal {
-  return { flags: 0, lo: 0, mid: 0, hi: 0 };
+  return { scale: 0, lo: 0, mid: 0, hi: 0, negative: false };
 }
 
 export const RustDecimal = {
   encode(message: RustDecimal, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.flags !== 0) {
-      writer.uint32(8).uint32(message.flags);
+    if (message.scale !== 0) {
+      writer.uint32(8).uint32(message.scale);
     }
     if (message.lo !== 0) {
       writer.uint32(16).uint32(message.lo);
@@ -882,6 +957,9 @@ export const RustDecimal = {
     }
     if (message.hi !== 0) {
       writer.uint32(32).uint32(message.hi);
+    }
+    if (message.negative === true) {
+      writer.uint32(40).bool(message.negative);
     }
     return writer;
   },
@@ -894,7 +972,7 @@ export const RustDecimal = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.flags = reader.uint32();
+          message.scale = reader.uint32();
           break;
         case 2:
           message.lo = reader.uint32();
@@ -904,6 +982,9 @@ export const RustDecimal = {
           break;
         case 4:
           message.hi = reader.uint32();
+          break;
+        case 5:
+          message.negative = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -915,19 +996,21 @@ export const RustDecimal = {
 
   fromJSON(object: any): RustDecimal {
     return {
-      flags: isSet(object.flags) ? Number(object.flags) : 0,
+      scale: isSet(object.scale) ? Number(object.scale) : 0,
       lo: isSet(object.lo) ? Number(object.lo) : 0,
       mid: isSet(object.mid) ? Number(object.mid) : 0,
       hi: isSet(object.hi) ? Number(object.hi) : 0,
+      negative: isSet(object.negative) ? Boolean(object.negative) : false,
     };
   },
 
   toJSON(message: RustDecimal): unknown {
     const obj: any = {};
-    message.flags !== undefined && (obj.flags = Math.round(message.flags));
+    message.scale !== undefined && (obj.scale = Math.round(message.scale));
     message.lo !== undefined && (obj.lo = Math.round(message.lo));
     message.mid !== undefined && (obj.mid = Math.round(message.mid));
     message.hi !== undefined && (obj.hi = Math.round(message.hi));
+    message.negative !== undefined && (obj.negative = message.negative);
     return obj;
   },
 
@@ -937,10 +1020,11 @@ export const RustDecimal = {
 
   fromPartial<I extends Exact<DeepPartial<RustDecimal>, I>>(object: I): RustDecimal {
     const message = createBaseRustDecimal();
-    message.flags = object.flags ?? 0;
+    message.scale = object.scale ?? 0;
     message.lo = object.lo ?? 0;
     message.mid = object.mid ?? 0;
     message.hi = object.hi ?? 0;
+    message.negative = object.negative ?? false;
     return message;
   },
 };
@@ -960,6 +1044,7 @@ function createBaseValue(): Value {
     dateValue: undefined,
     pointValue: undefined,
     durationValue: undefined,
+    jsonValue: undefined,
   };
 }
 
@@ -1003,6 +1088,9 @@ export const Value = {
     }
     if (message.durationValue !== undefined) {
       DurationType.encode(message.durationValue, writer.uint32(106).fork()).ldelim();
+    }
+    if (message.jsonValue !== undefined) {
+      Value1.encode(Value1.wrap(message.jsonValue), writer.uint32(114).fork()).ldelim();
     }
     return writer;
   },
@@ -1053,6 +1141,9 @@ export const Value = {
         case 13:
           message.durationValue = DurationType.decode(reader, reader.uint32());
           break;
+        case 14:
+          message.jsonValue = Value1.unwrap(Value1.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1076,6 +1167,7 @@ export const Value = {
       dateValue: isSet(object.dateValue) ? String(object.dateValue) : undefined,
       pointValue: isSet(object.pointValue) ? PointType.fromJSON(object.pointValue) : undefined,
       durationValue: isSet(object.durationValue) ? DurationType.fromJSON(object.durationValue) : undefined,
+      jsonValue: isSet(object?.jsonValue) ? object.jsonValue : undefined,
     };
   },
 
@@ -1098,6 +1190,7 @@ export const Value = {
       (obj.pointValue = message.pointValue ? PointType.toJSON(message.pointValue) : undefined);
     message.durationValue !== undefined &&
       (obj.durationValue = message.durationValue ? DurationType.toJSON(message.durationValue) : undefined);
+    message.jsonValue !== undefined && (obj.jsonValue = message.jsonValue);
     return obj;
   },
 
@@ -1126,6 +1219,7 @@ export const Value = {
     message.durationValue = (object.durationValue !== undefined && object.durationValue !== null)
       ? DurationType.fromPartial(object.durationValue)
       : undefined;
+    message.jsonValue = object.jsonValue ?? undefined;
     return message;
   },
 };

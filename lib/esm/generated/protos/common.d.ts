@@ -1,6 +1,6 @@
 import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
-import { EventType, FieldDefinition, Operation, RecordWithId } from "./types";
+import { EventFilter, FieldDefinition, Operation, RecordWithId } from "./types";
 export declare const protobufPackage = "dozer.common";
 /** The _common_ gRPC API handles Pull and Push queries of all endpoints with a single service, `CommonGrpcService`. */
 /** Request for `count` and `query`. */
@@ -17,12 +17,14 @@ export interface CountResponse {
 }
 /** Request for `OnEvent`. */
 export interface OnEventRequest {
-    /** The event type to subscribe to. */
-    type: EventType;
-    /** The name of the endpoint to subscribe to. */
-    endpoint: string;
-    /** JSON filter string. */
-    filter?: string | undefined;
+    /** The endpoints to subscribe to. Key is the endpoint name, value is the filter. */
+    endpoints: {
+        [key: string]: EventFilter;
+    };
+}
+export interface OnEventRequest_EndpointsEntry {
+    key: string;
+    value: EventFilter | undefined;
 }
 /** Request for `getFields`. */
 export interface GetFieldsRequest {
@@ -93,23 +95,89 @@ export declare const OnEventRequest: {
     fromJSON(object: any): OnEventRequest;
     toJSON(message: OnEventRequest): unknown;
     create<I extends {
-        type?: EventType | undefined;
-        endpoint?: string | undefined;
-        filter?: string | undefined;
+        endpoints?: {
+            [x: string]: {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } | undefined;
+        } | undefined;
     } & {
-        type?: EventType | undefined;
-        endpoint?: string | undefined;
-        filter?: string | undefined;
-    } & { [K in Exclude<keyof I, keyof OnEventRequest>]: never; }>(base?: I | undefined): OnEventRequest;
+        endpoints?: ({
+            [x: string]: {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } | undefined;
+        } & {
+            [x: string]: ({
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } & {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } & { [K in Exclude<keyof I["endpoints"][string], keyof EventFilter>]: never; }) | undefined;
+        } & { [K_1 in Exclude<keyof I["endpoints"], string | number>]: never; }) | undefined;
+    } & { [K_2 in Exclude<keyof I, "endpoints">]: never; }>(base?: I | undefined): OnEventRequest;
     fromPartial<I_1 extends {
-        type?: EventType | undefined;
-        endpoint?: string | undefined;
-        filter?: string | undefined;
+        endpoints?: {
+            [x: string]: {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } | undefined;
+        } | undefined;
     } & {
-        type?: EventType | undefined;
-        endpoint?: string | undefined;
-        filter?: string | undefined;
-    } & { [K_1 in Exclude<keyof I_1, keyof OnEventRequest>]: never; }>(object: I_1): OnEventRequest;
+        endpoints?: ({
+            [x: string]: {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } | undefined;
+        } & {
+            [x: string]: ({
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } & {
+                type?: import("./types").EventType | undefined;
+                filter?: string | undefined;
+            } & { [K_3 in Exclude<keyof I_1["endpoints"][string], keyof EventFilter>]: never; }) | undefined;
+        } & { [K_4 in Exclude<keyof I_1["endpoints"], string | number>]: never; }) | undefined;
+    } & { [K_5 in Exclude<keyof I_1, "endpoints">]: never; }>(object: I_1): OnEventRequest;
+};
+export declare const OnEventRequest_EndpointsEntry: {
+    encode(message: OnEventRequest_EndpointsEntry, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number): OnEventRequest_EndpointsEntry;
+    fromJSON(object: any): OnEventRequest_EndpointsEntry;
+    toJSON(message: OnEventRequest_EndpointsEntry): unknown;
+    create<I extends {
+        key?: string | undefined;
+        value?: {
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } | undefined;
+    } & {
+        key?: string | undefined;
+        value?: ({
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } & {
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } & { [K in Exclude<keyof I["value"], keyof EventFilter>]: never; }) | undefined;
+    } & { [K_1 in Exclude<keyof I, keyof OnEventRequest_EndpointsEntry>]: never; }>(base?: I | undefined): OnEventRequest_EndpointsEntry;
+    fromPartial<I_1 extends {
+        key?: string | undefined;
+        value?: {
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } | undefined;
+    } & {
+        key?: string | undefined;
+        value?: ({
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } & {
+            type?: import("./types").EventType | undefined;
+            filter?: string | undefined;
+        } & { [K_2 in Exclude<keyof I_1["value"], keyof EventFilter>]: never; }) | undefined;
+    } & { [K_3 in Exclude<keyof I_1, keyof OnEventRequest_EndpointsEntry>]: never; }>(object: I_1): OnEventRequest_EndpointsEntry;
 };
 export declare const GetFieldsRequest: {
     encode(message: GetFieldsRequest, writer?: _m0.Writer): _m0.Writer;
@@ -211,10 +279,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -226,6 +295,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -261,10 +331,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -276,6 +347,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -292,10 +364,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -307,6 +380,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -323,10 +397,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -338,6 +413,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } & {
@@ -351,10 +427,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -366,6 +443,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] & ({
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -376,10 +454,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -391,6 +470,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 } & {
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -401,15 +481,17 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: ({
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } & {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } & { [K_2 in Exclude<keyof I["records"][number]["record"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -427,6 +509,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } & { [K_4 in Exclude<keyof I["records"][number]["record"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                    jsonValue?: any;
                 } & { [K_5 in Exclude<keyof I["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_6 in Exclude<keyof I["records"][number]["record"]["values"], keyof {
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -437,10 +520,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -452,6 +536,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[]>]: never; }) | undefined;
                 version?: number | undefined;
             } & { [K_7 in Exclude<keyof I["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
@@ -468,10 +553,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -483,6 +569,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -507,10 +594,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -522,6 +610,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -557,10 +646,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -572,6 +662,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -588,10 +679,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -603,6 +695,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;
@@ -619,10 +712,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -634,6 +728,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } & {
@@ -647,10 +742,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -662,6 +758,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] & ({
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -672,10 +769,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -687,6 +785,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 } & {
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -697,15 +796,17 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: ({
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } & {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } & { [K_13 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["decimalValue"], keyof import("./types").RustDecimal>]: never; }) | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -723,6 +824,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } & { [K_15 in Exclude<keyof I_1["records"][number]["record"]["values"][number]["durationValue"], keyof import("./types").DurationType>]: never; }) | undefined;
+                    jsonValue?: any;
                 } & { [K_16 in Exclude<keyof I_1["records"][number]["record"]["values"][number], keyof import("./types").Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["records"][number]["record"]["values"], keyof {
                     uintValue?: number | undefined;
                     uint128Value?: string | undefined;
@@ -733,10 +835,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -748,6 +851,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[]>]: never; }) | undefined;
                 version?: number | undefined;
             } & { [K_18 in Exclude<keyof I_1["records"][number]["record"], keyof import("./types").Record>]: never; }) | undefined;
@@ -764,10 +868,11 @@ export declare const QueryResponse: {
                     stringValue?: string | undefined;
                     bytesValue?: Uint8Array | undefined;
                     decimalValue?: {
-                        flags?: number | undefined;
+                        scale?: number | undefined;
                         lo?: number | undefined;
                         mid?: number | undefined;
                         hi?: number | undefined;
+                        negative?: boolean | undefined;
                     } | undefined;
                     timestampValue?: Date | undefined;
                     dateValue?: string | undefined;
@@ -779,6 +884,7 @@ export declare const QueryResponse: {
                         value?: string | undefined;
                         timeUnit?: string | undefined;
                     } | undefined;
+                    jsonValue?: any;
                 }[] | undefined;
                 version?: number | undefined;
             } | undefined;

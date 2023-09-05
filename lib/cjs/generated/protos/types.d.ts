@@ -52,8 +52,8 @@ export declare enum Type {
     Timestamp = 10,
     /** Date - ISO 8601 calendar date without timezone. */
     Date = 11,
-    /** Bson - BSON data. */
-    Bson = 12,
+    /** Json - JSON data. */
+    Json = 12,
     /** Point - Geo Point type. */
     Point = 13,
     /** Duration - Duration type. */
@@ -62,6 +62,13 @@ export declare enum Type {
 }
 export declare function typeFromJSON(object: any): Type;
 export declare function typeToJSON(object: Type): string;
+/** Event filter. */
+export interface EventFilter {
+    /** The event type to subscribe to. */
+    type: EventType;
+    /** JSON filter string. */
+    filter?: string | undefined;
+}
 /** A Dozer event. */
 export interface Operation {
     /** The operation type. */
@@ -116,15 +123,15 @@ export interface DurationType {
 }
 /** rust-decimal as a message */
 export interface RustDecimal {
-    /** the sign of the Decimal value, 0 meaning positive and 1 meaning negative */
-    flags: number;
     /**
      * the lo, mid, hi, and flags fields contain the representation of the Decimal
      * value as a 96-bit integer
      */
+    scale: number;
     lo: number;
     mid: number;
     hi: number;
+    negative: boolean;
 }
 /** A field value. */
 export interface Value {
@@ -154,7 +161,29 @@ export interface Value {
     pointValue?: PointType | undefined;
     /** Duration type. */
     durationValue?: DurationType | undefined;
+    /** JSON type. */
+    jsonValue?: any | undefined;
 }
+export declare const EventFilter: {
+    encode(message: EventFilter, writer?: _m0.Writer): _m0.Writer;
+    decode(input: _m0.Reader | Uint8Array, length?: number): EventFilter;
+    fromJSON(object: any): EventFilter;
+    toJSON(message: EventFilter): unknown;
+    create<I extends {
+        type?: EventType | undefined;
+        filter?: string | undefined;
+    } & {
+        type?: EventType | undefined;
+        filter?: string | undefined;
+    } & { [K in Exclude<keyof I, keyof EventFilter>]: never; }>(base?: I | undefined): EventFilter;
+    fromPartial<I_1 extends {
+        type?: EventType | undefined;
+        filter?: string | undefined;
+    } & {
+        type?: EventType | undefined;
+        filter?: string | undefined;
+    } & { [K_1 in Exclude<keyof I_1, keyof EventFilter>]: never; }>(object: I_1): EventFilter;
+};
 export declare const Operation: {
     encode(message: Operation, writer?: _m0.Writer): _m0.Writer;
     decode(input: _m0.Reader | Uint8Array, length?: number): Operation;
@@ -173,10 +202,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -188,6 +218,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -202,10 +233,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -217,6 +249,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -235,10 +268,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -250,6 +284,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -263,10 +298,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -278,6 +314,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -288,10 +325,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -303,6 +341,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -313,15 +352,17 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K in Exclude<keyof I["old"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -339,6 +380,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_2 in Exclude<keyof I["old"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_3 in Exclude<keyof I["old"]["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["old"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -349,10 +391,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -364,6 +407,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_5 in Exclude<keyof I["old"], keyof Record>]: never; }) | undefined;
@@ -378,10 +422,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -393,6 +438,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -406,10 +452,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -421,6 +468,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -431,10 +479,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -446,6 +495,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -456,15 +506,17 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_6 in Exclude<keyof I["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -482,6 +534,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_8 in Exclude<keyof I["new"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_9 in Exclude<keyof I["new"]["values"][number], keyof Value>]: never; })[] & { [K_10 in Exclude<keyof I["new"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -492,10 +545,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -507,6 +561,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_11 in Exclude<keyof I["new"], keyof Record>]: never; }) | undefined;
@@ -526,10 +581,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -541,6 +597,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -555,10 +612,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -570,6 +628,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -588,10 +647,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -603,6 +663,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -616,10 +677,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -631,6 +693,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -641,10 +704,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -656,6 +720,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -666,15 +731,17 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_13 in Exclude<keyof I_1["old"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -692,6 +759,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_15 in Exclude<keyof I_1["old"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_16 in Exclude<keyof I_1["old"]["values"][number], keyof Value>]: never; })[] & { [K_17 in Exclude<keyof I_1["old"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -702,10 +770,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -717,6 +786,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_18 in Exclude<keyof I_1["old"], keyof Record>]: never; }) | undefined;
@@ -731,10 +801,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -746,6 +817,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -759,10 +831,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -774,6 +847,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -784,10 +858,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -799,6 +874,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -809,15 +885,17 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_19 in Exclude<keyof I_1["new"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -835,6 +913,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_21 in Exclude<keyof I_1["new"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_22 in Exclude<keyof I_1["new"]["values"][number], keyof Value>]: never; })[] & { [K_23 in Exclude<keyof I_1["new"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -845,10 +924,11 @@ export declare const Operation: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -860,6 +940,7 @@ export declare const Operation: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_24 in Exclude<keyof I_1["new"], keyof Record>]: never; }) | undefined;
@@ -883,10 +964,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -898,6 +980,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[] | undefined;
         version?: number | undefined;
     } & {
@@ -911,10 +994,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -926,6 +1010,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[] & ({
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -936,10 +1021,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -951,6 +1037,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         } & {
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -961,15 +1048,17 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: ({
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } & {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } & { [K in Exclude<keyof I["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -987,6 +1076,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } & { [K_2 in Exclude<keyof I["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            jsonValue?: any | undefined;
         } & { [K_3 in Exclude<keyof I["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["values"], keyof {
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -997,10 +1087,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1012,6 +1103,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[]>]: never; }) | undefined;
         version?: number | undefined;
     } & { [K_5 in Exclude<keyof I, keyof Record>]: never; }>(base?: I | undefined): Record;
@@ -1026,10 +1118,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1041,6 +1134,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[] | undefined;
         version?: number | undefined;
     } & {
@@ -1054,10 +1148,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1069,6 +1164,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[] & ({
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -1079,10 +1175,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1094,6 +1191,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         } & {
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -1104,15 +1202,17 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: ({
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } & {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } & { [K_6 in Exclude<keyof I_1["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1130,6 +1230,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } & { [K_8 in Exclude<keyof I_1["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+            jsonValue?: any | undefined;
         } & { [K_9 in Exclude<keyof I_1["values"][number], keyof Value>]: never; })[] & { [K_10 in Exclude<keyof I_1["values"], keyof {
             uintValue?: number | undefined;
             uint128Value?: string | undefined;
@@ -1140,10 +1241,11 @@ export declare const Record: {
             stringValue?: string | undefined;
             bytesValue?: Uint8Array | undefined;
             decimalValue?: {
-                flags?: number | undefined;
+                scale?: number | undefined;
                 lo?: number | undefined;
                 mid?: number | undefined;
                 hi?: number | undefined;
+                negative?: boolean | undefined;
             } | undefined;
             timestampValue?: Date | undefined;
             dateValue?: string | undefined;
@@ -1155,6 +1257,7 @@ export declare const Record: {
                 value?: string | undefined;
                 timeUnit?: string | undefined;
             } | undefined;
+            jsonValue?: any | undefined;
         }[]>]: never; }) | undefined;
         version?: number | undefined;
     } & { [K_11 in Exclude<keyof I_1, keyof Record>]: never; }>(object: I_1): Record;
@@ -1177,10 +1280,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1192,6 +1296,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -1208,10 +1313,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1223,6 +1329,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -1236,10 +1343,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1251,6 +1359,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1261,10 +1370,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1276,6 +1386,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1286,15 +1397,17 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K in Exclude<keyof I["record"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1312,6 +1425,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_2 in Exclude<keyof I["record"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_3 in Exclude<keyof I["record"]["values"][number], keyof Value>]: never; })[] & { [K_4 in Exclude<keyof I["record"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1322,10 +1436,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1337,6 +1452,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_5 in Exclude<keyof I["record"], keyof Record>]: never; }) | undefined;
@@ -1354,10 +1470,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1369,6 +1486,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } | undefined;
@@ -1385,10 +1503,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1400,6 +1519,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] | undefined;
             version?: number | undefined;
         } & {
@@ -1413,10 +1533,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1428,6 +1549,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[] & ({
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1438,10 +1560,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1453,6 +1576,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             } & {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1463,15 +1587,17 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: ({
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } & { [K_7 in Exclude<keyof I_1["record"]["values"][number]["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1489,6 +1615,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } & { [K_9 in Exclude<keyof I_1["record"]["values"][number]["durationValue"], keyof DurationType>]: never; }) | undefined;
+                jsonValue?: any | undefined;
             } & { [K_10 in Exclude<keyof I_1["record"]["values"][number], keyof Value>]: never; })[] & { [K_11 in Exclude<keyof I_1["record"]["values"], keyof {
                 uintValue?: number | undefined;
                 uint128Value?: string | undefined;
@@ -1499,10 +1626,11 @@ export declare const RecordWithId: {
                 stringValue?: string | undefined;
                 bytesValue?: Uint8Array | undefined;
                 decimalValue?: {
-                    flags?: number | undefined;
+                    scale?: number | undefined;
                     lo?: number | undefined;
                     mid?: number | undefined;
                     hi?: number | undefined;
+                    negative?: boolean | undefined;
                 } | undefined;
                 timestampValue?: Date | undefined;
                 dateValue?: string | undefined;
@@ -1514,6 +1642,7 @@ export declare const RecordWithId: {
                     value?: string | undefined;
                     timeUnit?: string | undefined;
                 } | undefined;
+                jsonValue?: any | undefined;
             }[]>]: never; }) | undefined;
             version?: number | undefined;
         } & { [K_12 in Exclude<keyof I_1["record"], keyof Record>]: never; }) | undefined;
@@ -1657,26 +1786,30 @@ export declare const RustDecimal: {
     fromJSON(object: any): RustDecimal;
     toJSON(message: RustDecimal): unknown;
     create<I extends {
-        flags?: number | undefined;
+        scale?: number | undefined;
         lo?: number | undefined;
         mid?: number | undefined;
         hi?: number | undefined;
+        negative?: boolean | undefined;
     } & {
-        flags?: number | undefined;
+        scale?: number | undefined;
         lo?: number | undefined;
         mid?: number | undefined;
         hi?: number | undefined;
+        negative?: boolean | undefined;
     } & { [K in Exclude<keyof I, keyof RustDecimal>]: never; }>(base?: I | undefined): RustDecimal;
     fromPartial<I_1 extends {
-        flags?: number | undefined;
+        scale?: number | undefined;
         lo?: number | undefined;
         mid?: number | undefined;
         hi?: number | undefined;
+        negative?: boolean | undefined;
     } & {
-        flags?: number | undefined;
+        scale?: number | undefined;
         lo?: number | undefined;
         mid?: number | undefined;
         hi?: number | undefined;
+        negative?: boolean | undefined;
     } & { [K_1 in Exclude<keyof I_1, keyof RustDecimal>]: never; }>(object: I_1): RustDecimal;
 };
 export declare const Value: {
@@ -1694,10 +1827,11 @@ export declare const Value: {
         stringValue?: string | undefined;
         bytesValue?: Uint8Array | undefined;
         decimalValue?: {
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } | undefined;
         timestampValue?: Date | undefined;
         dateValue?: string | undefined;
@@ -1709,6 +1843,7 @@ export declare const Value: {
             value?: string | undefined;
             timeUnit?: string | undefined;
         } | undefined;
+        jsonValue?: any | undefined;
     } & {
         uintValue?: number | undefined;
         uint128Value?: string | undefined;
@@ -1719,15 +1854,17 @@ export declare const Value: {
         stringValue?: string | undefined;
         bytesValue?: Uint8Array | undefined;
         decimalValue?: ({
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } & {
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } & { [K in Exclude<keyof I["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
         timestampValue?: Date | undefined;
         dateValue?: string | undefined;
@@ -1745,6 +1882,7 @@ export declare const Value: {
             value?: string | undefined;
             timeUnit?: string | undefined;
         } & { [K_2 in Exclude<keyof I["durationValue"], keyof DurationType>]: never; }) | undefined;
+        jsonValue?: any | undefined;
     } & { [K_3 in Exclude<keyof I, keyof Value>]: never; }>(base?: I | undefined): Value;
     fromPartial<I_1 extends {
         uintValue?: number | undefined;
@@ -1756,10 +1894,11 @@ export declare const Value: {
         stringValue?: string | undefined;
         bytesValue?: Uint8Array | undefined;
         decimalValue?: {
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } | undefined;
         timestampValue?: Date | undefined;
         dateValue?: string | undefined;
@@ -1771,6 +1910,7 @@ export declare const Value: {
             value?: string | undefined;
             timeUnit?: string | undefined;
         } | undefined;
+        jsonValue?: any | undefined;
     } & {
         uintValue?: number | undefined;
         uint128Value?: string | undefined;
@@ -1781,15 +1921,17 @@ export declare const Value: {
         stringValue?: string | undefined;
         bytesValue?: Uint8Array | undefined;
         decimalValue?: ({
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } & {
-            flags?: number | undefined;
+            scale?: number | undefined;
             lo?: number | undefined;
             mid?: number | undefined;
             hi?: number | undefined;
+            negative?: boolean | undefined;
         } & { [K_4 in Exclude<keyof I_1["decimalValue"], keyof RustDecimal>]: never; }) | undefined;
         timestampValue?: Date | undefined;
         dateValue?: string | undefined;
@@ -1807,6 +1949,7 @@ export declare const Value: {
             value?: string | undefined;
             timeUnit?: string | undefined;
         } & { [K_6 in Exclude<keyof I_1["durationValue"], keyof DurationType>]: never; }) | undefined;
+        jsonValue?: any | undefined;
     } & { [K_7 in Exclude<keyof I_1, keyof Value>]: never; }>(object: I_1): Value;
 };
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

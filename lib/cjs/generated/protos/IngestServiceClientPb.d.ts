@@ -4,7 +4,7 @@
  * @public
  */
 import * as grpcWeb from 'grpc-web';
-import * as protos_ingest_pb from '../protos/ingest_pb';
+import * as ingest_pb from './ingest_pb';
 export declare class IngestServiceClient {
     client_: grpcWeb.AbstractClientBase;
     hostname_: string;
@@ -19,10 +19,10 @@ export declare class IngestServiceClient {
     }, options?: null | {
         [index: string]: any;
     });
-    methodDescriptoringest: grpcWeb.MethodDescriptor<protos_ingest_pb.IngestRequest, protos_ingest_pb.IngestResponse>;
-    ingest(request: protos_ingest_pb.IngestRequest, metadata: grpcWeb.Metadata | null): Promise<protos_ingest_pb.IngestResponse>;
-    ingest(request: protos_ingest_pb.IngestRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: protos_ingest_pb.IngestResponse) => void): grpcWeb.ClientReadableStream<protos_ingest_pb.IngestResponse>;
-    methodDescriptoringest_arrow: grpcWeb.MethodDescriptor<protos_ingest_pb.IngestArrowRequest, protos_ingest_pb.IngestResponse>;
-    ingest_arrow(request: protos_ingest_pb.IngestArrowRequest, metadata: grpcWeb.Metadata | null): Promise<protos_ingest_pb.IngestResponse>;
-    ingest_arrow(request: protos_ingest_pb.IngestArrowRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: protos_ingest_pb.IngestResponse) => void): grpcWeb.ClientReadableStream<protos_ingest_pb.IngestResponse>;
+    methodDescriptoringest: grpcWeb.MethodDescriptor<ingest_pb.IngestRequest, ingest_pb.IngestResponse>;
+    ingest(request: ingest_pb.IngestRequest, metadata: grpcWeb.Metadata | null): Promise<ingest_pb.IngestResponse>;
+    ingest(request: ingest_pb.IngestRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: ingest_pb.IngestResponse) => void): grpcWeb.ClientReadableStream<ingest_pb.IngestResponse>;
+    methodDescriptoringest_arrow: grpcWeb.MethodDescriptor<ingest_pb.IngestArrowRequest, ingest_pb.IngestResponse>;
+    ingest_arrow(request: ingest_pb.IngestArrowRequest, metadata: grpcWeb.Metadata | null): Promise<ingest_pb.IngestResponse>;
+    ingest_arrow(request: ingest_pb.IngestArrowRequest, metadata: grpcWeb.Metadata | null, callback: (err: grpcWeb.RpcError, response: ingest_pb.IngestResponse) => void): grpcWeb.ClientReadableStream<ingest_pb.IngestResponse>;
 }

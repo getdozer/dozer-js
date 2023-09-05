@@ -1,5 +1,5 @@
 import {CommonGrpcServiceClient} from "./generated/protos/CommonServiceClientPb";
-import {EventType, FieldDefinition, Operation, OperationType} from "./generated/protos/types_pb";
+import {EventFilter, EventType, FieldDefinition, Operation, OperationType} from "./generated/protos/types_pb.js";
 import {RecordMapper} from "./helper";
 import {
     CountResponse,
@@ -90,12 +90,17 @@ export class ApiClient {
     }
 
     onEvent(eventType = EventType.ALL, filter: DozerFilter | null = null): ClientReadableStream<Operation> {
-        const onEventRequest = new OnEventRequest()
-        .setEndpoint(this.endpoint)
-        .setType(eventType);
+        const eventFilter = new EventFilter()
+          .setType(eventType);
+
         if (filter) {
-            onEventRequest.setFilter(QueryHelper.convertFilter(filter));
+          eventFilter.setFilter(QueryHelper.convertFilter(filter));
         }
+      
+        const onEventRequest = new OnEventRequest()
+        onEventRequest
+          .getEndpointsMap()
+          .set(this.endpoint, eventFilter);
 
         return this.service.onEvent(onEventRequest, this.authMetadata);
     }
@@ -243,13 +248,19 @@ export class DozerEndpoint {
 
   onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> | null {
     let stream: ClientReadableStream<Operation> | null = null;
-    const onEventRequest = new OnEventRequest()
-      .setEndpoint(this.endpoint)
+
+    const eventFilter = new EventFilter()
       .setType(eventType);
 
     if (filter) {
-      onEventRequest.setFilter(QueryHelper.convertFilter(filter));
+      eventFilter.setFilter(QueryHelper.convertFilter(filter));
     }
+      
+    const onEventRequest = new OnEventRequest()
+    onEventRequest
+      .getEndpointsMap()
+      .set(this.endpoint, eventFilter);
+  
 
     stream = this.client.service.onEvent(onEventRequest, this.client.authMetadata);
     stream.on('data', (operation) => {

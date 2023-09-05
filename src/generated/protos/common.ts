@@ -3,7 +3,7 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { EventType, eventTypeFromJSON, eventTypeToJSON, FieldDefinition, Operation, RecordWithId } from "./types";
+import { EventFilter, FieldDefinition, Operation, RecordWithId } from "./types";
 
 export const protobufPackage = "dozer.common";
 
@@ -25,12 +25,13 @@ export interface CountResponse {
 
 /** Request for `OnEvent`. */
 export interface OnEventRequest {
-  /** The event type to subscribe to. */
-  type: EventType;
-  /** The name of the endpoint to subscribe to. */
-  endpoint: string;
-  /** JSON filter string. */
-  filter?: string | undefined;
+  /** The endpoints to subscribe to. Key is the endpoint name, value is the filter. */
+  endpoints: { [key: string]: EventFilter };
+}
+
+export interface OnEventRequest_EndpointsEntry {
+  key: string;
+  value: EventFilter | undefined;
 }
 
 /** Request for `getFields`. */
@@ -179,20 +180,14 @@ export const CountResponse = {
 };
 
 function createBaseOnEventRequest(): OnEventRequest {
-  return { type: 0, endpoint: "", filter: undefined };
+  return { endpoints: {} };
 }
 
 export const OnEventRequest = {
   encode(message: OnEventRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.type !== 0) {
-      writer.uint32(8).int32(message.type);
-    }
-    if (message.endpoint !== "") {
-      writer.uint32(18).string(message.endpoint);
-    }
-    if (message.filter !== undefined) {
-      writer.uint32(26).string(message.filter);
-    }
+    Object.entries(message.endpoints).forEach(([key, value]) => {
+      OnEventRequest_EndpointsEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
+    });
     return writer;
   },
 
@@ -204,13 +199,10 @@ export const OnEventRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.type = reader.int32() as any;
-          break;
-        case 2:
-          message.endpoint = reader.string();
-          break;
-        case 3:
-          message.filter = reader.string();
+          const entry1 = OnEventRequest_EndpointsEntry.decode(reader, reader.uint32());
+          if (entry1.value !== undefined) {
+            message.endpoints[entry1.key] = entry1.value;
+          }
           break;
         default:
           reader.skipType(tag & 7);
@@ -222,17 +214,23 @@ export const OnEventRequest = {
 
   fromJSON(object: any): OnEventRequest {
     return {
-      type: isSet(object.type) ? eventTypeFromJSON(object.type) : 0,
-      endpoint: isSet(object.endpoint) ? String(object.endpoint) : "",
-      filter: isSet(object.filter) ? String(object.filter) : undefined,
+      endpoints: isObject(object.endpoints)
+        ? Object.entries(object.endpoints).reduce<{ [key: string]: EventFilter }>((acc, [key, value]) => {
+          acc[key] = EventFilter.fromJSON(value);
+          return acc;
+        }, {})
+        : {},
     };
   },
 
   toJSON(message: OnEventRequest): unknown {
     const obj: any = {};
-    message.type !== undefined && (obj.type = eventTypeToJSON(message.type));
-    message.endpoint !== undefined && (obj.endpoint = message.endpoint);
-    message.filter !== undefined && (obj.filter = message.filter);
+    obj.endpoints = {};
+    if (message.endpoints) {
+      Object.entries(message.endpoints).forEach(([k, v]) => {
+        obj.endpoints[k] = EventFilter.toJSON(v);
+      });
+    }
     return obj;
   },
 
@@ -242,9 +240,81 @@ export const OnEventRequest = {
 
   fromPartial<I extends Exact<DeepPartial<OnEventRequest>, I>>(object: I): OnEventRequest {
     const message = createBaseOnEventRequest();
-    message.type = object.type ?? 0;
-    message.endpoint = object.endpoint ?? "";
-    message.filter = object.filter ?? undefined;
+    message.endpoints = Object.entries(object.endpoints ?? {}).reduce<{ [key: string]: EventFilter }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = EventFilter.fromPartial(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    return message;
+  },
+};
+
+function createBaseOnEventRequest_EndpointsEntry(): OnEventRequest_EndpointsEntry {
+  return { key: "", value: undefined };
+}
+
+export const OnEventRequest_EndpointsEntry = {
+  encode(message: OnEventRequest_EndpointsEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== undefined) {
+      EventFilter.encode(message.value, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): OnEventRequest_EndpointsEntry {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOnEventRequest_EndpointsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = EventFilter.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OnEventRequest_EndpointsEntry {
+    return {
+      key: isSet(object.key) ? String(object.key) : "",
+      value: isSet(object.value) ? EventFilter.fromJSON(object.value) : undefined,
+    };
+  },
+
+  toJSON(message: OnEventRequest_EndpointsEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value ? EventFilter.toJSON(message.value) : undefined);
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OnEventRequest_EndpointsEntry>, I>>(base?: I): OnEventRequest_EndpointsEntry {
+    return OnEventRequest_EndpointsEntry.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<OnEventRequest_EndpointsEntry>, I>>(
+    object: I,
+  ): OnEventRequest_EndpointsEntry {
+    const message = createBaseOnEventRequest_EndpointsEntry();
+    message.key = object.key ?? "";
+    message.value = (object.value !== undefined && object.value !== null)
+      ? EventFilter.fromPartial(object.value)
+      : undefined;
     return message;
   },
 };
@@ -669,6 +739,10 @@ function longToNumber(long: Long): number {
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isObject(value: any): boolean {
+  return typeof value === "object" && value !== null;
 }
 
 function isSet(value: any): boolean {

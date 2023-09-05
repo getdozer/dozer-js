@@ -1,5 +1,5 @@
 import { CommonGrpcServiceClient } from "./generated/protos/CommonServiceClientPb";
-import { EventType, FieldDefinition, Operation, OperationType } from "./generated/protos/types_pb";
+import { EventType, FieldDefinition, Operation, OperationType } from "./generated/protos/types_pb.js";
 import { RecordMapper } from "./helper";
 import { CountResponse, GetFieldsResponse } from "./generated/protos/common_pb";
 import { DozerFilter, DozerQuery } from "./query_helper";
@@ -47,6 +47,7 @@ export declare class ApiClient {
 }
 export interface DozerClientOptions {
     serverAddress: string;
+    authToken?: string | null;
     headers?: Record<string, string>;
 }
 export interface DozerEndpointEvent {
