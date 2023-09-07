@@ -1,5 +1,11 @@
 # @dozerjs/dozer-react
 
+## 0.0.5-beta.11
+
+### Patch Changes
+
+- 4c04d73: use outdir path for react
+
 ## 0.0.5-beta.10
 
 ### Patch Changes
