@@ -1,7 +1,7 @@
 {
   "name": "@dozerjs/dozer",
   "description": "Official Dozer JS Client",
-  "version": "0.1.0",
+  "version": "0.0.8-beta.1",
   "dependencies": {
     "@types/google-protobuf": "^3.15.6",
     "google-protobuf": "^3.21.2",
@@ -9,7 +9,8 @@
     "long": "^5.2.3",
     "protobufjs": "^7.2.5",
     "rxjs": "^7.8.0",
-    "ts-proto": "^1.140.0"
+    "ts-proto": "^1.140.0",
+    "@changesets/cli": "^2.26.2"
   },
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -22,7 +23,8 @@
     "generate:grpc": "sh scripts/build_ts_from_proto.sh",
     "build:cjs": "tsc --module commonjs --target es5 --outDir lib/cjs && cp src/generated/protos/*_pb.d.ts lib/cjs/generated/protos/",
     "build:esm": "tsc --module esnext --target es6 --outDir lib/esm && cp src/generated/protos/*_pb.d.ts lib/esm/generated/protos/",
-    "test": "jest"
+    "test": "jest",
+    "version": "pnpm version"
   },
   "repository": {
     "type": "git",

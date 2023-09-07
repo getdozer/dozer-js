@@ -1,7 +1,7 @@
 {
   "name": "@dozerjs/libs",
   "description": "Mono repo for dozer JS libraries",
-  "version": "0.1",
+  "version": "0.0.8-beta.1",
   "devDependencies": {
     "@types/jest": "^29.4.1",
     "jest": "^29.5.0",
@@ -12,7 +12,7 @@
   "scripts": {
     "build": "pnpm --filter @dozerjs/dozer build",
     "publish": "pnpm --filter @dozerjs/dozer publish",
-    "release": "pnpm build && pnpm publish"
+    "version": "changeset version"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/getdozer/dozer-js/issues"
   },
-  "homepage": "https://github.com/getdozer/dozer-js#readme"
+  "homepage": "https://github.com/getdozer/dozer-js#readme",
+  "dependencies": {
+    "@changesets/cli": "^2.26.2"
+  }
 }
