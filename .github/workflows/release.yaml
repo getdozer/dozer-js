@@ -57,4 +57,4 @@ jobs:
           fi
           echo "Publishing with tag: $TAG"
 
-          pnpm publish --tag $TAG
+          pnpm publish --tag $TAG --access public --no-git-checks
