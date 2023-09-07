@@ -116,31 +116,52 @@ export const IngestRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IngestRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIngestRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schemaName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.typ = reader.int32() as any;
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.old = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.new = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 5:
+          if (tag !== 40) {
+            break;
+          }
+
           message.seqNo = reader.uint32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -157,18 +178,27 @@ export const IngestRequest = {
 
   toJSON(message: IngestRequest): unknown {
     const obj: any = {};
-    message.schemaName !== undefined && (obj.schemaName = message.schemaName);
-    message.typ !== undefined && (obj.typ = operationTypeToJSON3(message.typ));
-    message.old !== undefined && (obj.old = message.old ? Record.toJSON(message.old) : undefined);
-    message.new !== undefined && (obj.new = message.new ? Record.toJSON(message.new) : undefined);
-    message.seqNo !== undefined && (obj.seqNo = Math.round(message.seqNo));
+    if (message.schemaName !== "") {
+      obj.schemaName = message.schemaName;
+    }
+    if (message.typ !== 0) {
+      obj.typ = operationTypeToJSON3(message.typ);
+    }
+    if (message.old !== undefined) {
+      obj.old = Record.toJSON(message.old);
+    }
+    if (message.new !== undefined) {
+      obj.new = Record.toJSON(message.new);
+    }
+    if (message.seqNo !== 0) {
+      obj.seqNo = Math.round(message.seqNo);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<IngestRequest>, I>>(base?: I): IngestRequest {
-    return IngestRequest.fromPartial(base ?? {});
+    return IngestRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<IngestRequest>, I>>(object: I): IngestRequest {
     const message = createBaseIngestRequest();
     message.schemaName = object.schemaName ?? "";
@@ -193,19 +223,24 @@ export const IngestResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IngestResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIngestResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.seqNo = reader.uint32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -216,14 +251,15 @@ export const IngestResponse = {
 
   toJSON(message: IngestResponse): unknown {
     const obj: any = {};
-    message.seqNo !== undefined && (obj.seqNo = Math.round(message.seqNo));
+    if (message.seqNo !== 0) {
+      obj.seqNo = Math.round(message.seqNo);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<IngestResponse>, I>>(base?: I): IngestResponse {
-    return IngestResponse.fromPartial(base ?? {});
+    return IngestResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<IngestResponse>, I>>(object: I): IngestResponse {
     const message = createBaseIngestResponse();
     message.seqNo = object.seqNo ?? 0;
@@ -232,7 +268,7 @@ export const IngestResponse = {
 };
 
 function createBaseIngestArrowRequest(): IngestArrowRequest {
-  return { schemaName: "", records: new Uint8Array(), seqNo: 0, metadata: {} };
+  return { schemaName: "", records: new Uint8Array(0), seqNo: 0, metadata: {} };
 }
 
 export const IngestArrowRequest = {
@@ -253,31 +289,48 @@ export const IngestArrowRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IngestArrowRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIngestArrowRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.schemaName = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.records = reader.bytes();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.seqNo = reader.uint32();
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           const entry4 = IngestArrowRequest_MetadataEntry.decode(reader, reader.uint32());
           if (entry4.value !== undefined) {
             message.metadata[entry4.key] = entry4.value;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -285,7 +338,7 @@ export const IngestArrowRequest = {
   fromJSON(object: any): IngestArrowRequest {
     return {
       schemaName: isSet(object.schemaName) ? String(object.schemaName) : "",
-      records: isSet(object.records) ? bytesFromBase64(object.records) : new Uint8Array(),
+      records: isSet(object.records) ? bytesFromBase64(object.records) : new Uint8Array(0),
       seqNo: isSet(object.seqNo) ? Number(object.seqNo) : 0,
       metadata: isObject(object.metadata)
         ? Object.entries(object.metadata).reduce<{ [key: number]: IngestMetadata }>((acc, [key, value]) => {
@@ -298,27 +351,34 @@ export const IngestArrowRequest = {
 
   toJSON(message: IngestArrowRequest): unknown {
     const obj: any = {};
-    message.schemaName !== undefined && (obj.schemaName = message.schemaName);
-    message.records !== undefined &&
-      (obj.records = base64FromBytes(message.records !== undefined ? message.records : new Uint8Array()));
-    message.seqNo !== undefined && (obj.seqNo = Math.round(message.seqNo));
-    obj.metadata = {};
+    if (message.schemaName !== "") {
+      obj.schemaName = message.schemaName;
+    }
+    if (message.records.length !== 0) {
+      obj.records = base64FromBytes(message.records);
+    }
+    if (message.seqNo !== 0) {
+      obj.seqNo = Math.round(message.seqNo);
+    }
     if (message.metadata) {
-      Object.entries(message.metadata).forEach(([k, v]) => {
-        obj.metadata[k] = IngestMetadata.toJSON(v);
-      });
+      const entries = Object.entries(message.metadata);
+      if (entries.length > 0) {
+        obj.metadata = {};
+        entries.forEach(([k, v]) => {
+          obj.metadata[k] = IngestMetadata.toJSON(v);
+        });
+      }
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<IngestArrowRequest>, I>>(base?: I): IngestArrowRequest {
-    return IngestArrowRequest.fromPartial(base ?? {});
+    return IngestArrowRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<IngestArrowRequest>, I>>(object: I): IngestArrowRequest {
     const message = createBaseIngestArrowRequest();
     message.schemaName = object.schemaName ?? "";
-    message.records = object.records ?? new Uint8Array();
+    message.records = object.records ?? new Uint8Array(0);
     message.seqNo = object.seqNo ?? 0;
     message.metadata = Object.entries(object.metadata ?? {}).reduce<{ [key: number]: IngestMetadata }>(
       (acc, [key, value]) => {
@@ -349,22 +409,31 @@ export const IngestArrowRequest_MetadataEntry = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IngestArrowRequest_MetadataEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIngestArrowRequest_MetadataEntry();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.key = reader.uint32();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = IngestMetadata.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -378,17 +447,20 @@ export const IngestArrowRequest_MetadataEntry = {
 
   toJSON(message: IngestArrowRequest_MetadataEntry): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = Math.round(message.key));
-    message.value !== undefined && (obj.value = message.value ? IngestMetadata.toJSON(message.value) : undefined);
+    if (message.key !== 0) {
+      obj.key = Math.round(message.key);
+    }
+    if (message.value !== undefined) {
+      obj.value = IngestMetadata.toJSON(message.value);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<IngestArrowRequest_MetadataEntry>, I>>(
     base?: I,
   ): IngestArrowRequest_MetadataEntry {
-    return IngestArrowRequest_MetadataEntry.fromPartial(base ?? {});
+    return IngestArrowRequest_MetadataEntry.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<IngestArrowRequest_MetadataEntry>, I>>(
     object: I,
   ): IngestArrowRequest_MetadataEntry {
@@ -417,22 +489,31 @@ export const IngestMetadata = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IngestMetadata {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIngestMetadata();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.typ = reader.int32() as any;
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.version = reader.uint32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -446,15 +527,18 @@ export const IngestMetadata = {
 
   toJSON(message: IngestMetadata): unknown {
     const obj: any = {};
-    message.typ !== undefined && (obj.typ = operationTypeToJSON(message.typ));
-    message.version !== undefined && (obj.version = Math.round(message.version));
+    if (message.typ !== 0) {
+      obj.typ = operationTypeToJSON(message.typ);
+    }
+    if (message.version !== 0) {
+      obj.version = Math.round(message.version);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<IngestMetadata>, I>>(base?: I): IngestMetadata {
-    return IngestMetadata.fromPartial(base ?? {});
+    return IngestMetadata.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<IngestMetadata>, I>>(object: I): IngestMetadata {
     const message = createBaseIngestMetadata();
     message.typ = object.typ ?? 0;
@@ -470,11 +554,12 @@ export interface IngestService {
   ingest_arrow_stream(request: Observable<IngestArrowRequest>): Promise<IngestResponse>;
 }
 
+export const IngestServiceServiceName = "dozer.ingest.IngestService";
 export class IngestServiceClientImpl implements IngestService {
   private readonly rpc: Rpc;
   private readonly service: string;
   constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "dozer.ingest.IngestService";
+    this.service = opts?.service || IngestServiceServiceName;
     this.rpc = rpc;
     this.ingest = this.ingest.bind(this);
     this.ingest_stream = this.ingest_stream.bind(this);
@@ -484,25 +569,25 @@ export class IngestServiceClientImpl implements IngestService {
   ingest(request: IngestRequest): Promise<IngestResponse> {
     const data = IngestRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "ingest", data);
-    return promise.then((data) => IngestResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => IngestResponse.decode(_m0.Reader.create(data)));
   }
 
   ingest_stream(request: Observable<IngestRequest>): Promise<IngestResponse> {
     const data = request.pipe(map((request) => IngestRequest.encode(request).finish()));
     const promise = this.rpc.clientStreamingRequest(this.service, "ingest_stream", data);
-    return promise.then((data) => IngestResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => IngestResponse.decode(_m0.Reader.create(data)));
   }
 
   ingest_arrow(request: IngestArrowRequest): Promise<IngestResponse> {
     const data = IngestArrowRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "ingest_arrow", data);
-    return promise.then((data) => IngestResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => IngestResponse.decode(_m0.Reader.create(data)));
   }
 
   ingest_arrow_stream(request: Observable<IngestArrowRequest>): Promise<IngestResponse> {
     const data = request.pipe(map((request) => IngestArrowRequest.encode(request).finish()));
     const promise = this.rpc.clientStreamingRequest(this.service, "ingest_arrow_stream", data);
-    return promise.then((data) => IngestResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => IngestResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -513,10 +598,10 @@ interface Rpc {
   bidirectionalStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Observable<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
+declare const self: any | undefined;
+declare const window: any | undefined;
+declare const global: any | undefined;
+const tsProtoGlobalThis: any = (() => {
   if (typeof globalThis !== "undefined") {
     return globalThis;
   }

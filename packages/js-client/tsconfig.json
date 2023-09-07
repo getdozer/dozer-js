@@ -1,27 +1,10 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node 18",
-
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "composite": true,
     "outDir": "lib/esm",
-    "module": "esnext",
-    "target": "es6",
-    "lib": ["dom", "esnext"],
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "declaration": true,
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "ignoreDeprecations": "5.0",
-    "suppressImplicitAnyIndexErrors": true,
-    "allowSyntheticDefaultImports": true
+    "rootDir": "src"
   },
-
-  "include": ["src/*.ts", "src/**/*.ts","src/*.js", "src/**/*.js"]
+  "include": ["src/*.ts", "src/**/*.ts","src/*.js", "src/**/*.js"],
 }

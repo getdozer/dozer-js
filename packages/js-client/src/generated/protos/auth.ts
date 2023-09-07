@@ -29,19 +29,24 @@ export const GetAuthTokenRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetAuthTokenRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetAuthTokenRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.accessFilter = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -52,14 +57,15 @@ export const GetAuthTokenRequest = {
 
   toJSON(message: GetAuthTokenRequest): unknown {
     const obj: any = {};
-    message.accessFilter !== undefined && (obj.accessFilter = message.accessFilter);
+    if (message.accessFilter !== "") {
+      obj.accessFilter = message.accessFilter;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetAuthTokenRequest>, I>>(base?: I): GetAuthTokenRequest {
-    return GetAuthTokenRequest.fromPartial(base ?? {});
+    return GetAuthTokenRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetAuthTokenRequest>, I>>(object: I): GetAuthTokenRequest {
     const message = createBaseGetAuthTokenRequest();
     message.accessFilter = object.accessFilter ?? "";
@@ -80,19 +86,24 @@ export const GetAuthTokenResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetAuthTokenResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetAuthTokenResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.token = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -103,14 +114,15 @@ export const GetAuthTokenResponse = {
 
   toJSON(message: GetAuthTokenResponse): unknown {
     const obj: any = {};
-    message.token !== undefined && (obj.token = message.token);
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetAuthTokenResponse>, I>>(base?: I): GetAuthTokenResponse {
-    return GetAuthTokenResponse.fromPartial(base ?? {});
+    return GetAuthTokenResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetAuthTokenResponse>, I>>(object: I): GetAuthTokenResponse {
     const message = createBaseGetAuthTokenResponse();
     message.token = object.token ?? "";
@@ -124,18 +136,19 @@ export interface AuthGrpcService {
   getAuthToken(request: GetAuthTokenRequest): Promise<GetAuthTokenResponse>;
 }
 
+export const AuthGrpcServiceServiceName = "dozer.auth.AuthGrpcService";
 export class AuthGrpcServiceClientImpl implements AuthGrpcService {
   private readonly rpc: Rpc;
   private readonly service: string;
   constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "dozer.auth.AuthGrpcService";
+    this.service = opts?.service || AuthGrpcServiceServiceName;
     this.rpc = rpc;
     this.getAuthToken = this.getAuthToken.bind(this);
   }
   getAuthToken(request: GetAuthTokenRequest): Promise<GetAuthTokenResponse> {
     const data = GetAuthTokenRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "getAuthToken", data);
-    return promise.then((data) => GetAuthTokenResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => GetAuthTokenResponse.decode(_m0.Reader.create(data)));
   }
 }
 

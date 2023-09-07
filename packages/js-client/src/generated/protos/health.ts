@@ -76,19 +76,24 @@ export const HealthCheckRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): HealthCheckRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseHealthCheckRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.service = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -99,14 +104,15 @@ export const HealthCheckRequest = {
 
   toJSON(message: HealthCheckRequest): unknown {
     const obj: any = {};
-    message.service !== undefined && (obj.service = message.service);
+    if (message.service !== "") {
+      obj.service = message.service;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<HealthCheckRequest>, I>>(base?: I): HealthCheckRequest {
-    return HealthCheckRequest.fromPartial(base ?? {});
+    return HealthCheckRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<HealthCheckRequest>, I>>(object: I): HealthCheckRequest {
     const message = createBaseHealthCheckRequest();
     message.service = object.service ?? "";
@@ -127,19 +133,24 @@ export const HealthCheckResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): HealthCheckResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseHealthCheckResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.status = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -150,14 +161,15 @@ export const HealthCheckResponse = {
 
   toJSON(message: HealthCheckResponse): unknown {
     const obj: any = {};
-    message.status !== undefined && (obj.status = healthCheckResponse_ServingStatusToJSON(message.status));
+    if (message.status !== 0) {
+      obj.status = healthCheckResponse_ServingStatusToJSON(message.status);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<HealthCheckResponse>, I>>(base?: I): HealthCheckResponse {
-    return HealthCheckResponse.fromPartial(base ?? {});
+    return HealthCheckResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<HealthCheckResponse>, I>>(object: I): HealthCheckResponse {
     const message = createBaseHealthCheckResponse();
     message.status = object.status ?? 0;
@@ -173,11 +185,12 @@ export interface HealthGrpcService {
   healthWatch(request: HealthCheckRequest): Observable<HealthCheckResponse>;
 }
 
+export const HealthGrpcServiceServiceName = "dozer.health.HealthGrpcService";
 export class HealthGrpcServiceClientImpl implements HealthGrpcService {
   private readonly rpc: Rpc;
   private readonly service: string;
   constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "dozer.health.HealthGrpcService";
+    this.service = opts?.service || HealthGrpcServiceServiceName;
     this.rpc = rpc;
     this.healthCheck = this.healthCheck.bind(this);
     this.healthWatch = this.healthWatch.bind(this);
@@ -185,13 +198,13 @@ export class HealthGrpcServiceClientImpl implements HealthGrpcService {
   healthCheck(request: HealthCheckRequest): Promise<HealthCheckResponse> {
     const data = HealthCheckRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "healthCheck", data);
-    return promise.then((data) => HealthCheckResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => HealthCheckResponse.decode(_m0.Reader.create(data)));
   }
 
   healthWatch(request: HealthCheckRequest): Observable<HealthCheckResponse> {
     const data = HealthCheckRequest.encode(request).finish();
     const result = this.rpc.serverStreamingRequest(this.service, "healthWatch", data);
-    return result.pipe(map((data) => HealthCheckResponse.decode(new _m0.Reader(data))));
+    return result.pipe(map((data) => HealthCheckResponse.decode(_m0.Reader.create(data))));
   }
 }
 

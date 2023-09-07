@@ -82,22 +82,31 @@ export const QueryRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.endpoint = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.query = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -111,15 +120,18 @@ export const QueryRequest = {
 
   toJSON(message: QueryRequest): unknown {
     const obj: any = {};
-    message.endpoint !== undefined && (obj.endpoint = message.endpoint);
-    message.query !== undefined && (obj.query = message.query);
+    if (message.endpoint !== "") {
+      obj.endpoint = message.endpoint;
+    }
+    if (message.query !== undefined) {
+      obj.query = message.query;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<QueryRequest>, I>>(base?: I): QueryRequest {
-    return QueryRequest.fromPartial(base ?? {});
+    return QueryRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<QueryRequest>, I>>(object: I): QueryRequest {
     const message = createBaseQueryRequest();
     message.endpoint = object.endpoint ?? "";
@@ -141,19 +153,24 @@ export const CountResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): CountResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseCountResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.count = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -164,14 +181,15 @@ export const CountResponse = {
 
   toJSON(message: CountResponse): unknown {
     const obj: any = {};
-    message.count !== undefined && (obj.count = Math.round(message.count));
+    if (message.count !== 0) {
+      obj.count = Math.round(message.count);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<CountResponse>, I>>(base?: I): CountResponse {
-    return CountResponse.fromPartial(base ?? {});
+    return CountResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<CountResponse>, I>>(object: I): CountResponse {
     const message = createBaseCountResponse();
     message.count = object.count ?? 0;
@@ -192,22 +210,27 @@ export const OnEventRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): OnEventRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseOnEventRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           const entry1 = OnEventRequest_EndpointsEntry.decode(reader, reader.uint32());
           if (entry1.value !== undefined) {
             message.endpoints[entry1.key] = entry1.value;
           }
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -225,19 +248,21 @@ export const OnEventRequest = {
 
   toJSON(message: OnEventRequest): unknown {
     const obj: any = {};
-    obj.endpoints = {};
     if (message.endpoints) {
-      Object.entries(message.endpoints).forEach(([k, v]) => {
-        obj.endpoints[k] = EventFilter.toJSON(v);
-      });
+      const entries = Object.entries(message.endpoints);
+      if (entries.length > 0) {
+        obj.endpoints = {};
+        entries.forEach(([k, v]) => {
+          obj.endpoints[k] = EventFilter.toJSON(v);
+        });
+      }
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<OnEventRequest>, I>>(base?: I): OnEventRequest {
-    return OnEventRequest.fromPartial(base ?? {});
+    return OnEventRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<OnEventRequest>, I>>(object: I): OnEventRequest {
     const message = createBaseOnEventRequest();
     message.endpoints = Object.entries(object.endpoints ?? {}).reduce<{ [key: string]: EventFilter }>(
@@ -269,22 +294,31 @@ export const OnEventRequest_EndpointsEntry = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): OnEventRequest_EndpointsEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseOnEventRequest_EndpointsEntry();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.key = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.value = EventFilter.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -298,15 +332,18 @@ export const OnEventRequest_EndpointsEntry = {
 
   toJSON(message: OnEventRequest_EndpointsEntry): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value ? EventFilter.toJSON(message.value) : undefined);
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== undefined) {
+      obj.value = EventFilter.toJSON(message.value);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<OnEventRequest_EndpointsEntry>, I>>(base?: I): OnEventRequest_EndpointsEntry {
-    return OnEventRequest_EndpointsEntry.fromPartial(base ?? {});
+    return OnEventRequest_EndpointsEntry.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<OnEventRequest_EndpointsEntry>, I>>(
     object: I,
   ): OnEventRequest_EndpointsEntry {
@@ -332,19 +369,24 @@ export const GetFieldsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetFieldsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetFieldsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.endpoint = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -355,14 +397,15 @@ export const GetFieldsRequest = {
 
   toJSON(message: GetFieldsRequest): unknown {
     const obj: any = {};
-    message.endpoint !== undefined && (obj.endpoint = message.endpoint);
+    if (message.endpoint !== "") {
+      obj.endpoint = message.endpoint;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetFieldsRequest>, I>>(base?: I): GetFieldsRequest {
-    return GetFieldsRequest.fromPartial(base ?? {});
+    return GetFieldsRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetFieldsRequest>, I>>(object: I): GetFieldsRequest {
     const message = createBaseGetFieldsRequest();
     message.endpoint = object.endpoint ?? "";
@@ -388,29 +431,41 @@ export const GetFieldsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetFieldsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetFieldsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          if ((tag & 7) === 2) {
+          if (tag === 8) {
+            message.primaryIndex.push(reader.int32());
+
+            continue;
+          }
+
+          if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
               message.primaryIndex.push(reader.int32());
             }
-          } else {
-            message.primaryIndex.push(reader.int32());
+
+            continue;
           }
+
           break;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.fields.push(FieldDefinition.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -424,23 +479,18 @@ export const GetFieldsResponse = {
 
   toJSON(message: GetFieldsResponse): unknown {
     const obj: any = {};
-    if (message.primaryIndex) {
+    if (message.primaryIndex?.length) {
       obj.primaryIndex = message.primaryIndex.map((e) => Math.round(e));
-    } else {
-      obj.primaryIndex = [];
     }
-    if (message.fields) {
-      obj.fields = message.fields.map((e) => e ? FieldDefinition.toJSON(e) : undefined);
-    } else {
-      obj.fields = [];
+    if (message.fields?.length) {
+      obj.fields = message.fields.map((e) => FieldDefinition.toJSON(e));
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetFieldsResponse>, I>>(base?: I): GetFieldsResponse {
-    return GetFieldsResponse.fromPartial(base ?? {});
+    return GetFieldsResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetFieldsResponse>, I>>(object: I): GetFieldsResponse {
     const message = createBaseGetFieldsResponse();
     message.primaryIndex = object.primaryIndex?.map((e) => e) || [];
@@ -465,22 +515,31 @@ export const QueryResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.fields.push(FieldDefinition.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.records.push(RecordWithId.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -494,23 +553,18 @@ export const QueryResponse = {
 
   toJSON(message: QueryResponse): unknown {
     const obj: any = {};
-    if (message.fields) {
-      obj.fields = message.fields.map((e) => e ? FieldDefinition.toJSON(e) : undefined);
-    } else {
-      obj.fields = [];
+    if (message.fields?.length) {
+      obj.fields = message.fields.map((e) => FieldDefinition.toJSON(e));
     }
-    if (message.records) {
-      obj.records = message.records.map((e) => e ? RecordWithId.toJSON(e) : undefined);
-    } else {
-      obj.records = [];
+    if (message.records?.length) {
+      obj.records = message.records.map((e) => RecordWithId.toJSON(e));
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<QueryResponse>, I>>(base?: I): QueryResponse {
-    return QueryResponse.fromPartial(base ?? {});
+    return QueryResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<QueryResponse>, I>>(object: I): QueryResponse {
     const message = createBaseQueryResponse();
     message.fields = object.fields?.map((e) => FieldDefinition.fromPartial(e)) || [];
@@ -529,16 +583,17 @@ export const GetEndpointsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetEndpointsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetEndpointsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -553,9 +608,8 @@ export const GetEndpointsRequest = {
   },
 
   create<I extends Exact<DeepPartial<GetEndpointsRequest>, I>>(base?: I): GetEndpointsRequest {
-    return GetEndpointsRequest.fromPartial(base ?? {});
+    return GetEndpointsRequest.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetEndpointsRequest>, I>>(_: I): GetEndpointsRequest {
     const message = createBaseGetEndpointsRequest();
     return message;
@@ -575,19 +629,24 @@ export const GetEndpointsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): GetEndpointsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseGetEndpointsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.endpoints.push(reader.string());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -598,18 +657,15 @@ export const GetEndpointsResponse = {
 
   toJSON(message: GetEndpointsResponse): unknown {
     const obj: any = {};
-    if (message.endpoints) {
-      obj.endpoints = message.endpoints.map((e) => e);
-    } else {
-      obj.endpoints = [];
+    if (message.endpoints?.length) {
+      obj.endpoints = message.endpoints;
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<GetEndpointsResponse>, I>>(base?: I): GetEndpointsResponse {
-    return GetEndpointsResponse.fromPartial(base ?? {});
+    return GetEndpointsResponse.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<GetEndpointsResponse>, I>>(object: I): GetEndpointsResponse {
     const message = createBaseGetEndpointsResponse();
     message.endpoints = object.endpoints?.map((e) => e) || [];
@@ -649,11 +705,12 @@ export interface CommonGrpcService {
   getFields(request: GetFieldsRequest): Promise<GetFieldsResponse>;
 }
 
+export const CommonGrpcServiceServiceName = "dozer.common.CommonGrpcService";
 export class CommonGrpcServiceClientImpl implements CommonGrpcService {
   private readonly rpc: Rpc;
   private readonly service: string;
   constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || "dozer.common.CommonGrpcService";
+    this.service = opts?.service || CommonGrpcServiceServiceName;
     this.rpc = rpc;
     this.count = this.count.bind(this);
     this.query = this.query.bind(this);
@@ -664,31 +721,31 @@ export class CommonGrpcServiceClientImpl implements CommonGrpcService {
   count(request: QueryRequest): Promise<CountResponse> {
     const data = QueryRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "count", data);
-    return promise.then((data) => CountResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => CountResponse.decode(_m0.Reader.create(data)));
   }
 
   query(request: QueryRequest): Promise<QueryResponse> {
     const data = QueryRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "query", data);
-    return promise.then((data) => QueryResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => QueryResponse.decode(_m0.Reader.create(data)));
   }
 
   OnEvent(request: OnEventRequest): Observable<Operation> {
     const data = OnEventRequest.encode(request).finish();
     const result = this.rpc.serverStreamingRequest(this.service, "OnEvent", data);
-    return result.pipe(map((data) => Operation.decode(new _m0.Reader(data))));
+    return result.pipe(map((data) => Operation.decode(_m0.Reader.create(data))));
   }
 
   getEndpoints(request: GetEndpointsRequest): Promise<GetEndpointsResponse> {
     const data = GetEndpointsRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "getEndpoints", data);
-    return promise.then((data) => GetEndpointsResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => GetEndpointsResponse.decode(_m0.Reader.create(data)));
   }
 
   getFields(request: GetFieldsRequest): Promise<GetFieldsResponse> {
     const data = GetFieldsRequest.encode(request).finish();
     const promise = this.rpc.request(this.service, "getFields", data);
-    return promise.then((data) => GetFieldsResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => GetFieldsResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -699,10 +756,10 @@ interface Rpc {
   bidirectionalStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Observable<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
+declare const self: any | undefined;
+declare const window: any | undefined;
+declare const global: any | undefined;
+const tsProtoGlobalThis: any = (() => {
   if (typeof globalThis !== "undefined") {
     return globalThis;
   }

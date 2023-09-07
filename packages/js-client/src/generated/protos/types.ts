@@ -386,22 +386,31 @@ export const EventFilter = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): EventFilter {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseEventFilter();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.type = reader.int32() as any;
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.filter = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -415,15 +424,18 @@ export const EventFilter = {
 
   toJSON(message: EventFilter): unknown {
     const obj: any = {};
-    message.type !== undefined && (obj.type = eventTypeToJSON(message.type));
-    message.filter !== undefined && (obj.filter = message.filter);
+    if (message.type !== 0) {
+      obj.type = eventTypeToJSON(message.type);
+    }
+    if (message.filter !== undefined) {
+      obj.filter = message.filter;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<EventFilter>, I>>(base?: I): EventFilter {
-    return EventFilter.fromPartial(base ?? {});
+    return EventFilter.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<EventFilter>, I>>(object: I): EventFilter {
     const message = createBaseEventFilter();
     message.type = object.type ?? 0;
@@ -457,31 +469,52 @@ export const Operation = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Operation {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseOperation();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.typ = reader.int32() as any;
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.old = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.new = Record.decode(reader, reader.uint32());
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.newId = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 5:
+          if (tag !== 42) {
+            break;
+          }
+
           message.endpointName = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -498,18 +531,27 @@ export const Operation = {
 
   toJSON(message: Operation): unknown {
     const obj: any = {};
-    message.typ !== undefined && (obj.typ = operationTypeToJSON(message.typ));
-    message.old !== undefined && (obj.old = message.old ? Record.toJSON(message.old) : undefined);
-    message.new !== undefined && (obj.new = message.new ? Record.toJSON(message.new) : undefined);
-    message.newId !== undefined && (obj.newId = Math.round(message.newId));
-    message.endpointName !== undefined && (obj.endpointName = message.endpointName);
+    if (message.typ !== 0) {
+      obj.typ = operationTypeToJSON(message.typ);
+    }
+    if (message.old !== undefined) {
+      obj.old = Record.toJSON(message.old);
+    }
+    if (message.new !== undefined) {
+      obj.new = Record.toJSON(message.new);
+    }
+    if (message.newId !== undefined) {
+      obj.newId = Math.round(message.newId);
+    }
+    if (message.endpointName !== "") {
+      obj.endpointName = message.endpointName;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<Operation>, I>>(base?: I): Operation {
-    return Operation.fromPartial(base ?? {});
+    return Operation.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<Operation>, I>>(object: I): Operation {
     const message = createBaseOperation();
     message.typ = object.typ ?? 0;
@@ -537,22 +579,31 @@ export const Record = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Record {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecord();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.values.push(Value.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.version = reader.uint32();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -566,19 +617,18 @@ export const Record = {
 
   toJSON(message: Record): unknown {
     const obj: any = {};
-    if (message.values) {
-      obj.values = message.values.map((e) => e ? Value.toJSON(e) : undefined);
-    } else {
-      obj.values = [];
+    if (message.values?.length) {
+      obj.values = message.values.map((e) => Value.toJSON(e));
     }
-    message.version !== undefined && (obj.version = Math.round(message.version));
+    if (message.version !== 0) {
+      obj.version = Math.round(message.version);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<Record>, I>>(base?: I): Record {
-    return Record.fromPartial(base ?? {});
+    return Record.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<Record>, I>>(object: I): Record {
     const message = createBaseRecord();
     message.values = object.values?.map((e) => Value.fromPartial(e)) || [];
@@ -603,22 +653,31 @@ export const RecordWithId = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RecordWithId {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRecordWithId();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.id = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.record = Record.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -632,15 +691,18 @@ export const RecordWithId = {
 
   toJSON(message: RecordWithId): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = Math.round(message.id));
-    message.record !== undefined && (obj.record = message.record ? Record.toJSON(message.record) : undefined);
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
+    }
+    if (message.record !== undefined) {
+      obj.record = Record.toJSON(message.record);
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<RecordWithId>, I>>(base?: I): RecordWithId {
-    return RecordWithId.fromPartial(base ?? {});
+    return RecordWithId.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RecordWithId>, I>>(object: I): RecordWithId {
     const message = createBaseRecordWithId();
     message.id = object.id ?? 0;
@@ -675,35 +737,55 @@ export const SchemaEvent = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): SchemaEvent {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseSchemaEvent();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.endpoint = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.version = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 3:
-          if ((tag & 7) === 2) {
+          if (tag === 24) {
+            message.primaryIndex.push(reader.int32());
+
+            continue;
+          }
+
+          if (tag === 26) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
               message.primaryIndex.push(reader.int32());
             }
-          } else {
-            message.primaryIndex.push(reader.int32());
+
+            continue;
           }
+
           break;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.fields.push(FieldDefinition.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -719,25 +801,24 @@ export const SchemaEvent = {
 
   toJSON(message: SchemaEvent): unknown {
     const obj: any = {};
-    message.endpoint !== undefined && (obj.endpoint = message.endpoint);
-    message.version !== undefined && (obj.version = Math.round(message.version));
-    if (message.primaryIndex) {
-      obj.primaryIndex = message.primaryIndex.map((e) => Math.round(e));
-    } else {
-      obj.primaryIndex = [];
+    if (message.endpoint !== "") {
+      obj.endpoint = message.endpoint;
     }
-    if (message.fields) {
-      obj.fields = message.fields.map((e) => e ? FieldDefinition.toJSON(e) : undefined);
-    } else {
-      obj.fields = [];
+    if (message.version !== 0) {
+      obj.version = Math.round(message.version);
+    }
+    if (message.primaryIndex?.length) {
+      obj.primaryIndex = message.primaryIndex.map((e) => Math.round(e));
+    }
+    if (message.fields?.length) {
+      obj.fields = message.fields.map((e) => FieldDefinition.toJSON(e));
     }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<SchemaEvent>, I>>(base?: I): SchemaEvent {
-    return SchemaEvent.fromPartial(base ?? {});
+    return SchemaEvent.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<SchemaEvent>, I>>(object: I): SchemaEvent {
     const message = createBaseSchemaEvent();
     message.endpoint = object.endpoint ?? "";
@@ -767,25 +848,38 @@ export const FieldDefinition = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): FieldDefinition {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseFieldDefinition();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.typ = reader.int32() as any;
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.name = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.nullable = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -800,16 +894,21 @@ export const FieldDefinition = {
 
   toJSON(message: FieldDefinition): unknown {
     const obj: any = {};
-    message.typ !== undefined && (obj.typ = typeToJSON(message.typ));
-    message.name !== undefined && (obj.name = message.name);
-    message.nullable !== undefined && (obj.nullable = message.nullable);
+    if (message.typ !== 0) {
+      obj.typ = typeToJSON(message.typ);
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.nullable === true) {
+      obj.nullable = message.nullable;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<FieldDefinition>, I>>(base?: I): FieldDefinition {
-    return FieldDefinition.fromPartial(base ?? {});
+    return FieldDefinition.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<FieldDefinition>, I>>(object: I): FieldDefinition {
     const message = createBaseFieldDefinition();
     message.typ = object.typ ?? 0;
@@ -835,22 +934,31 @@ export const PointType = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): PointType {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePointType();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 9) {
+            break;
+          }
+
           message.x = reader.double();
-          break;
+          continue;
         case 2:
+          if (tag !== 17) {
+            break;
+          }
+
           message.y = reader.double();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -861,15 +969,18 @@ export const PointType = {
 
   toJSON(message: PointType): unknown {
     const obj: any = {};
-    message.x !== undefined && (obj.x = message.x);
-    message.y !== undefined && (obj.y = message.y);
+    if (message.x !== 0) {
+      obj.x = message.x;
+    }
+    if (message.y !== 0) {
+      obj.y = message.y;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<PointType>, I>>(base?: I): PointType {
-    return PointType.fromPartial(base ?? {});
+    return PointType.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<PointType>, I>>(object: I): PointType {
     const message = createBasePointType();
     message.x = object.x ?? 0;
@@ -894,22 +1005,31 @@ export const DurationType = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): DurationType {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseDurationType();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.value = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.timeUnit = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -923,15 +1043,18 @@ export const DurationType = {
 
   toJSON(message: DurationType): unknown {
     const obj: any = {};
-    message.value !== undefined && (obj.value = message.value);
-    message.timeUnit !== undefined && (obj.timeUnit = message.timeUnit);
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    if (message.timeUnit !== "") {
+      obj.timeUnit = message.timeUnit;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<DurationType>, I>>(base?: I): DurationType {
-    return DurationType.fromPartial(base ?? {});
+    return DurationType.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<DurationType>, I>>(object: I): DurationType {
     const message = createBaseDurationType();
     message.value = object.value ?? "";
@@ -965,31 +1088,52 @@ export const RustDecimal = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): RustDecimal {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseRustDecimal();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.scale = reader.uint32();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.lo = reader.uint32();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.mid = reader.uint32();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.hi = reader.uint32();
-          break;
+          continue;
         case 5:
+          if (tag !== 40) {
+            break;
+          }
+
           message.negative = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1006,18 +1150,27 @@ export const RustDecimal = {
 
   toJSON(message: RustDecimal): unknown {
     const obj: any = {};
-    message.scale !== undefined && (obj.scale = Math.round(message.scale));
-    message.lo !== undefined && (obj.lo = Math.round(message.lo));
-    message.mid !== undefined && (obj.mid = Math.round(message.mid));
-    message.hi !== undefined && (obj.hi = Math.round(message.hi));
-    message.negative !== undefined && (obj.negative = message.negative);
+    if (message.scale !== 0) {
+      obj.scale = Math.round(message.scale);
+    }
+    if (message.lo !== 0) {
+      obj.lo = Math.round(message.lo);
+    }
+    if (message.mid !== 0) {
+      obj.mid = Math.round(message.mid);
+    }
+    if (message.hi !== 0) {
+      obj.hi = Math.round(message.hi);
+    }
+    if (message.negative === true) {
+      obj.negative = message.negative;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<RustDecimal>, I>>(base?: I): RustDecimal {
-    return RustDecimal.fromPartial(base ?? {});
+    return RustDecimal.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<RustDecimal>, I>>(object: I): RustDecimal {
     const message = createBaseRustDecimal();
     message.scale = object.scale ?? 0;
@@ -1096,58 +1249,115 @@ export const Value = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Value {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseValue();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.uintValue = longToNumber(reader.uint64() as Long);
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.uint128Value = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.intValue = longToNumber(reader.int64() as Long);
-          break;
+          continue;
         case 4:
+          if (tag !== 34) {
+            break;
+          }
+
           message.int128Value = reader.string();
-          break;
+          continue;
         case 5:
+          if (tag !== 41) {
+            break;
+          }
+
           message.floatValue = reader.double();
-          break;
+          continue;
         case 6:
+          if (tag !== 48) {
+            break;
+          }
+
           message.boolValue = reader.bool();
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.stringValue = reader.string();
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.bytesValue = reader.bytes();
-          break;
+          continue;
         case 9:
+          if (tag !== 74) {
+            break;
+          }
+
           message.decimalValue = RustDecimal.decode(reader, reader.uint32());
-          break;
+          continue;
         case 10:
+          if (tag !== 82) {
+            break;
+          }
+
           message.timestampValue = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 11:
+          if (tag !== 90) {
+            break;
+          }
+
           message.dateValue = reader.string();
-          break;
+          continue;
         case 12:
+          if (tag !== 98) {
+            break;
+          }
+
           message.pointValue = PointType.decode(reader, reader.uint32());
-          break;
+          continue;
         case 13:
+          if (tag !== 106) {
+            break;
+          }
+
           message.durationValue = DurationType.decode(reader, reader.uint32());
-          break;
+          continue;
         case 14:
+          if (tag !== 114) {
+            break;
+          }
+
           message.jsonValue = Value1.unwrap(Value1.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -1173,31 +1383,54 @@ export const Value = {
 
   toJSON(message: Value): unknown {
     const obj: any = {};
-    message.uintValue !== undefined && (obj.uintValue = Math.round(message.uintValue));
-    message.uint128Value !== undefined && (obj.uint128Value = message.uint128Value);
-    message.intValue !== undefined && (obj.intValue = Math.round(message.intValue));
-    message.int128Value !== undefined && (obj.int128Value = message.int128Value);
-    message.floatValue !== undefined && (obj.floatValue = message.floatValue);
-    message.boolValue !== undefined && (obj.boolValue = message.boolValue);
-    message.stringValue !== undefined && (obj.stringValue = message.stringValue);
-    message.bytesValue !== undefined &&
-      (obj.bytesValue = message.bytesValue !== undefined ? base64FromBytes(message.bytesValue) : undefined);
-    message.decimalValue !== undefined &&
-      (obj.decimalValue = message.decimalValue ? RustDecimal.toJSON(message.decimalValue) : undefined);
-    message.timestampValue !== undefined && (obj.timestampValue = message.timestampValue.toISOString());
-    message.dateValue !== undefined && (obj.dateValue = message.dateValue);
-    message.pointValue !== undefined &&
-      (obj.pointValue = message.pointValue ? PointType.toJSON(message.pointValue) : undefined);
-    message.durationValue !== undefined &&
-      (obj.durationValue = message.durationValue ? DurationType.toJSON(message.durationValue) : undefined);
-    message.jsonValue !== undefined && (obj.jsonValue = message.jsonValue);
+    if (message.uintValue !== undefined) {
+      obj.uintValue = Math.round(message.uintValue);
+    }
+    if (message.uint128Value !== undefined) {
+      obj.uint128Value = message.uint128Value;
+    }
+    if (message.intValue !== undefined) {
+      obj.intValue = Math.round(message.intValue);
+    }
+    if (message.int128Value !== undefined) {
+      obj.int128Value = message.int128Value;
+    }
+    if (message.floatValue !== undefined) {
+      obj.floatValue = message.floatValue;
+    }
+    if (message.boolValue !== undefined) {
+      obj.boolValue = message.boolValue;
+    }
+    if (message.stringValue !== undefined) {
+      obj.stringValue = message.stringValue;
+    }
+    if (message.bytesValue !== undefined) {
+      obj.bytesValue = base64FromBytes(message.bytesValue);
+    }
+    if (message.decimalValue !== undefined) {
+      obj.decimalValue = RustDecimal.toJSON(message.decimalValue);
+    }
+    if (message.timestampValue !== undefined) {
+      obj.timestampValue = message.timestampValue.toISOString();
+    }
+    if (message.dateValue !== undefined) {
+      obj.dateValue = message.dateValue;
+    }
+    if (message.pointValue !== undefined) {
+      obj.pointValue = PointType.toJSON(message.pointValue);
+    }
+    if (message.durationValue !== undefined) {
+      obj.durationValue = DurationType.toJSON(message.durationValue);
+    }
+    if (message.jsonValue !== undefined) {
+      obj.jsonValue = message.jsonValue;
+    }
     return obj;
   },
 
   create<I extends Exact<DeepPartial<Value>, I>>(base?: I): Value {
-    return Value.fromPartial(base ?? {});
+    return Value.fromPartial(base ?? ({} as any));
   },
-
   fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
     const message = createBaseValue();
     message.uintValue = object.uintValue ?? undefined;
@@ -1224,10 +1457,10 @@ export const Value = {
   },
 };
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-declare var global: any | undefined;
-var tsProtoGlobalThis: any = (() => {
+declare const self: any | undefined;
+declare const window: any | undefined;
+declare const global: any | undefined;
+const tsProtoGlobalThis: any = (() => {
   if (typeof globalThis !== "undefined") {
     return globalThis;
   }
@@ -1286,8 +1519,8 @@ function toTimestamp(date: Date): Timestamp {
 }
 
 function fromTimestamp(t: Timestamp): Date {
-  let millis = t.seconds * 1_000;
-  millis += t.nanos / 1_000_000;
+  let millis = (t.seconds || 0) * 1_000;
+  millis += (t.nanos || 0) / 1_000_000;
   return new Date(millis);
 }
 
