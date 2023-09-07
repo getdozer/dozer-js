@@ -24,17 +24,12 @@
     "build:cjs": "tsc --module commonjs --target es5 --outDir lib/cjs && cp src/generated/protos/*_pb.d.ts lib/cjs/generated/protos/",
     "build:esm": "tsc --module esnext --target es6 --outDir lib/esm && cp src/generated/protos/*_pb.d.ts lib/esm/generated/protos/",
     "test": "jest",
-    "version": "pnpm version"
+    "version": "changeset version"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/getdozer/dozer-js.git"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/getdozer/dozer-js/issues"
-  },
-  "homepage": "https://github.com/getdozer/dozer-js#readme",
   "devDependencies": {
     "protoc-gen-grpc-web": "^1.4.2",
     "protoc-gen-js": "^3.21.2"

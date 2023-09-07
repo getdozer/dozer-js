@@ -11,25 +11,46 @@
     ⚡ All with just a simple configuration! ⚡️
     </b>
 </p>
-<br />
-
-<p align="center">
-  <a href="https://github.com/getdozer/dozer/actions/workflows/dozer.yaml" target="_blank"><img src="https://github.com/getdozer/dozer/actions/workflows/dozer.yaml/badge.svg" alt="CI"></a>
-  <a href="https://coveralls.io/github/getdozer/dozer?branch=main" target="_blank"><img src="https://coveralls.io/repos/github/getdozer/dozer/badge.svg?branch=main&t=kZMYaV&style=flat" alt="Coverage Status"></a>
-  <a href="https://getdozer.io/docs/dozer" target="_blank"><img src="https://img.shields.io/badge/doc-reference-green" alt="Docs"></a>
-  <a href="https://discord.com/invite/3eWXBgJaEQ" target="_blank"><img src="https://img.shields.io/badge/join-on%20discord-primary" alt="Join on Discord"></a>
-  <a href="https://github.com/getdozer/dozer-python/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-MIT-informational" alt="License"></a>
-
 </p>
-<br>
 
 ## Overview
-This repository provides A typescript client that provide a wrapper over gRPC APIs and various component libraries.
+This repository provides client libraries for [Dozer](http://github.com/getdozer/dozer). 
 
 
 ### Libraries
 
-[@dozerjs/dozer](./packages/js-client/README.md)
+
+#### Dozer JS Client
+
+Typescript wrapper over several gRPC services generated automatically when you run Dozer.
+
 ```bash
 yarn add @dozerjs/dozer
 ```
+You can find usage instructions [here](./packages/js-client/README.md)
+
+####  Dozer React
+
+React component library that makes it convenient to create views using Dozer APIs.
+
+```bash
+yarn add @dozerjs/dozer-react
+```
+You can find usage instructions [here](./packages/react/README.md)
+
+
+
+### Release
+
+Bump the version
+```bash
+# pnpm version -h
+# [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git]
+
+pnpm version prerelease
+(or)
+pnpm version prepatch
+```
+
+- `Main` creates a `beta` tag
+- `v*.*.*` creates a `latest` tag
