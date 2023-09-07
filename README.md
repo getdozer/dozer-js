@@ -42,15 +42,10 @@ You can find usage instructions [here](./packages/react/README.md)
 
 ### Release
 
-Bump the version
+Release in beta
 ```bash
-# pnpm version -h
-# [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git]
+pnpm run changeset pre enter beta
+# pnpm run changeset pre exit
 
-pnpm version prerelease
-(or)
-pnpm version prepatch
+pnpm run version
 ```
-
-- `Main` creates a `beta` tag
-- `v*.*.*` creates a `latest` tag

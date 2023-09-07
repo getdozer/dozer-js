@@ -1,0 +1,9 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@dozerjs/dozer": "0.0.8-beta.2",
+    "@dozerjs/dozer-react": "0.0.5-beta.7"
+  },
+  "changesets": []
+}

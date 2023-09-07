@@ -24,6 +24,7 @@
     "build:cjs": "tsc --module commonjs --target es5 --outDir lib/cjs && cp src/generated/protos/*_pb.d.ts lib/cjs/generated/protos/",
     "build:esm": "tsc --module esnext --target es6 --outDir lib/esm && cp src/generated/protos/*_pb.d.ts lib/esm/generated/protos/",
     "test": "jest",
+    "changeset": "changeset",
     "version": "changeset version"
   },
   "repository": {

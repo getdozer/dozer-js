@@ -46,15 +46,12 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish to NPM
-        run: |
-          branch_ref=$(printf "%q" ${{ github.ref_name }})
-
-          if [[ $branch_ref =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            TAG="latest"
-          else
-            TAG="beta"
-          fi
-          echo "Publishing with tag: $TAG"
-
-          pnpm publish --tag $TAG --access public --no-git-checks
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm run publish
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
