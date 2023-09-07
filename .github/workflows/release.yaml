@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - chore/workspace
+      - main
     tags:
       - "v*.*.*"
 
@@ -57,4 +57,4 @@ jobs:
           fi
           echo "Publishing with tag: $TAG"
 
-          #pnpm publish --tag $TAG
+          pnpm publish --tag $TAG
