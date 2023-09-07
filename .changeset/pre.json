@@ -6,6 +6,8 @@
     "@dozerjs/dozer-react": "0.0.5-beta.7"
   },
   "changesets": [
+    "dull-crabs-do",
+    "five-cycles-agree",
     "ninety-nails-listen"
   ]
 }

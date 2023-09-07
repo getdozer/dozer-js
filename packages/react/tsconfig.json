@@ -1,12 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "src",
   },
   "paths": {
     "@dozerjs/dozer": ["../js-client"]
   },
-  "include": ["src/*.tsx", "src/*.ts", "src/**/*.ts","src/*.js", "src/**/*.js"],
+  "include": ["src"],
 }

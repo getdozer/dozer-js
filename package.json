@@ -11,9 +11,9 @@
   },
   "scripts": {
     "build": "pnpm --filter @dozerjs/dozer --filter @dozerjs/dozer-react build",
-    "publish": "changeset publish",
+    "publish": "pnpm run build && changeset publish",
     "changeset": "changeset",
-    "version": "pnpm --filter @dozerjs/dozer --filter @dozerjs/dozer-react version"
+    "version": "changeset version"
   },
   "repository": {
     "type": "git",

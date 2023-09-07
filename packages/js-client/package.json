@@ -1,7 +1,7 @@
 {
   "name": "@dozerjs/dozer",
   "description": "Official Dozer JS Client",
-  "version": "0.0.8-beta.3",
+  "version": "0.0.8-beta.5",
   "dependencies": {
     "@types/google-protobuf": "^3.15.6",
     "google-protobuf": "^3.21.2",

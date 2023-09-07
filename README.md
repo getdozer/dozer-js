@@ -42,7 +42,13 @@ You can find usage instructions [here](./packages/react/README.md)
 
 ### Release
 
-Release in beta
+```
+pnpm run changeset
+pnpm run changeset version
+```
+
+
+Enter and exit beta
 ```bash
 pnpm run changeset pre enter beta
 # pnpm run changeset pre exit
