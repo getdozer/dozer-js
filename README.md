@@ -24,67 +24,12 @@
 <br>
 
 ## Overview
-This repository is a typescript wrapper over gRPC APIs that are automatically generated when you run [Dozer](https://github.com/getdozer/dozer).
+This repository provides A typescript client that provide a wrapper over gRPC APIs and various component libraries.
 
-## Installation
 
+### Libraries
+
+[@dozerjs/dozer](./packages/js-client/README.md)
 ```bash
 yarn add @dozerjs/dozer
-```
-
-## Instance
-
-```typescript
-  const client = new DozerClient();
-  const endpoint = client.getEndpoint('flights');
-```
-
-## Methods
-
-### `Count()`
-Count query returns number of records in particular source.
-
-```typescript
-  const count = await endpoint.count();
-```
-
-
-### `Query(query = string | null)`
-
-Query method is used to fetch records from cache. Reference to gRPC method is [here](https://getdozer.io/docs/api/grpc/common)
-
-```typescript
-  const [fields, records] = await endpoint.query();
-```
-
-Also, client supports query parameter, which allows to filter, sort and paginate. More about you can find [here](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest)
-```typescript
-import { Order } from "@dozerjs/dozer";
-
-const query = {
-    orderBy: {
-        start: Order.ASC
-    }
-}
-
-const [fields, records] = await endpoint.query(query);
-```
-
-### `OnEvent(eventType: EventType = EventType.ALL)`
-Other available option is to use events streams method `onEvent`.
-It connects to the gRPC stream and sends changes to the client. This method has `eventType` parameter, which is used to determine what type of changes will be streamed.
-Available options are `ALL`, `INSERT_ONLY`, `UPDATE_ONLY`, `DELETE_ONLY`.
-
-```typescript
-import { EventType, DozerEndpointEvent, DozerFilter } from "@dozerjs/dozer";
-
-const filter: DozerFilter | null = null;
-
-endpoints.onEvent((evt: DozerEndpointEvent) => {
-  console.log(evt.data);
-  console.log(evt.fields);
-  console.log(evt.primaryIndexKeys);
-  console.log(evt.operation);
-  console.log(evt.mapper);
-}, EventType.INSERT_ONLY, filter);
 ```

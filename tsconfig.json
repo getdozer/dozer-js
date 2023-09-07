@@ -3,7 +3,7 @@
   "display": "Node 18",
 
   "compilerOptions": {
-    "outDir": "lib/esm",
+    "composite": true,
     "module": "esnext",
     "target": "es6",
     "lib": ["dom", "esnext"],
@@ -23,5 +23,12 @@
     "allowSyntheticDefaultImports": true
   },
 
-  "include": ["src/*.ts", "src/**/*.ts","src/*.js", "src/**/*.js"]
+  "include": [
+    "packages/**/src/**/*.ts*",
+    "packages/**/typings.d.ts",
+    "packages/**/src/**/*.ts",
+    "packages/**/src/**/*.json",
+    "packages/**/src/**/*.css",
+    "packages/**/package.json"
+  ]
 }
