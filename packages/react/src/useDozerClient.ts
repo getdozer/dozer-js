@@ -1,4 +1,4 @@
-import { DozerClient, DozerClientOptions } from "@dozerjs/dozer/src";
+import { DozerClient, DozerClientOptions } from "@dozerjs/dozer";
 
 const defaultDozerClientOptions: DozerClientOptions = {
     serverAddress: "http://localhost:50051",

@@ -1,4 +1,4 @@
-import { DozerClientOptions } from '@dozerjs/dozer/src';
+import { DozerClientOptions } from '@dozerjs/dozer';
 import { ReactNode, createContext, useContext } from 'react';
 import { useDozerClient } from './useDozerClient';
 
