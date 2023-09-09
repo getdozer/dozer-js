@@ -81,14 +81,14 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
-  samples/react-sample:
+  packages/react-example:
     dependencies:
       '@dozerjs/dozer':
         specifier: workspace:*
-        version: link:../../packages/js-client
+        version: link:../js-client
       '@dozerjs/dozer-react':
         specifier: workspace:*
-        version: link:../../packages/react
+        version: link:../react
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.21)(react@18.2.0)
