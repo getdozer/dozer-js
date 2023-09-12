@@ -2,3 +2,5 @@ node_modules/*
 
 packages/js-client/lib/
 packages/react/dist/
+packages/vue/dist/
+tsconfig.tsbuildinfo
