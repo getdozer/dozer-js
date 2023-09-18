@@ -1,4 +1,4 @@
-import { ApiClient } from "../src/client";
+import { DozerClient, DozerEndpoint, DozerEndpointEvent } from "../src/client";
 import { CommonGrpcServiceClient } from "../src/generated/protos/CommonServiceClientPb";
 import { HealthGrpcServiceClient } from "../src/generated/protos/HealthServiceClientPb";
 import { expect, jest } from '@jest/globals';
@@ -21,48 +21,109 @@ beforeEach(() => {
 
 describe('Client', () => {
     it('should instantialte classes', () => {
-        new ApiClient("test", { "authToken": "test-token", "serverAddress": "server-address" });
+        new DozerEndpoint("test", new DozerClient({ "authToken": "test-token", "serverAddress": "server-address" }));
         expect(CommonGrpcServiceClient).toHaveBeenCalledWith("server-address", { "Authorization": "Bearer test-token" })
         expect(HealthGrpcServiceClient).toHaveBeenCalledWith("server-address", { "Authorization": "Bearer test-token" })
     });
 
     it('should subscribe onEvent', () => {
 
-        const mockOnEvent = jest.fn();
+        const mockOnEvent = jest.fn(() => {
+            return {
+                on: jest.fn(),
+            }
+        });
         const mockedClient: any = jest.mocked(CommonGrpcServiceClient);
         mockedClient.mockImplementation(() => ({
             onEvent: mockOnEvent,
         }));
 
-        const client = new ApiClient("endpoint-name", { "authToken": "test-token", "serverAddress": "server-address" });
+        const client = new DozerEndpoint("endpoint-name", new DozerClient({ "authToken": "test-token", "serverAddress": "server-address" }));;
 
-        client.onEvent(EventType.ALL);
+        client.onEvent((evt: DozerEndpointEvent) => {
+            console.log(evt);
+        }, EventType.ALL);
         expect(mockOnEvent).toBeCalledWith({
-            "array": [null, "endpoint-name"],
+            "wrappers_": {
+                "1": {
+                    "arr_": [],
+                    "map_": {
+                        "endpoint-name": {
+                            "key": "endpoint-name",
+                            "value": [
+                                null
+                            ],
+                            "valueWrapper": {
+                                "wrappers_": null,
+                                "arrayIndexOffset_": -1,
+                                "array": [
+                                    null
+                                ],
+                                "messageId_": undefined,
+                                "pivot_": expect.any(Number),
+                                "convertedPrimitiveFields_": {}
+                            }
+                        }
+                    },
+                    "arrClean": false,
+                    "valueCtor_": expect.any(Function),
+                }
+            },
             "arrayIndexOffset_": -1,
-            "convertedPrimitiveFields_": {},
+            "array": [
+                []
+            ],
             "messageId_": undefined,
             "pivot_": expect.any(Number),
-            "wrappers_": null
+            "convertedPrimitiveFields_": {}
+
         }, { "Authorization": "Bearer test-token" });
 
         mockOnEvent.mockClear();
-        client.onEvent(EventType.DELETE_ONLY, {
+        client.onEvent((evt: DozerEndpointEvent) => {
+            console.log(evt);
+        }, EventType.DELETE_ONLY, {
             id: {
                 [FilterOperator.GT]: 100
             }
         });
         expect(mockOnEvent).toBeCalledWith({
-            "array": [
-                EventType.DELETE_ONLY,
-                "endpoint-name",
-                "{\"id\":{\"$gt\":100}}"
-            ],
+            "wrappers_": {
+                "1": {
+                    "arr_": [],
+                    "map_": {
+                        "endpoint-name": {
+                            "key": "endpoint-name",
+                            "value": [
+                                EventType.DELETE_ONLY,
+                                ,
+                                "{\"id\":{\"$gt\":100}}"
+                            ],
+                            "valueWrapper": {
+                                "wrappers_": null,
+                                "arrayIndexOffset_": -1,
+                                "array": [
+                                    EventType.DELETE_ONLY,
+                                    ,
+                                    "{\"id\":{\"$gt\":100}}"
+                                ],
+                                "messageId_": undefined,
+                                "pivot_": expect.any(Number),
+                                "convertedPrimitiveFields_": {}
+                            }
+                        }
+                    },
+                    "arrClean": false,
+                    "valueCtor_": expect.any(Function),
+                }
+            },
             "arrayIndexOffset_": -1,
-            "convertedPrimitiveFields_": {},
+            "array": [
+                []
+            ],  
             "messageId_": undefined,
             "pivot_": expect.any(Number),
-            "wrappers_": null
+            "convertedPrimitiveFields_": {}
         }, { "Authorization": "Bearer test-token" });
 
     })

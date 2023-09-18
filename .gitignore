@@ -1,4 +1,4 @@
 node_modules/*
-
+coverage/*
 packages/js-client/lib/
 packages/react/dist/
