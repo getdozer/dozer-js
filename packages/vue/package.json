@@ -2,15 +2,27 @@
   "name": "@dozerjs/dozer-vue",
   "version": "0.0.2",
   "description": "",
-  "main": "src/index.ts",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "typings": "cjs/index.d.ts",
   "scripts": {
-    "clean": "rm -rf dist && rm tsconfig.tsbuildinfo",
-    "build": "npm run clean && tsc",
+    "build": "npm run build:cjs && npm run build:esm",
+    "prebuild:cjs": "rm -rf cjs",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "prebuild:esm": "rm -rf esm",
+    "build:esm": "tsc -p tsconfig.esm.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./esm/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "require": {
+        "types": "./cjs/index.d.ts",
+        "default": "./cjs/index.js"
+      }
     }
   },
   "repository": {
@@ -27,7 +39,8 @@
     "@dozerjs/dozer": "workspace:*"
   },
   "files": [
-    "/dist"
+    "/cjs",
+    "/esm"
   ],
   "peerDependencies": {
     "vue": "^3.3.4"
