@@ -1,5 +1,14 @@
 # @dozerjs/dozer
 
+## 0.0.8
+
+### Patch Changes
+
+- b08083f: fix build
+- b08083f: Fix export paths
+- e2cc550: export libs
+- 5407f47: bump patch
+
 ## 0.0.8-beta.5
 
 ### Patch Changes
