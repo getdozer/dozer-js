@@ -1,5 +1,20 @@
 # @dozerjs/dozer-react
 
+## 0.0.5
+
+### Patch Changes
+
+- b08083f: fix build
+- b08083f: Fix export paths
+- 4c04d73: use outdir path for react
+- e2cc550: export libs
+- 5407f47: bump patch
+- Updated dependencies [b08083f]
+- Updated dependencies [b08083f]
+- Updated dependencies [e2cc550]
+- Updated dependencies [5407f47]
+  - @dozerjs/dozer@0.0.8
+
 ## 0.0.5-beta.11
 
 ### Patch Changes
