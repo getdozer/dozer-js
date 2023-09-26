@@ -1,0 +1,39 @@
+{
+  "name": "@dozerjs/dozer-vue",
+  "version": "0.0.2",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "clean": "rm -rf dist && rm tsconfig.tsbuildinfo",
+    "build": "npm run clean && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getdozer/dozer-vue.git"
+  },
+  "author": "getdozer/dozer-dev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/getdozer/dozer-vue/issues"
+  },
+  "homepage": "https://github.com/getdozer/dozer-vue#readme",
+  "dependencies": {
+    "@dozerjs/dozer": "workspace:*"
+  },
+  "files": [
+    "/dist"
+  ],
+  "peerDependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.22.5",
+    "typescript": "^4.9.5"
+  }
+}
