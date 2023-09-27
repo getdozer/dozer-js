@@ -1,5 +1,11 @@
 # @dozerjs/dozer-react
 
+## 0.0.6
+
+### Patch Changes
+
+- 8f7a4a3: update tsc compiler optitons for react
+
 ## 0.0.5
 
 ### Patch Changes
