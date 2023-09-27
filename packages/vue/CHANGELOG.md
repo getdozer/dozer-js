@@ -1,5 +1,11 @@
 # @dozerjs/dozer-vue
 
+## 0.0.4
+
+### Patch Changes
+
+- 8f7a4a3: add @dozerjs/dozer-vue to build flow
+
 ## 0.0.3
 
 ### Patch Changes
