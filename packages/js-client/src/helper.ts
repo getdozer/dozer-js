@@ -1,4 +1,4 @@
-import {FieldDefinition, Type, Value} from "./generated/protos/types_pb.js";
+import { FieldDefinition, Type, Value } from "./generated/protos/types_pb.js";
 
 function convertValue(typ: Type, object: Value): any {
     switch (typ) {
@@ -23,7 +23,7 @@ function convertValue(typ: Type, object: Value): any {
         case Type.DATE:
             return object.getDateValue();
         case Type.JSON:
-            return object.getBytesValue();
+            return object.getJsonValue();
         case Type.POINT:
             return object.getPointValue();
     }
