@@ -1,6 +1,4 @@
 import { FieldDefinition, Type, Value } from "./generated/protos/types_pb.js";
-import { Value as StructValue } from './generated/protos/google/protobuf/struct.js';
-window['StructValue'] = StructValue;
 
 function convertValue(typ: Type, object: Value): any {
     switch (typ) {
