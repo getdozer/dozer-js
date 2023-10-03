@@ -1,5 +1,11 @@
 # @dozerjs/dozer
 
+## 0.0.9
+
+### Patch Changes
+
+- d846373: decode json type data
+
 ## 0.0.8
 
 ### Patch Changes
