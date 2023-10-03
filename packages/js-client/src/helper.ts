@@ -23,7 +23,7 @@ function convertValue(typ: Type, object: Value): any {
         case Type.DATE:
             return object.getDateValue();
         case Type.JSON:
-            return object.getJsonValue();
+            return object.getJsonValue()?.toJavaScript();
         case Type.POINT:
             return object.getPointValue();
     }

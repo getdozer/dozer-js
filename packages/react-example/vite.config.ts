@@ -9,7 +9,7 @@ export default defineConfig({
   },
   build: {
     commonjsOptions: {
-      include: [/@dozerjs\/doze/, /@dozerjs\/dozer-react/, /node_modules/],
+      include: [/@dozerjs\/dozer/, /@dozerjs\/dozer-react/, /node_modules/],
     },
   },
 })
