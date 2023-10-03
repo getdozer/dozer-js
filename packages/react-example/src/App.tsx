@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box } from '@mui/material';
 import { DozerProvider, useDozerEndpoint } from "@dozerjs/dozer-react"
+import { types_pb } from '@dozerjs/dozer';
 
 
 function DozerTable () {
@@ -34,8 +35,13 @@ function DozerTable () {
               <TableRow key={idx}>
                 {fields?.map(field => {
                   let val = row[field.getName()]
+                  if (field.getTyp() === types_pb.Type.JSON) {
+                    val = JSON.stringify(val);
+                  } else {
+                    val = val?.toString()
+                  }
                   return (<TableCell component="th" scope="row" key={field.getName()}>
-                    {val && val.toString()}
+                    {val}
                   </TableCell>)
                 })}
               </TableRow>
