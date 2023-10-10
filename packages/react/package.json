@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "pnpm run clean && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "changeset": "changeset",
     "version": "changeset version"
   },
@@ -26,9 +26,9 @@
   },
   "homepage": "https://github.com/getdozer/dozer-react#readme",
   "dependencies": {
+    "@changesets/cli": "^2.26.2",
     "@dozerjs/dozer": "workspace:*",
-    "@types/react": "^18.0.28",
-    "@changesets/cli": "^2.26.2"
+    "@types/react": "^18.0.28"
   },
   "files": [
     "/dist"
@@ -37,6 +37,7 @@
     "react": ">=18.2"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.0.0",
     "typescript": "^4.9.5"
   }
 }

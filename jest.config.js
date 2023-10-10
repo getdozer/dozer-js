@@ -1,12 +1,8 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  testMatch: [
-    '<rootDir>/packages/**/tests/**/*.test.ts',
+  projects: [
+    '<rootDir>/packages/js-client',
+    '<rootDir>/packages/react',
   ],
   collectCoverage: true,
-  coveragePathIgnorePatterns: [
-    '<rootDir>/packages/js-client/src/generated',
-  ]
 };
