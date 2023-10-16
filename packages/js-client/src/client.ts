@@ -47,6 +47,7 @@ export class DozerClient {
   service: CommonGrpcServiceClient;
   healthService: HealthGrpcServiceClient;
   authMetadata: Metadata = {};
+  private fieldsResponseCache = new Map<string, Promise<GetFieldsResponse>>();
 
   constructor(options: DozerClientOptions) {
     this.options = { ...defaultDozerClientOptions, ...options };
@@ -86,14 +87,43 @@ export class DozerClient {
   getEndpoint(endpoint: string): DozerEndpoint {
     return new DozerEndpoint(endpoint, this);
   }
+
+  ensureFields(endpoint: string): Promise<GetFieldsResponse> {
+    let cache = this.fieldsResponseCache.get(endpoint);
+
+    if (cache === undefined) {
+      cache = this.service.getFields(new GetFieldsRequest().setEndpoint(endpoint), this.authMetadata);
+      this.fieldsResponseCache.set(endpoint, cache);
+    }
+
+    return cache;
+  }
+
+  onEvent(options: {
+    endpoint: string,
+    eventType?: EventType,
+    filter?: DozerFilter,
+  }[]) {
+    const onEventRequest = new OnEventRequest()
+    const endpointsMap = onEventRequest.getEndpointsMap();
+
+    options.forEach(option => {
+      const eventFilter = new EventFilter()
+        .setType(option.eventType ?? EventType.ALL);
+
+      if (option.filter) {
+        eventFilter.setFilter(QueryHelper.convertFilter(option.filter));
+      }
+      endpointsMap.set(option.endpoint, eventFilter);
+    });
+
+    return this.service.onEvent(onEventRequest, this.authMetadata);
+  }
 }
 
 export class DozerEndpoint {
   private endpoint: string;
   private client: DozerClient;
-  private fieldsResponse?: GetFieldsResponse;
-  private fieldsResponseLoading: boolean = false;
-  private fieldsResponseCallback: Function[] = [];
   constructor(endpoint: string, client: DozerClient) {
     this.endpoint = endpoint;
     this.client = client;
@@ -132,41 +162,19 @@ export class DozerEndpoint {
   }
 
   async ensureFields(): Promise<GetFieldsResponse> {
-    if (this.fieldsResponse) {
-      return Promise.resolve(this.fieldsResponse);
-    }
-    if (this.fieldsResponseLoading) {
-      return new Promise((resolve) => {
-        this.fieldsResponseCallback.push(resolve);
-      });
-    }
-    this.fieldsResponseLoading = true;
-    return this.getFields().then((response) => {
-      this.fieldsResponse = response;
-      this.fieldsResponseLoading = false;
-      this.fieldsResponseCallback.forEach((cb) => cb(this.fieldsResponse));
-      return this.fieldsResponse;
-    });
+    return this.client.ensureFields(this.endpoint);
   }
 
-  onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> | null {
-    let stream: ClientReadableStream<Operation> | null = null;
+  onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> {
+    const stream = this.client.onEvent([
+      {
+        endpoint: this.endpoint,
+        eventType,
+        filter,
+      },
+    ]);
 
-    const eventFilter = new EventFilter()
-      .setType(eventType);
-
-    if (filter) {
-      eventFilter.setFilter(QueryHelper.convertFilter(filter));
-    }
-
-    const onEventRequest = new OnEventRequest()
-    onEventRequest
-      .getEndpointsMap()
-      .set(this.endpoint, eventFilter);
-
-
-    stream = this.client.service.onEvent(onEventRequest, this.client.authMetadata);
-    stream.on('data', (operation) => {
+    stream.on('data', (operation: Operation) => {
       this.ensureFields().then((fieldsResponse) => {
         const fields = fieldsResponse.getFieldsList();
         const mapper = new RecordMapper(fields);
