@@ -6,11 +6,11 @@ import { forwardRef } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
 
 export function DozerTable(props: {
-  stream: ClientReadableStream<types_pb.Operation>;
+  stream?: ClientReadableStream<types_pb.Operation>;
   endpoint: string;
 }) {
   const { fields, records, error, connect } = useDozerQuery(props.endpoint, {});
-  connect(props.stream);
+  props.stream && connect(props.stream);
 
   if (error) {
     return (
