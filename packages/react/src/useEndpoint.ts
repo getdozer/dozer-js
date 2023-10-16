@@ -1,6 +1,8 @@
-import { DozerEndpointEvent, DozerQuery } from "@dozerjs/dozer";
-import { EventType, FieldDefinition, OperationType, Record, Type } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
-import { useEffect, useState } from "react";
+import { DozerEndpointEvent, DozerFilter, DozerQuery } from "@dozerjs/dozer";
+import { EventType, FieldDefinition, Operation, OperationType, Record, Type } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { RecordMapper } from "@dozerjs/dozer/lib/esm/helper";
+import { ClientReadableStream } from "grpc-web";
+import { useCallback, useEffect, useState } from "react";
 import { DozerConsumer } from "./context";
 
 export function useDozerEndpointCount(name: string, options?: {
@@ -42,6 +44,154 @@ export function useDozerEndpoint(name: string, options?: {
 }) {
   const { count, fields, records, error } = useDozerEndpointCommon(name, options);
   return { count, fields, records, error };
+}
+
+export function useDozerQuery(name: string, query: DozerQuery) {
+  const { client } = DozerConsumer();
+  const endpoint = client.getEndpoint(name);
+  const [fields, setFields] = useState<FieldDefinition[]>([]);
+  const [primaryIndexKeys, setPrimaryIndexKeys] = useState<string[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
+  const [cache, setCache] = useState<Operation[]>([]);
+  const [error, setError] = useState<Error>();
+  const [_stream, setStream] = useState<ClientReadableStream<Operation>>();
+
+  const consume = useCallback((operation: Operation) => {
+    if (fields.length === 0) {
+      return;
+    }
+    const mapper = new RecordMapper(fields);
+    setRecords((prev) => {
+      if (prev) {
+        const result = merge(prev, operation, mapper, fields, primaryIndexKeys);
+        return result ?? prev;
+      } else {
+        return prev;
+      }
+    });
+
+    const index = cache.indexOf(operation);
+    if (index !== -1) {
+      setCache(prev => {
+        prev.splice(index, 1);
+        return prev;
+      });
+    }
+  }, [fields, primaryIndexKeys, cache]);
+
+  const cb = useCallback((operation: Operation) => {
+    if (operation.getEndpointName() !== name) {
+      return;
+    }
+
+    if (error) {
+      return;
+    }
+
+    if (fields === undefined || records === undefined || primaryIndexKeys === undefined) {
+      setCache((prev) => [...prev, operation]);
+    } else {
+      consume(operation);
+    }
+  }, [name, error, fields, primaryIndexKeys]);
+
+  const connect = (stream: ClientReadableStream<Operation>) => {
+    if (_stream === stream) {
+      return;
+    }
+    setStream(stream);
+  }
+
+  useEffect(() => {
+    _stream?.on('data', cb);
+    return () => {
+      _stream?.removeListener('data', cb);
+    }
+  }, [_stream, cb]);
+  
+  
+  useEffect(() => {
+    setPrimaryIndexKeys([]);
+    setFields([]);
+    setRecords([]);
+    setCache([]);
+    
+    Promise.all([
+      endpoint.getFields().then(response => response.getFieldsList().reduce((keys: string[], field, index) => {
+        if (response.getPrimaryIndexList().includes(index)) {
+          keys.push(field.getName());
+        }
+        return keys;
+      }, [])),
+      endpoint.query(query),
+    ]).then(([primaryIndexKeys, [fields, records]]) => {
+      setPrimaryIndexKeys(primaryIndexKeys);
+      setFields(fields);
+      setRecords(records);
+      cache.forEach(consume);
+    }).catch(error => {
+      setError(error);
+    });
+  }, [name]);
+
+  return { fields, records, connect, error };
+}
+
+export function useDozerWatch(options: {
+  endpoint: string,
+  eventType?: EventType,
+  filter?: DozerFilter,
+}[]) {
+  const { client } = DozerConsumer();
+  const [stream, setStream] = useState<ClientReadableStream<Operation>>();
+  const [error, setError] = useState<Error>();
+
+  useEffect(() => {
+    const _stream = client.onEvent(options)
+    setStream(_stream);
+    _stream.on('error', setError);
+    return () => {
+      _stream.cancel();
+    }
+  }, []);
+
+  return { stream, error };
+}
+
+function merge(prev: any[], operation: Operation, mapper: RecordMapper, fields: FieldDefinition[], primaryIndexKeys: string[]) {
+  if (operation.getTyp() === OperationType.INSERT) {
+    const newValue: any = mapper.mapRecord(operation.getNew()?.getValuesList() ?? []);
+    const index = prev.findIndex(record => compareFn(record, newValue, fields, primaryIndexKeys));
+    // ignore if exists
+    if (index !== -1) {
+      return;
+    }
+    return [...prev, newValue];
+  } else if (operation.getTyp() === OperationType.DELETE) {
+    const oldValue: any = mapper.mapRecord(operation.getOld()?.getValuesList() ?? []);
+    const index = prev.findIndex((record) => compareFn(record, oldValue, fields, primaryIndexKeys));
+    // ignore if not exists
+    if (index === -1) {
+      return;
+    }
+    prev.splice(index, 1);  
+    return [...prev];
+  } else if (operation.getTyp() === OperationType.UPDATE) {
+    const newValue: any = mapper.mapRecord(operation.getNew()?.getValuesList() ?? []);
+    const index = prev.findIndex((record) => compareFn(record, newValue, fields, primaryIndexKeys));
+    // ignore if not exists
+    if (index === -1) {
+      return;
+    }
+    // ignore if version is lower
+    if (newValue.version < prev[index].version) {
+      return;
+    }
+    prev.splice(index, 1, newValue);
+    return [...prev];
+  } else {
+    return;
+  }
 }
 
 function useDozerEndpointCommon(name: string, options?: {
