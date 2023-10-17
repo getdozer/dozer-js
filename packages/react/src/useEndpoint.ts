@@ -2,7 +2,7 @@ import { DozerEndpointEvent, DozerFilter, DozerQuery } from "@dozerjs/dozer";
 import { EventType, FieldDefinition, Operation, OperationType, Record, Type } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
 import { RecordMapper } from "@dozerjs/dozer/lib/esm/helper";
 import { ClientReadableStream } from "grpc-web";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DozerConsumer } from "./context";
 
 export function useDozerEndpointCount(name: string, options?: {
@@ -52,69 +52,78 @@ export function useDozerQuery(name: string, query: DozerQuery) {
   const [fields, setFields] = useState<FieldDefinition[]>([]);
   const [primaryIndexKeys, setPrimaryIndexKeys] = useState<string[]>([]);
   const [records, setRecords] = useState<any[]>([]);
-  const [cache, setCache] = useState<Operation[]>([]);
   const [error, setError] = useState<Error>();
-  const [_stream, setStream] = useState<ClientReadableStream<Operation>>();
+
+  const fieldsRef = useRef<FieldDefinition[]>([]);
+  const primaryIndexKeysRef = useRef<string[]>([]);
+  const errorRef = useRef<Error>();
+  const cacheRef = useRef<Operation[]>([]);
+  const streamRef = useRef<ClientReadableStream<Operation>>();
 
   const consume = useCallback((operation: Operation) => {
-    if (fields.length === 0) {
-      return;
-    }
-    const mapper = new RecordMapper(fields);
-    setRecords((prev) => {
-      if (prev) {
-        const result = merge(prev, operation, mapper, fields, primaryIndexKeys);
-        return result ?? prev;
-      } else {
-        return prev;
-      }
-    });
-
-    const index = cache.indexOf(operation);
-    if (index !== -1) {
-      setCache(prev => {
-        prev.splice(index, 1);
-        return prev;
-      });
-    }
-  }, [fields, primaryIndexKeys, cache]);
-
-  const cb = useCallback((operation: Operation) => {
     if (operation.getEndpointName() !== name) {
       return;
     }
 
-    if (error) {
+    if (errorRef.current) {
       return;
     }
 
-    if (fields === undefined || records === undefined || primaryIndexKeys === undefined) {
-      setCache((prev) => [...prev, operation]);
+    if (fieldsRef.current.length === 0) {
+      cacheRef.current.push(operation);
     } else {
-      consume(operation);
+      const mapper = new RecordMapper(fieldsRef.current);
+      setRecords((prev) => {
+        if (prev) {
+          const result = merge(prev, operation, mapper, fieldsRef.current, primaryIndexKeysRef.current);
+          return result ?? prev;
+        } else {
+          return prev;
+        }
+      });
     }
-  }, [name, error, fields, primaryIndexKeys]);
+  }, []);
 
   const connect = (stream: ClientReadableStream<Operation>) => {
-    if (_stream === stream) {
+    if (streamRef.current === stream) {
       return;
     }
-    setStream(stream);
+    streamRef.current = stream;
   }
 
   useEffect(() => {
-    _stream?.on('data', cb);
+    streamRef.current?.on('data', consume);
     return () => {
-      _stream?.removeListener('data', cb);
+      streamRef.current?.removeListener('data', consume);
     }
-  }, [_stream, cb]);
-  
+  }, [streamRef.current, consume]);
+
+  useEffect(() => {
+    fieldsRef.current = fields;
+  }, [fields]);
+
+  useEffect(() => {
+    while (cacheRef.current.length) {
+      const operation = cacheRef.current.pop();
+      operation && consume(operation);
+    }
+  }, [fields]);
+
+ 
+
+  useEffect(() => {
+    primaryIndexKeysRef.current = primaryIndexKeys;
+  }, [primaryIndexKeys]);
+
+  useEffect(() => {
+    errorRef.current = error;
+  }, [error]);
   
   useEffect(() => {
     setPrimaryIndexKeys([]);
     setFields([]);
     setRecords([]);
-    setCache([]);
+    cacheRef.current = [];
     
     Promise.all([
       endpoint.getFields().then(response => response.getFieldsList().reduce((keys: string[], field, index) => {
@@ -128,11 +137,10 @@ export function useDozerQuery(name: string, query: DozerQuery) {
       setPrimaryIndexKeys(primaryIndexKeys);
       setFields(fields);
       setRecords(records);
-      cache.forEach(consume);
     }).catch(error => {
       setError(error);
     });
-  }, [name]);
+  }, []);
 
   return { fields, records, connect, error };
 }
