@@ -2,14 +2,13 @@ import { CommonGrpcServiceClient } from "./generated/protos/CommonServiceClientP
 import { EventFilter, EventType, FieldDefinition, Operation, OperationType } from "./generated/protos/types_pb.js";
 import { RecordMapper } from "./helper";
 import {
-  CountResponse,
   GetEndpointsRequest,
   GetFieldsRequest,
   GetFieldsResponse,
   OnEventRequest,
   QueryRequest
 } from "./generated/protos/common_pb";
-import { DozerFilter, DozerQuery, QueryHelper } from "./query_helper";
+import { DozerFilter, DozerQuery, DozerRecord, QueryHelper } from "./query_helper";
 import { HealthGrpcServiceClient } from "./generated/protos/HealthServiceClientPb";
 import { HealthCheckRequest, HealthCheckResponse } from "./generated/protos/health_pb";
 import { ClientReadableStream, Metadata } from "grpc-web";
@@ -20,19 +19,18 @@ export interface DozerClientOptions {
   headers?: Record<string, string>;
 }
 
-export interface DozerEndpointEvent {
-  data: DozerEndpointEventData;
+export interface DozerEndpointEvent<T = any> {
+  data: DozerEndpointEventData<T>;
   fields: FieldDefinition[];
   primaryIndexKeys: string[];
   operation: Operation;
   mapper: RecordMapper;
 }
 
-export interface DozerEndpointEventData {
+export interface DozerEndpointEventData<T = any> {
   typ: OperationType,
-  old?: Object,
-  new?: Object,
-  newId?: number;
+  old?: DozerRecord<T>,
+  new?: DozerRecord<T>,
   endpointName: string;
 }
 
@@ -49,7 +47,7 @@ export class DozerClient {
   authMetadata: Metadata = {};
   private fieldsResponseCache = new Map<string, Promise<GetFieldsResponse>>();
 
-  constructor(options: DozerClientOptions) {
+  constructor(options?: DozerClientOptions) {
     this.options = { ...defaultDozerClientOptions, ...options };
     this.authMetadata = (this.options.authToken ? { Authorization: 'Bearer ' + this.options.authToken } : {}) as Metadata;
     Object.assign(this.authMetadata, this.options.headers);
@@ -129,17 +127,19 @@ export class DozerEndpoint {
     this.client = client;
   }
 
-  async count(query?: DozerQuery): Promise<CountResponse> {
+  async count(query?: DozerQuery): Promise<number> {
     // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
       request.setQuery(QueryHelper.convertSchema(query));
     }
 
-    return this.client.service.count(request, this.client.authMetadata);
+    return this.client.service.count(request, this.client.authMetadata).then((response) => {
+      return response.getCount();
+    });
   }
 
-  async query(query?: DozerQuery): Promise<[FieldDefinition[], Object[]]> {
+  async query<T = any>(query?: DozerQuery): Promise<[FieldDefinition[], DozerRecord<T>[]]> {
     // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
@@ -151,7 +151,7 @@ export class DozerEndpoint {
 
       return [
         response.getFieldsList(),
-        response.getRecordsList().map(v => mapper.mapRecord(v.getRecord()?.getValuesList() ?? [])),
+        response.getRecordsList().map(v => mapper.mapRecord(v)),
       ];
     });
   }
@@ -185,9 +185,8 @@ export class DozerEndpoint {
 
         const data = {
           typ: operation.getTyp(),
-          old: oldValue ? mapper.mapRecord(oldValue.getValuesList()) : undefined,
-          new: newValue ? mapper.mapRecord(newValue.getValuesList()) : undefined,
-          newId: operation.getNewId() ?? undefined,
+          old: oldValue ? mapper.mapRecord(oldValue) : undefined,
+          new: newValue ? mapper.mapRecord(newValue) : undefined,
           endpointName: operation.getEndpointName(),
         };
 

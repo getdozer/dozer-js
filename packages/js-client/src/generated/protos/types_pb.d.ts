@@ -47,11 +47,6 @@ export class Operation extends jspb.Message {
   hasNew(): boolean;
   clearNew(): Operation;
 
-  getNewId(): number;
-  setNewId(value: number): Operation;
-  hasNewId(): boolean;
-  clearNewId(): Operation;
-
   getEndpointName(): string;
   setEndpointName(value: string): Operation;
 
@@ -68,18 +63,12 @@ export namespace Operation {
     typ: OperationType,
     old?: Record.AsObject,
     pb_new?: Record.AsObject,
-    newId?: number,
     endpointName: string,
   }
 
   export enum OldCase { 
     _OLD_NOT_SET = 0,
     OLD = 2,
-  }
-
-  export enum NewIdCase { 
-    _NEW_ID_NOT_SET = 0,
-    NEW_ID = 4,
   }
 }
 
@@ -88,6 +77,9 @@ export class Record extends jspb.Message {
   setValuesList(value: Array<Value>): Record;
   clearValuesList(): Record;
   addValues(value?: Value, index?: number): Value;
+
+  getId(): number;
+  setId(value: number): Record;
 
   getVersion(): number;
   setVersion(value: number): Record;
@@ -103,31 +95,8 @@ export class Record extends jspb.Message {
 export namespace Record {
   export type AsObject = {
     valuesList: Array<Value.AsObject>,
-    version: number,
-  }
-}
-
-export class RecordWithId extends jspb.Message {
-  getId(): number;
-  setId(value: number): RecordWithId;
-
-  getRecord(): Record | undefined;
-  setRecord(value?: Record): RecordWithId;
-  hasRecord(): boolean;
-  clearRecord(): RecordWithId;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RecordWithId.AsObject;
-  static toObject(includeInstance: boolean, msg: RecordWithId): RecordWithId.AsObject;
-  static serializeBinaryToWriter(message: RecordWithId, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RecordWithId;
-  static deserializeBinaryFromReader(message: RecordWithId, reader: jspb.BinaryReader): RecordWithId;
-}
-
-export namespace RecordWithId {
-  export type AsObject = {
     id: number,
-    record?: Record.AsObject,
+    version: number,
   }
 }
 
@@ -368,6 +337,54 @@ export namespace Value {
     POINT_VALUE = 12,
     DURATION_VALUE = 13,
     JSON_VALUE = 14,
+  }
+}
+
+export class SchemasResponse extends jspb.Message {
+  getSchemasMap(): jspb.Map<string, Schema>;
+  clearSchemasMap(): SchemasResponse;
+
+  getErrorsMap(): jspb.Map<string, string>;
+  clearErrorsMap(): SchemasResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SchemasResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SchemasResponse): SchemasResponse.AsObject;
+  static serializeBinaryToWriter(message: SchemasResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SchemasResponse;
+  static deserializeBinaryFromReader(message: SchemasResponse, reader: jspb.BinaryReader): SchemasResponse;
+}
+
+export namespace SchemasResponse {
+  export type AsObject = {
+    schemasMap: Array<[string, Schema.AsObject]>,
+    errorsMap: Array<[string, string]>,
+  }
+}
+
+export class Schema extends jspb.Message {
+  getPrimaryIndexList(): Array<number>;
+  setPrimaryIndexList(value: Array<number>): Schema;
+  clearPrimaryIndexList(): Schema;
+  addPrimaryIndex(value: number, index?: number): Schema;
+
+  getFieldsList(): Array<FieldDefinition>;
+  setFieldsList(value: Array<FieldDefinition>): Schema;
+  clearFieldsList(): Schema;
+  addFields(value?: FieldDefinition, index?: number): FieldDefinition;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Schema.AsObject;
+  static toObject(includeInstance: boolean, msg: Schema): Schema.AsObject;
+  static serializeBinaryToWriter(message: Schema, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Schema;
+  static deserializeBinaryFromReader(message: Schema, reader: jspb.BinaryReader): Schema;
+}
+
+export namespace Schema {
+  export type AsObject = {
+    primaryIndexList: Array<number>,
+    fieldsList: Array<FieldDefinition.AsObject>,
   }
 }
 

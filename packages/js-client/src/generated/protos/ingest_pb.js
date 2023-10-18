@@ -33,7 +33,7 @@ goog.exportSymbol('proto.dozer.ingest.OperationType', null, global);
  * @constructor
  */
 proto.dozer.ingest.IngestRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.dozer.ingest.IngestRequest.repeatedFields_, null);
 };
 goog.inherits(proto.dozer.ingest.IngestRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -107,6 +107,13 @@ if (goog.DEBUG && !COMPILED) {
   proto.dozer.ingest.IngestMetadata.displayName = 'proto.dozer.ingest.IngestMetadata';
 }
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.dozer.ingest.IngestRequest.repeatedFields_ = [3,4];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -140,8 +147,10 @@ proto.dozer.ingest.IngestRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     schemaName: jspb.Message.getFieldWithDefault(msg, 1, ""),
     typ: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    old: (f = msg.getOld()) && types_pb.Record.toObject(includeInstance, f),
-    pb_new: (f = msg.getNew()) && types_pb.Record.toObject(includeInstance, f),
+    oldList: jspb.Message.toObjectList(msg.getOldList(),
+    types_pb.Value.toObject, includeInstance),
+    newList: jspb.Message.toObjectList(msg.getNewList(),
+    types_pb.Value.toObject, includeInstance),
     seqNo: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
@@ -188,14 +197,14 @@ proto.dozer.ingest.IngestRequest.deserializeBinaryFromReader = function(msg, rea
       msg.setTyp(value);
       break;
     case 3:
-      var value = new types_pb.Record;
-      reader.readMessage(value,types_pb.Record.deserializeBinaryFromReader);
-      msg.setOld(value);
+      var value = new types_pb.Value;
+      reader.readMessage(value,types_pb.Value.deserializeBinaryFromReader);
+      msg.addOld(value);
       break;
     case 4:
-      var value = new types_pb.Record;
-      reader.readMessage(value,types_pb.Record.deserializeBinaryFromReader);
-      msg.setNew(value);
+      var value = new types_pb.Value;
+      reader.readMessage(value,types_pb.Value.deserializeBinaryFromReader);
+      msg.addNew(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readUint32());
@@ -244,20 +253,20 @@ proto.dozer.ingest.IngestRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getOld();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getOldList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
       3,
       f,
-      types_pb.Record.serializeBinaryToWriter
+      types_pb.Value.serializeBinaryToWriter
     );
   }
-  f = message.getNew();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getNewList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
       4,
       f,
-      types_pb.Record.serializeBinaryToWriter
+      types_pb.Value.serializeBinaryToWriter
     );
   }
   f = message.getSeqNo();
@@ -307,76 +316,78 @@ proto.dozer.ingest.IngestRequest.prototype.setTyp = function(value) {
 
 
 /**
- * optional dozer.types.Record old = 3;
- * @return {?proto.dozer.types.Record}
+ * repeated dozer.types.Value old = 3;
+ * @return {!Array<!proto.dozer.types.Value>}
  */
-proto.dozer.ingest.IngestRequest.prototype.getOld = function() {
-  return /** @type{?proto.dozer.types.Record} */ (
-    jspb.Message.getWrapperField(this, types_pb.Record, 3));
+proto.dozer.ingest.IngestRequest.prototype.getOldList = function() {
+  return /** @type{!Array<!proto.dozer.types.Value>} */ (
+    jspb.Message.getRepeatedWrapperField(this, types_pb.Value, 3));
 };
 
 
 /**
- * @param {?proto.dozer.types.Record|undefined} value
+ * @param {!Array<!proto.dozer.types.Value>} value
  * @return {!proto.dozer.ingest.IngestRequest} returns this
 */
-proto.dozer.ingest.IngestRequest.prototype.setOld = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+proto.dozer.ingest.IngestRequest.prototype.setOldList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * @param {!proto.dozer.types.Value=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.dozer.types.Value}
+ */
+proto.dozer.ingest.IngestRequest.prototype.addOld = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.dozer.types.Value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
  * @return {!proto.dozer.ingest.IngestRequest} returns this
  */
-proto.dozer.ingest.IngestRequest.prototype.clearOld = function() {
-  return this.setOld(undefined);
+proto.dozer.ingest.IngestRequest.prototype.clearOldList = function() {
+  return this.setOldList([]);
 };
 
 
 /**
- * Returns whether this field is set.
- * @return {boolean}
+ * repeated dozer.types.Value new = 4;
+ * @return {!Array<!proto.dozer.types.Value>}
  */
-proto.dozer.ingest.IngestRequest.prototype.hasOld = function() {
-  return jspb.Message.getField(this, 3) != null;
+proto.dozer.ingest.IngestRequest.prototype.getNewList = function() {
+  return /** @type{!Array<!proto.dozer.types.Value>} */ (
+    jspb.Message.getRepeatedWrapperField(this, types_pb.Value, 4));
 };
 
 
 /**
- * optional dozer.types.Record new = 4;
- * @return {?proto.dozer.types.Record}
- */
-proto.dozer.ingest.IngestRequest.prototype.getNew = function() {
-  return /** @type{?proto.dozer.types.Record} */ (
-    jspb.Message.getWrapperField(this, types_pb.Record, 4));
-};
-
-
-/**
- * @param {?proto.dozer.types.Record|undefined} value
+ * @param {!Array<!proto.dozer.types.Value>} value
  * @return {!proto.dozer.ingest.IngestRequest} returns this
 */
-proto.dozer.ingest.IngestRequest.prototype.setNew = function(value) {
-  return jspb.Message.setWrapperField(this, 4, value);
+proto.dozer.ingest.IngestRequest.prototype.setNewList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * @param {!proto.dozer.types.Value=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.dozer.types.Value}
+ */
+proto.dozer.ingest.IngestRequest.prototype.addNew = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.dozer.types.Value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
  * @return {!proto.dozer.ingest.IngestRequest} returns this
  */
-proto.dozer.ingest.IngestRequest.prototype.clearNew = function() {
-  return this.setNew(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.dozer.ingest.IngestRequest.prototype.hasNew = function() {
-  return jspb.Message.getField(this, 4) != null;
+proto.dozer.ingest.IngestRequest.prototype.clearNewList = function() {
+  return this.setNewList([]);
 };
 
 

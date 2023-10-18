@@ -118,10 +118,10 @@ export class QueryResponse extends jspb.Message {
   clearFieldsList(): QueryResponse;
   addFields(value?: types_pb.FieldDefinition, index?: number): types_pb.FieldDefinition;
 
-  getRecordsList(): Array<types_pb.RecordWithId>;
-  setRecordsList(value: Array<types_pb.RecordWithId>): QueryResponse;
+  getRecordsList(): Array<types_pb.Record>;
+  setRecordsList(value: Array<types_pb.Record>): QueryResponse;
   clearRecordsList(): QueryResponse;
-  addRecords(value?: types_pb.RecordWithId, index?: number): types_pb.RecordWithId;
+  addRecords(value?: types_pb.Record, index?: number): types_pb.Record;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): QueryResponse.AsObject;
@@ -134,7 +134,7 @@ export class QueryResponse extends jspb.Message {
 export namespace QueryResponse {
   export type AsObject = {
     fieldsList: Array<types_pb.FieldDefinition.AsObject>,
-    recordsList: Array<types_pb.RecordWithId.AsObject>,
+    recordsList: Array<types_pb.Record.AsObject>,
   }
 }
 

@@ -55,3 +55,8 @@ export class QueryHelper {
         return JSON.stringify(jsonObject);
     }
 }
+
+export type DozerRecord<T> =  T & {
+    __dozer_record_id: number;
+    __dozer_record_version: number;
+};;

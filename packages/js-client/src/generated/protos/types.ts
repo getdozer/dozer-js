@@ -246,10 +246,6 @@ export interface Operation {
   new:
     | Record
     | undefined;
-  /** New record id, only applicable for INSERT type. */
-  newId?:
-    | number
-    | undefined;
   /** Name of the endpoint that this event is from. */
   endpointName: string;
 }
@@ -258,16 +254,10 @@ export interface Operation {
 export interface Record {
   /** The list of field values. */
   values: Value[];
+  /** The record id in cache. */
+  id: number;
   /** Records with same primary key will have increasing version. */
   version: number;
-}
-
-/** A record with its id in cache. */
-export interface RecordWithId {
-  /** The record id. */
-  id: number;
-  /** The record data. */
-  record: Record | undefined;
 }
 
 export interface SchemaEvent {
@@ -370,6 +360,28 @@ export interface Value {
   jsonValue?: any | undefined;
 }
 
+export interface SchemasResponse {
+  schemas: { [key: string]: Schema };
+  errors: { [key: string]: string };
+}
+
+export interface SchemasResponse_SchemasEntry {
+  key: string;
+  value: Schema | undefined;
+}
+
+export interface SchemasResponse_ErrorsEntry {
+  key: string;
+  value: string;
+}
+
+export interface Schema {
+  /** The list of indexes of the keys that are used as the primary index. */
+  primaryIndex: number[];
+  /** The list of field definitions. */
+  fields: FieldDefinition[];
+}
+
 function createBaseEventFilter(): EventFilter {
   return { type: 0, filter: undefined };
 }
@@ -445,7 +457,7 @@ export const EventFilter = {
 };
 
 function createBaseOperation(): Operation {
-  return { typ: 0, old: undefined, new: undefined, newId: undefined, endpointName: "" };
+  return { typ: 0, old: undefined, new: undefined, endpointName: "" };
 }
 
 export const Operation = {
@@ -458,9 +470,6 @@ export const Operation = {
     }
     if (message.new !== undefined) {
       Record.encode(message.new, writer.uint32(26).fork()).ldelim();
-    }
-    if (message.newId !== undefined) {
-      writer.uint32(32).uint64(message.newId);
     }
     if (message.endpointName !== "") {
       writer.uint32(42).string(message.endpointName);
@@ -496,13 +505,6 @@ export const Operation = {
 
           message.new = Record.decode(reader, reader.uint32());
           continue;
-        case 4:
-          if (tag !== 32) {
-            break;
-          }
-
-          message.newId = longToNumber(reader.uint64() as Long);
-          continue;
         case 5:
           if (tag !== 42) {
             break;
@@ -524,7 +526,6 @@ export const Operation = {
       typ: isSet(object.typ) ? operationTypeFromJSON(object.typ) : 0,
       old: isSet(object.old) ? Record.fromJSON(object.old) : undefined,
       new: isSet(object.new) ? Record.fromJSON(object.new) : undefined,
-      newId: isSet(object.newId) ? Number(object.newId) : undefined,
       endpointName: isSet(object.endpointName) ? String(object.endpointName) : "",
     };
   },
@@ -540,9 +541,6 @@ export const Operation = {
     if (message.new !== undefined) {
       obj.new = Record.toJSON(message.new);
     }
-    if (message.newId !== undefined) {
-      obj.newId = Math.round(message.newId);
-    }
     if (message.endpointName !== "") {
       obj.endpointName = message.endpointName;
     }
@@ -557,14 +555,13 @@ export const Operation = {
     message.typ = object.typ ?? 0;
     message.old = (object.old !== undefined && object.old !== null) ? Record.fromPartial(object.old) : undefined;
     message.new = (object.new !== undefined && object.new !== null) ? Record.fromPartial(object.new) : undefined;
-    message.newId = object.newId ?? undefined;
     message.endpointName = object.endpointName ?? "";
     return message;
   },
 };
 
 function createBaseRecord(): Record {
-  return { values: [], version: 0 };
+  return { values: [], id: 0, version: 0 };
 }
 
 export const Record = {
@@ -572,8 +569,11 @@ export const Record = {
     for (const v of message.values) {
       Value.encode(v!, writer.uint32(10).fork()).ldelim();
     }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
     if (message.version !== 0) {
-      writer.uint32(16).uint32(message.version);
+      writer.uint32(24).uint32(message.version);
     }
     return writer;
   },
@@ -597,6 +597,13 @@ export const Record = {
             break;
           }
 
+          message.id = longToNumber(reader.uint64() as Long);
+          continue;
+        case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.version = reader.uint32();
           continue;
       }
@@ -611,6 +618,7 @@ export const Record = {
   fromJSON(object: any): Record {
     return {
       values: Array.isArray(object?.values) ? object.values.map((e: any) => Value.fromJSON(e)) : [],
+      id: isSet(object.id) ? Number(object.id) : 0,
       version: isSet(object.version) ? Number(object.version) : 0,
     };
   },
@@ -619,6 +627,9 @@ export const Record = {
     const obj: any = {};
     if (message.values?.length) {
       obj.values = message.values.map((e) => Value.toJSON(e));
+    }
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
     }
     if (message.version !== 0) {
       obj.version = Math.round(message.version);
@@ -632,83 +643,8 @@ export const Record = {
   fromPartial<I extends Exact<DeepPartial<Record>, I>>(object: I): Record {
     const message = createBaseRecord();
     message.values = object.values?.map((e) => Value.fromPartial(e)) || [];
-    message.version = object.version ?? 0;
-    return message;
-  },
-};
-
-function createBaseRecordWithId(): RecordWithId {
-  return { id: 0, record: undefined };
-}
-
-export const RecordWithId = {
-  encode(message: RecordWithId, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
-    }
-    if (message.record !== undefined) {
-      Record.encode(message.record, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): RecordWithId {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRecordWithId();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.id = longToNumber(reader.uint64() as Long);
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.record = Record.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): RecordWithId {
-    return {
-      id: isSet(object.id) ? Number(object.id) : 0,
-      record: isSet(object.record) ? Record.fromJSON(object.record) : undefined,
-    };
-  },
-
-  toJSON(message: RecordWithId): unknown {
-    const obj: any = {};
-    if (message.id !== 0) {
-      obj.id = Math.round(message.id);
-    }
-    if (message.record !== undefined) {
-      obj.record = Record.toJSON(message.record);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<RecordWithId>, I>>(base?: I): RecordWithId {
-    return RecordWithId.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<RecordWithId>, I>>(object: I): RecordWithId {
-    const message = createBaseRecordWithId();
     message.id = object.id ?? 0;
-    message.record = (object.record !== undefined && object.record !== null)
-      ? Record.fromPartial(object.record)
-      : undefined;
+    message.version = object.version ?? 0;
     return message;
   },
 };
@@ -1457,6 +1393,351 @@ export const Value = {
   },
 };
 
+function createBaseSchemasResponse(): SchemasResponse {
+  return { schemas: {}, errors: {} };
+}
+
+export const SchemasResponse = {
+  encode(message: SchemasResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    Object.entries(message.schemas).forEach(([key, value]) => {
+      SchemasResponse_SchemasEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
+    });
+    Object.entries(message.errors).forEach(([key, value]) => {
+      SchemasResponse_ErrorsEntry.encode({ key: key as any, value }, writer.uint32(18).fork()).ldelim();
+    });
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SchemasResponse {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSchemasResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          const entry1 = SchemasResponse_SchemasEntry.decode(reader, reader.uint32());
+          if (entry1.value !== undefined) {
+            message.schemas[entry1.key] = entry1.value;
+          }
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          const entry2 = SchemasResponse_ErrorsEntry.decode(reader, reader.uint32());
+          if (entry2.value !== undefined) {
+            message.errors[entry2.key] = entry2.value;
+          }
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SchemasResponse {
+    return {
+      schemas: isObject(object.schemas)
+        ? Object.entries(object.schemas).reduce<{ [key: string]: Schema }>((acc, [key, value]) => {
+          acc[key] = Schema.fromJSON(value);
+          return acc;
+        }, {})
+        : {},
+      errors: isObject(object.errors)
+        ? Object.entries(object.errors).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {})
+        : {},
+    };
+  },
+
+  toJSON(message: SchemasResponse): unknown {
+    const obj: any = {};
+    if (message.schemas) {
+      const entries = Object.entries(message.schemas);
+      if (entries.length > 0) {
+        obj.schemas = {};
+        entries.forEach(([k, v]) => {
+          obj.schemas[k] = Schema.toJSON(v);
+        });
+      }
+    }
+    if (message.errors) {
+      const entries = Object.entries(message.errors);
+      if (entries.length > 0) {
+        obj.errors = {};
+        entries.forEach(([k, v]) => {
+          obj.errors[k] = v;
+        });
+      }
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SchemasResponse>, I>>(base?: I): SchemasResponse {
+    return SchemasResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SchemasResponse>, I>>(object: I): SchemasResponse {
+    const message = createBaseSchemasResponse();
+    message.schemas = Object.entries(object.schemas ?? {}).reduce<{ [key: string]: Schema }>((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = Schema.fromPartial(value);
+      }
+      return acc;
+    }, {});
+    message.errors = Object.entries(object.errors ?? {}).reduce<{ [key: string]: string }>((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {});
+    return message;
+  },
+};
+
+function createBaseSchemasResponse_SchemasEntry(): SchemasResponse_SchemasEntry {
+  return { key: "", value: undefined };
+}
+
+export const SchemasResponse_SchemasEntry = {
+  encode(message: SchemasResponse_SchemasEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== undefined) {
+      Schema.encode(message.value, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SchemasResponse_SchemasEntry {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSchemasResponse_SchemasEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = Schema.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SchemasResponse_SchemasEntry {
+    return {
+      key: isSet(object.key) ? String(object.key) : "",
+      value: isSet(object.value) ? Schema.fromJSON(object.value) : undefined,
+    };
+  },
+
+  toJSON(message: SchemasResponse_SchemasEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== undefined) {
+      obj.value = Schema.toJSON(message.value);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SchemasResponse_SchemasEntry>, I>>(base?: I): SchemasResponse_SchemasEntry {
+    return SchemasResponse_SchemasEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SchemasResponse_SchemasEntry>, I>>(object: I): SchemasResponse_SchemasEntry {
+    const message = createBaseSchemasResponse_SchemasEntry();
+    message.key = object.key ?? "";
+    message.value = (object.value !== undefined && object.value !== null)
+      ? Schema.fromPartial(object.value)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseSchemasResponse_ErrorsEntry(): SchemasResponse_ErrorsEntry {
+  return { key: "", value: "" };
+}
+
+export const SchemasResponse_ErrorsEntry = {
+  encode(message: SchemasResponse_ErrorsEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): SchemasResponse_ErrorsEntry {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSchemasResponse_ErrorsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SchemasResponse_ErrorsEntry {
+    return { key: isSet(object.key) ? String(object.key) : "", value: isSet(object.value) ? String(object.value) : "" };
+  },
+
+  toJSON(message: SchemasResponse_ErrorsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SchemasResponse_ErrorsEntry>, I>>(base?: I): SchemasResponse_ErrorsEntry {
+    return SchemasResponse_ErrorsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SchemasResponse_ErrorsEntry>, I>>(object: I): SchemasResponse_ErrorsEntry {
+    const message = createBaseSchemasResponse_ErrorsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? "";
+    return message;
+  },
+};
+
+function createBaseSchema(): Schema {
+  return { primaryIndex: [], fields: [] };
+}
+
+export const Schema = {
+  encode(message: Schema, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    writer.uint32(10).fork();
+    for (const v of message.primaryIndex) {
+      writer.int32(v);
+    }
+    writer.ldelim();
+    for (const v of message.fields) {
+      FieldDefinition.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Schema {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSchema();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag === 8) {
+            message.primaryIndex.push(reader.int32());
+
+            continue;
+          }
+
+          if (tag === 10) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.primaryIndex.push(reader.int32());
+            }
+
+            continue;
+          }
+
+          break;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.fields.push(FieldDefinition.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Schema {
+    return {
+      primaryIndex: Array.isArray(object?.primaryIndex) ? object.primaryIndex.map((e: any) => Number(e)) : [],
+      fields: Array.isArray(object?.fields) ? object.fields.map((e: any) => FieldDefinition.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: Schema): unknown {
+    const obj: any = {};
+    if (message.primaryIndex?.length) {
+      obj.primaryIndex = message.primaryIndex.map((e) => Math.round(e));
+    }
+    if (message.fields?.length) {
+      obj.fields = message.fields.map((e) => FieldDefinition.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Schema>, I>>(base?: I): Schema {
+    return Schema.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Schema>, I>>(object: I): Schema {
+    const message = createBaseSchema();
+    message.primaryIndex = object.primaryIndex?.map((e) => e) || [];
+    message.fields = object.fields?.map((e) => FieldDefinition.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 declare const self: any | undefined;
 declare const window: any | undefined;
 declare const global: any | undefined;
@@ -1544,6 +1825,10 @@ function longToNumber(long: Long): number {
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isObject(value: any): boolean {
+  return typeof value === "object" && value !== null;
 }
 
 function isSet(value: any): boolean {
