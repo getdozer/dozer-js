@@ -25,7 +25,7 @@
 
 ## Overview
 This repository is a react helpers for using [Dozer](https://github.com/getdozer/dozer) as data provider.
-It contains 3 hooks `useDozerEndpointCount`, `useDozerEndpointQuery`, `useDozerEndpoint`
+
 ## Installation
 
 ```bash
@@ -49,31 +49,15 @@ function App () {
 }
 ```
 
-### `useDozerEndpointCount(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
 
-This hook returns number of records in endpoint.
-```javascript
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpointCount } from "@dozerjs/dozer-react";
-// ...
+### query
+`useDozerQuery(endpoint: string, query?: DozerQuery)`
 
-const AirportComponent = () => {
-    // count will be updated on any change in airports endpoint
-    // if you don't want to watch for changes, you can remove watch option
-    const { count } = useDozerEndpointCount('airports', { watch: EventType.ALL });
-
-    return <span>Total airports count: {count}</span>
-}
-```
-
-### `useDozerEndpointQuery(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
-This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest). 
+This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/accessing-data/query-format). 
 Query is json object serialized as string.
-```javascript
+```tsx
 import { Order } from '@dozerjs/dozer';
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpointQuery } from "@dozerjs/dozer-react";
-// ...
+import { useDozerQuery } from "@dozerjs/dozer-react";
 
 const AirportComponent = () => {
     let query = {
@@ -81,28 +65,136 @@ const AirportComponent = () => {
         start: Order.ASC
       }
     }
-    // records will be updated on any change in airports endpoint
-    // if you don't want to watch for changes, you can remove watch option
-    const { records, fields } = useDozerEndpointQuery('airports', { query, watch: EventType.ALL });
+    const { records, fields } = useDozerQuery('airports', query);
     
     return <>{records.map(r => <div>{ r.name }</div>)}</>
 }
 ```
 
-### `useDozerEndpoint(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
 
-```javascript
+### count
+`useDozerCount(endpoint: string, query?: DozerQuery)`
+
+This hook returns number of records in endpoint.
+```tsx
+import { useDozerCount } from "@dozerjs/dozer-react";
+
+const AirportComponent = () => {
+    const { count } = useDozerEndpointCount('airports');
+
+    return <span>Total airports count: {count}</span>
+}
+```
+
+
+### event
+`useDozerEvent(options: { endpoint: string; eventType?: EventType; filter?: DozerFilter}[])`
+
+This hook can create a gRPC stream to monitor real-time store modifications for multiple endpoints.
+
+```tsx
+import { useState } from 'react';
+import { useDozerEvent } from "@dozerjs/dozer-react";
+import { EventType, Operation } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
+
+const AirportComponent = () => {
+   
+    const [count, setCount] = useState(0);
+   
+    const { stream } = useDozerEvent([
+        {
+            endpoint: 'airports', 
+            eventType: EventType.All,
+        }
+    ]);
+
+    stream.on('data', (operation: Operation) => {
+        setNum(pre => prev + 1);
+    });
+    
+    return <span>Total event count: {count}</span>
+}
+```
+
+## Advantage
+
+### connect event
+
+Here a `connect` function exported from `useDozerQuery` and `useDozerCount`, it can monitor gRPC stream exported from `useDozerEvent` and automagically updates.
+
+```tsx
+import { useDozerCount, userDozerQuery, useDozerEvent } from "@dozerjs/dozer-react";
+
+const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
+ const { count, connect } = useDozerCount('airports');
+ connect(stream);
+ return (
+    <div>
+        <div>Total count: {count}</div>
+        <div>* automagic updates</div>
+    </div>
+ )
+}
+const QueryComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
+ const { records, connect } = useDozerQuery('airports');
+ connect(stream);
+ return (
+    <div>
+        <div>Records length: {records.length}</div>
+        <div>* automagic updates</div>
+    </div>
+ )
+}
+
+const AirportComponent = () => {
+    const { stream } = useDozerEvent({
+        endpoint: 'airports',
+        eventType: EventType.ALL
+    });
+
+    return (
+        <div>
+            <CountComponent stream={stream} />
+            <QueryComponent stream={stream} />
+        </div>
+    )
+}
+```
+
+
+
+### multiple endpoints with event
+`useDozerEndpoints(options: { endpoint: string; eventType?: EventType; filter?: DozerFilter}[])`
+
+This hook can get data for multiple endpoints. Can also automagic updates if you set `eventType`.
+
+```tsx
 import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpointQuery } from "@dozerjs/dozer-react";
+import { useDozerQuery } from "@dozerjs/dozer-react";
 
 const AirportsComponent = () => {
-    // count and records will be updated on any change in airports endpoint
-    // if you don't want to watch for changes, you can remove watch option
-    const { count, records, fields } = useDozerEndpoint('airports', { watch: EventType.ALL });
+    const options = [
+        {
+            endpoint: 'airports', 
+            eventType: EventType.All,
+        },
+        {
+            endpoint: 'airports_count', 
+            eventType: EventType.All,
+        },
+    ];
     
-    return <>
-        <div>Count: {count}</div>
-        {airports.map((airport, idx) => <div key={idx}>{ airport.name }</div>)}
-    </>
+    const data = useDozerEndpoints(options);
+    
+    return options.map((option, index) => (
+        <>
+            <h3>Endpoint: {option.endpoint}</h3>
+            <div>
+                {
+                    data[index].records.map((record, idx) => <div key={idx}>{ JSON.stringify(record) }</div>)
+                }
+            </div>
+        </>
+    ))
 }
 ```
