@@ -12,7 +12,6 @@ export function useDozerCount(name: string, query?: DozerQuery) {
 
     const readyRef = useRef<boolean>(false);
     const errorRef = useRef<Error>();
-    const cacheRef = useRef<Operation[]>([]);
     const streamRef = useRef<ClientReadableStream<Operation>>();
 
     const consume = useCallback((operation: Operation) => {
@@ -25,7 +24,6 @@ export function useDozerCount(name: string, query?: DozerQuery) {
         }
 
         if (readyRef.current === false) {
-            cacheRef.current.push(operation);
             return;
         }
 
