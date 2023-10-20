@@ -40,7 +40,7 @@ export function useDozerQuery(name: string, query?: DozerQuery) {
     }
   }, []);
 
-  const connect = (stream: ClientReadableStream<Operation>) => {
+  const connect = (stream?: ClientReadableStream<Operation>) => {
     if (streamRef.current === stream) {
       return;
     }

@@ -36,7 +36,7 @@ export function useDozerCount(name: string, query?: DozerQuery) {
         setCount((prev) => prev + map[operation.getTyp()]);
     }, []);
 
-    const connect = (stream: ClientReadableStream<Operation>) => {
+    const connect = (stream?: ClientReadableStream<Operation>) => {
         if (streamRef.current === stream) {
             return;
         }
