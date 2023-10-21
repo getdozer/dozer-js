@@ -173,7 +173,7 @@ import { useDozerCount, useDozerEvent } from "@dozerjs/dozer-react";
 import { ClientReadableStream } from "grpc-web";
 
 const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
-  const { count, consuume } = useDozerCount('airports');
+  const { count, consume } = useDozerCount('airports');
 
   useEffect(() => {
     const cb = ((operation: types_pb.Operation) => {
