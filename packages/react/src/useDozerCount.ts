@@ -58,5 +58,5 @@ export function useDozerCount(name: string, query?: DozerQuery) {
       setError(error);
     });
   }, []);
-  return { count, error, connect };
+  return { count, error, connect, consume };
 }

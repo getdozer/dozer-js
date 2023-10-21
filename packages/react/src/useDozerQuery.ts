@@ -78,5 +78,5 @@ export function useDozerQuery(name: string, query?: DozerQuery) {
     });
   }, []);
 
-  return { fields, records, connect, error };
+  return { fields, records, connect, consume, error };
 }

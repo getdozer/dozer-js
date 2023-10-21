@@ -10,7 +10,7 @@ export function merge<T>(prev: DozerRecord<T>[], operation: Operation, fields: F
     if (!newRecord) {
       return;
     }
-    const index = prev.findIndex(record => record.__dozer_record_id === newRecord?.getId());
+    const index = prev.findIndex(record => record.__dozer_record_id === newRecord.getId());
     // ignore if exists
     if (index !== -1) {
       return;
