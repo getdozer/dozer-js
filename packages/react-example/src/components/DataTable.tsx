@@ -1,28 +1,18 @@
-import { types_pb } from "@dozerjs/dozer";
-import { useDozerQuery } from "@dozerjs/dozer-react";
-import { Alert, Box, Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import { ClientReadableStream } from "grpc-web";
+import { DozerRecord, types_pb } from "@dozerjs/dozer";
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { forwardRef } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
+import { ErrorMessage } from "./ErrorMessage";
 
-export function DozerTable(props: {
-  stream?: ClientReadableStream<types_pb.Operation>;
-  endpoint: string;
+export function DataTable<T>(props: {
+  fields?: types_pb.FieldDefinition[];
+  records?: DozerRecord<T>[];
+  error?: Error;
 }) {
-  const { fields, records, error, connect } = useDozerQuery(props.endpoint, {});
-  props.stream && connect(props.stream);
+  const { fields, records, error } = props;
 
   if (error) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '500px',
-      }}>
-        <Alert severity="error">{error.message}</Alert>
-      </Box>
-    )
+    return <ErrorMessage error={error} />;
   }
 
   const VirtuosoTableComponents: TableComponents<object> = {
@@ -52,7 +42,7 @@ export function DozerTable(props: {
   function FixedHeaderContent() {
     return (
       <TableRow>
-        {fields.map((column: types_pb.FieldDefinition) => (
+        {fields?.map((column: types_pb.FieldDefinition) => (
           <TableCell
             key={column.getName()}
             variant="head"
@@ -70,10 +60,9 @@ export function DozerTable(props: {
   function RowContent(_index: number, row: any) {
     return (
       <>
-        {fields.map((column: types_pb.FieldDefinition) => (
-          <TableCell key={column.getName()}
-          >
-            {row[column.getName()]}
+        {fields?.map((column: types_pb.FieldDefinition) => (
+          <TableCell key={column.getName()}>
+            <>{row[column.getName()]}</>
           </TableCell>
         ))}
       </>
