@@ -38,14 +38,14 @@ yarn add @dozerjs/dozer-react
 ```tsx
 import { DozerProvider } from "@dozerjs/dozer-react";
 
-function App () {
-    return (
-        <DozerProvider value={{
-            serverAddress: 'http://localhost:50051',
-        }}>
-            {/* ... */}
-        </DozerProvider>
-    )
+function App() {
+  return (
+    <DozerProvider value={{
+      serverAddress: 'http://localhost:50051',
+    }}>
+      {/* ... */}
+    </DozerProvider>
+  )
 }
 ```
 
@@ -53,21 +53,21 @@ function App () {
 ### query
 `useDozerQuery(endpoint: string, query?: DozerQuery)`
 
-This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/accessing-data/query-format). 
+This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/accessing-data/query-format).
 Query is json object serialized as string.
 ```tsx
 import { Order } from '@dozerjs/dozer';
 import { useDozerQuery } from "@dozerjs/dozer-react";
 
-const AirportComponent = () => {
-    let query = {
-      orderBy: {
-        start: Order.ASC
-      }
+function AirportComponent() {
+  let query = {
+    orderBy: {
+      start: Order.ASC
     }
-    const { records, fields } = useDozerQuery('airports', query);
-    
-    return <>{records.map(r => <div>{ r.name }</div>)}</>
+  }
+  const { records, fields } = useDozerQuery('airports', query);
+
+  return <>{records.map(r => <div>{r.name}</div>)}</>
 }
 ```
 
@@ -80,9 +80,9 @@ This hook returns number of records in endpoint.
 import { useDozerCount } from "@dozerjs/dozer-react";
 
 const AirportComponent = () => {
-    const { count } = useDozerEndpointCount('airports');
+  const { count } = useDozerEndpointCount('airports');
 
-    return <span>Total airports count: {count}</span>
+  return <span>Total airports count: {count}</span>
 }
 ```
 
@@ -93,75 +93,140 @@ const AirportComponent = () => {
 This hook can create a gRPC stream to monitor real-time store modifications for multiple endpoints.
 
 ```tsx
-import { useState } from 'react';
+import { types_pb } from '@dozerjs/dozer';
 import { useDozerEvent } from "@dozerjs/dozer-react";
-import { EventType, Operation } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
+import { useState } from 'react';
 
 const AirportComponent = () => {
-   
-    const [count, setCount] = useState(0);
-   
-    const { stream } = useDozerEvent([
-        {
-            endpoint: 'airports', 
-            eventType: EventType.All,
-        }
-    ]);
 
-    stream.on('data', (operation: Operation) => {
-        setNum(pre => prev + 1);
-    });
-    
-    return <span>Total event count: {count}</span>
+  const [count, setCount] = useState(0);
+
+  const { stream } = useDozerEvent([
+    {
+      endpoint: 'airports',
+      eventType: types_pb.EventType.All,
+    }
+  ]);
+
+  stream.on('data', (operation: types_pb.Operation) => {
+    setNum(pre => prev + 1);
+  });
+
+  return <span>Total event count: {count}</span>
 }
 ```
 
 ## Advantage
 
-### connect event
+### connect stream
 
 Here a `connect` function exported from `useDozerQuery` and `useDozerCount`, it can monitor gRPC stream exported from `useDozerEvent` and automagically updates.
 
 ```tsx
-import { useDozerCount, userDozerQuery, useDozerEvent } from "@dozerjs/dozer-react";
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerCount, useDozerEvent } from "@dozerjs/dozer-react";
+import { ClientReadableStream } from "grpc-web";
 
 const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
- const { count, connect } = useDozerCount('airports');
- connect(stream);
- return (
+  const { count, connect } = useDozerCount('airports');
+  connect(stream);
+  return (
     <div>
-        <div>Total count: {count}</div>
-        <div>* automagic updates</div>
+      <div>Total count: {count}</div>
+      <div>* automagic updates</div>
     </div>
- )
+  )
 }
 const QueryComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
- const { records, connect } = useDozerQuery('airports');
- connect(stream);
- return (
+  const { records, connect } = useDozerQuery('airports');
+  connect(stream);
+  return (
     <div>
-        <div>Records length: {records.length}</div>
-        <div>* automagic updates</div>
+      <div>Records length: {records.length}</div>
+      <div>* automagic updates</div>
     </div>
- )
+  )
 }
 
 const AirportComponent = () => {
-    const { stream } = useDozerEvent({
-        endpoint: 'airports',
-        eventType: EventType.ALL
-    });
+  const { stream } = useDozerEvent({
+    endpoint: 'airports',
+    eventType: types_pb.EventType.ALL
+  });
 
-    return (
-        <div>
-            <CountComponent stream={stream} />
-            <QueryComponent stream={stream} />
-        </div>
-    )
+  return (
+    <div>
+      <CountComponent stream={stream} />
+      <QueryComponent stream={stream} />
+    </div>
+  )
 }
 ```
 
+### consume operation
 
+The `connect` function will consume all the operations of gRPC stream, if you want to filter, you can use `consume` funtion.
+
+```tsx
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerCount, useDozerEvent } from "@dozerjs/dozer-react";
+import { ClientReadableStream } from "grpc-web";
+
+const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
+  const { count, consuume } = useDozerCount('airports');
+
+  useEffect(() => {
+    const cb = ((operation: types_pb.Operation) => {
+      consume(operation);
+    })
+    props.stream?.on('data', cb);
+    return () => {
+      props.stream?.removeListener('data', cb);
+    }
+  }, [props.stream]);
+
+  return (
+    <div>
+      <div>Total count: {count}</div>
+      <div>* automagic updates</div>
+    </div>
+  )
+}
+const QueryComponent = (props: { stream?: ClientReadableStream<types_pb.Operation> }) => {
+  const { records, consume } = useDozerQuery('airports');
+
+  useEffect(() => {
+    const cb = ((operation: types_pb.Operation) => {
+      consume(operation);
+    })
+    props.stream?.on('data', cb);
+    return () => {
+      props.stream?.removeListener('data', cb);
+    }
+  }, [props.stream]);
+
+  return (
+    <div>
+      <div>Records length: {records.length}</div>
+      <div>* automagic updates</div>
+    </div>
+  )
+}
+
+const AirportComponent = () => {
+  const { stream } = useDozerEvent({
+    endpoint: 'airports',
+    eventType: types_pb.EventType.ALL
+  });
+
+  return (
+    <div>
+      <CountComponent stream={stream} />
+      <QueryComponent stream={stream} />
+    </div>
+  )
+}
+```
 
 ### multiple endpoints with event
 `useDozerEndpoints(options: { endpoint: string; eventType?: EventType; filter?: DozerFilter}[])`
@@ -169,32 +234,32 @@ const AirportComponent = () => {
 This hook can get data for multiple endpoints. Can also automagic updates if you set `eventType`.
 
 ```tsx
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerQuery } from "@dozerjs/dozer-react";
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerEndpoints } from "@dozerjs/dozer-react";
 
 const AirportsComponent = () => {
-    const options = [
+  const options = [
+    {
+      endpoint: 'airports',
+      eventType: types_pb.EventType.All,
+    },
+    {
+      endpoint: 'airports_count',
+      eventType: types_pb.EventType.All,
+    },
+  ];
+
+  const data = useDozerEndpoints(options);
+
+  return options.map((option, index) => (
+    <>
+      <h3>Endpoint: {option.endpoint}</h3>
+      <div>
         {
-            endpoint: 'airports', 
-            eventType: EventType.All,
-        },
-        {
-            endpoint: 'airports_count', 
-            eventType: EventType.All,
-        },
-    ];
-    
-    const data = useDozerEndpoints(options);
-    
-    return options.map((option, index) => (
-        <>
-            <h3>Endpoint: {option.endpoint}</h3>
-            <div>
-                {
-                    data[index].records.map((record, idx) => <div key={idx}>{ JSON.stringify(record) }</div>)
-                }
-            </div>
-        </>
-    ))
+          data[index].records.map((record, idx) => <div key={idx}>{JSON.stringify(record)}</div>)
+        }
+      </div>
+    </>
+  ))
 }
 ```
