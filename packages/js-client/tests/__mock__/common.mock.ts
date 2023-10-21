@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { ClientReadableStream, Metadata } from 'grpc-web';
 import { CountResponse, GetFieldsRequest, GetFieldsResponse, OnEventRequest, QueryRequest, QueryResponse } from '../../src/generated/protos/common_pb';
-import { FieldDefinition, Operation, Record, RecordWithId, Value } from '../../src/generated/protos/types_pb';
+import { FieldDefinition, Operation, Record, Value } from '../../src/generated/protos/types_pb';
 import { eventMockData, fieldsMockData, primaryIndexList, recordMockData } from './common.data';
 
 jest.mock('grpc-web', );
@@ -29,12 +29,13 @@ export const queryMock = jest.fn<(request: QueryRequest, metadata: Metadata | nu
   fieldsMockData.forEach((field) => {
     resp.addFields(new FieldDefinition().setTyp(field.typ).setName(field.name).setNullable(field.nullable));
   })
-  
+
   recordMockData.forEach((item) => {
     const record = new Record();
-    record.setValuesList(item.record.values.map(v => new Value().setIntValue(v.intValue)));
-    record.setVersion(item.record.version);
-    resp.addRecords(new RecordWithId().setId(item.id).setRecord(record));
+    record.setId(item.id);
+    record.setValuesList(item.values.map(v => new Value().setIntValue(v.intValue)));
+    record.setVersion(item.version);
+    resp.addRecords(record);
   });
 
   return Promise.resolve(resp);
@@ -46,25 +47,23 @@ export const onEventMock = jest.fn((event: string, callback: (operation?: Operat
       const operation = new Operation();
       operation.setEndpointName(item.endpointName);
       operation.setTyp(item.typ);
-      
+
       if (item.new) {
         const newRecord = new Record();
+        newRecord.setId(item.new.id);
         newRecord.setVersion(item.new.version);
         newRecord.setValuesList(item.new.values.map(v => new Value().setIntValue(v.intValue)));
         operation.setNew(newRecord);
       }
-      
+
       if (item.old) {
         const oldRecord = new Record();
+        oldRecord.setId(item.old.id);
         oldRecord.setVersion(item.old.version);
         oldRecord.setValuesList(item.old.values.map(v => new Value().setIntValue(v.intValue)));
         operation.setNew(oldRecord);
       }
 
-      if (item.newId) {
-        operation.setNewId(item.newId);
-      }
-      
       callback(operation);
     });
   } else if (event === "end") {
