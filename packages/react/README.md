@@ -88,7 +88,7 @@ const AirportComponent = () => {
 
 
 ### event
-`useDozerEvent(options: { endpoint: string; eventType?: EventType; filter?: DozerFilter}[])`
+`useDozerEvent(options: DozerOnEventOption[])`
 
 This hook can create a gRPC stream to monitor real-time store modifications for multiple endpoints.
 
@@ -229,7 +229,7 @@ const AirportComponent = () => {
 ```
 
 ### multiple endpoints with event
-`useDozerEndpoints(options: { endpoint: string; eventType?: EventType; filter?: DozerFilter}[])`
+`useDozerEndpoints(options: DozerOnEventOption[])`
 
 This hook can get data for multiple endpoints. Can also automagic updates if you set `eventType`.
 

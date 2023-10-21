@@ -1,15 +1,11 @@
-import { DozerFilter } from "@dozerjs/dozer";
-import { EventType, FieldDefinition, Operation } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { DozerOnEventOption } from "@dozerjs/dozer";
+import { FieldDefinition, Operation } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DozerConsumer } from "./context";
 import { useDozerEvent } from "./useDozerEvent";
 import { merge } from "./util";
 
-export function useDozerEndpoints(options: {
-  endpoint: string;
-  eventType?: EventType;
-  filter?: DozerFilter;
-}[]) {
+export function useDozerEndpoints(options: DozerOnEventOption[]) {
   const { client } = DozerConsumer();
   const { stream } = useDozerEvent(options.filter(item => item.eventType !== undefined));
   const [data, setData] = useState<{ fields?: FieldDefinition[]; records?: any[], error?: Error }[]>([]);

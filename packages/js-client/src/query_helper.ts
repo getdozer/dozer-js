@@ -1,3 +1,5 @@
+import { EventType } from "./generated/protos/types_pb";
+
 export interface DozerQuery {
     orderBy?: null | OrderByParam
     limit?: number,
@@ -59,4 +61,10 @@ export class QueryHelper {
 export type DozerRecord<T> =  T & {
     __dozer_record_id: number;
     __dozer_record_version: number;
-};;
+}
+
+export interface DozerOnEventOption {
+  endpoint: string;
+  eventType?: EventType;
+  filter?: DozerFilter;
+}

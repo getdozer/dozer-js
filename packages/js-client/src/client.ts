@@ -8,7 +8,7 @@ import {
   OnEventRequest,
   QueryRequest
 } from "./generated/protos/common_pb";
-import { DozerFilter, DozerQuery, DozerRecord, QueryHelper } from "./query_helper";
+import { DozerFilter, DozerOnEventOption, DozerQuery, DozerRecord, QueryHelper } from "./query_helper";
 import { HealthGrpcServiceClient } from "./generated/protos/HealthServiceClientPb";
 import { HealthCheckRequest, HealthCheckResponse } from "./generated/protos/health_pb";
 import { ClientReadableStream, Metadata } from "grpc-web";
@@ -97,11 +97,7 @@ export class DozerClient {
     return cache;
   }
 
-  onEvent(options: {
-    endpoint: string,
-    eventType?: EventType,
-    filter?: DozerFilter,
-  }[]) {
+  onEvent(options: DozerOnEventOption[]) {
     const onEventRequest = new OnEventRequest()
     const endpointsMap = onEventRequest.getEndpointsMap();
 
