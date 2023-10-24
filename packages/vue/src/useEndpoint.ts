@@ -50,7 +50,7 @@ function useDozerEndpointCommon(name: string, options?: {
 
   onMounted(() => {
     options?.onlyQuery || endpoint.count(options?.query).then((response) => {
-      count.value = response.getCount();
+      count.value = response;
     });
 
     options?.onlyCount || endpoint.query(options?.query).then((response) => {
@@ -66,7 +66,7 @@ function useDozerEndpointCommon(name: string, options?: {
               buffer.value = [...buffer.value, evt.data.new];
             }
           }
-         
+
           if (!options.onlyQuery) {
             count.value = count.value + 1;
           }
@@ -88,7 +88,7 @@ function useDozerEndpointCommon(name: string, options?: {
             if (index !== -1) {
               buffer.value.splice(index, 1, newValue);
             }
-            
+
           }
         }
       }, options.watch, options.query?.filter);
