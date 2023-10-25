@@ -25,11 +25,16 @@
 
 ## Overview
 This repository is a vue helpers for using [Dozer](https://github.com/getdozer/dozer) as data provider.
-It contains 3 hooks `useDozerEndpointCount`, `useDozerEndpointQuery`, `useDozerEndpoint`
+
 ## Installation
 
 ```bash
+# npm
+npm install @dozerjs/dozer-vue
+# yarn
 yarn add @dozerjs/dozer-vue
+# pnpm
+pnpm add @dozerjs/dozer-vue
 ```
 
 ## Usage
@@ -42,64 +47,169 @@ import { DozerProvider } from "@dozerjs/dozer-vue";
 </script>
 
 <template>
-    <DozerProvider :value="{
-        serverAddress: 'http://localhost:50051',
-    }">
-        <!-- content -->
-    </DozerProvider>
+  <DozerProvider :value="{
+      serverAddress: 'http://localhost:50051',
+  }">
+    <!-- content -->
+  </DozerProvider>
 </template>
 ```
 
-### `useDozerEndpointCount(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
+### query
+`useDozerQuery(endpoint: string, query?: DozerQuery)`
+
+This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/accessing-data/query-format).
+Query is json object serialized as string.
+
+```vue
+<script setup lang="ts">
+import { useDozerQuery } from "@dozerjs/dozer-vue";
+const { fields, records } = useDozerQuery('airports');
+</script>
+
+<template>
+  <div v-for="record of records" :key="record.__dozer_record_id">{{JSON.stringify(record)}}</div>
+</template>
+```
+
+### count
+`useDozerCount(endpoint: string, query?: DozerQuery)`
 
 This hook returns number of records in endpoint.
+
 ```vue
 <script setup lang="ts">
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpointCount } from "@dozerjs/dozer-vue";
-
-// count will be updated on any change in airports endpoint
-// if you don't want to watch for changes, you can remove watch option
-const { count } = useDozerEndpointCount('airports', { watch: EventType.ALL });
+import { useDozerCount } from "@dozerjs/dozer-vue";
+const { count } = useDozerCount('airports');
 </script>
 
 <template>
-    <span>Total airports count: {count}</span>
+  <span>Total airports count: {count}</span>
 </template>
 ```
 
-### `useDozerEndpointQuery(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
-This hook can be used for getting data from cache. It allows to pass [query](https://getdozer.io/docs/api/grpc/common#dozer-common-QueryRequest). 
-Query is json object serialized as string.
+###  event
+`useDozerEvent(options: DozerOnEventOption[])`
+
+This hook can create a gRPC stream to monitor real-time store modifications for multiple endpoints.
+
 ```vue
 <script setup lang="ts">
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpointQuery } from "@dozerjs/dozer-vue";
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerEvent } from "@dozerjs/dozer-vue";
+import { ref } from 'vue';
 
-// records will be updated on any change in airports endpoint
-// if you don't want to watch for changes, you can remove watch option
-const { records, fields } = useDozerEndpointQuery('airports', { query, watch: EventType.ALL });
+const count = ref(0);
+
+const { stream } = useDozerEvent([
+  {
+    endpoint: 'airports',
+    eventType: types_pb.EventType.All,
+  }
+]);
+
+stream.on('data', (operation: types_pb.Operation) => {
+  count.value += 1;
+})
 </script>
 
 <template>
-    <div v-for="(r as Record<string, any>)of records" :key="(r as Record<string, any>).name">{{(r as Record<string, any>).name}}</div>
+  <span>Total event count: {count}</span>
 </template>
 ```
 
-### `useDozerEndpoint(endpoint: string, options?: { query?: DozerQuery; watch?: EventType; })`
+
+## Advantage
+
+### connect stream
+
+Here a `connect` function exported from `useDozerQuery` and `useDozerCount`, it can monitor gRPC stream exported from `useDozerEvent` and automagically updates.
 
 ```vue
 <script setup lang="ts">
-import { EventType } from '@dozerjs/dozer/lib/esm/generated/protos/types_pb';
-import { useDozerEndpoint } from "@dozerjs/dozer-vue";
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerCount, useDozerEvent, useDozerQuery } from "@dozerjs/dozer-vue";
 
-// count and records will be updated on any change in airports endpoint
-// if you don't want to watch for changes, you can remove watch option
-const { count, records, fields } = useDozerEndpoint('airports', { watch: EventType.ALL });
+const { stream } = useDozerEvent([
+  {
+    endpoint: 'airports',
+    eventType: types_pb.EventType.ALL
+  },
+]);
+const { count, connect: countConnect } = useDozerCount('airports');
+const { records, connect: queryConnect } = useDozerQuery('airports');
+countConnect(stream);
+queryConnect(stream);
 </script>
 
 <template>
-    <div>Count: {count}</div>
-    <div v-for="(r as Record<string, any>) of records" :key="(r as Record<string, any>).name">{{(r as Record<string, any>).name}}</div>
+  <h3>Total count: <small>* automagic updates</small></h3>
+  <div>{count}</div>
+  <h3>Records length:  <small>* automagic updates</small></h3>
+  <div v-for="record of records" :key="record.__dozer_record_id">{{JSON.stringify(record)}}</div>
+</template>
+```
+
+### consume operation
+
+The `connect` function will consume all the operations of gRPC stream, if you want to filter, you can use `consume` funtion.
+
+```vue
+<script setup lang="ts">
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerCount, useDozerEvent, useDozerQuery } from "@dozerjs/dozer-vue";
+
+const { stream } = useDozerEvent([
+  {
+    endpoint: 'airports',
+    eventType: types_pb.EventType.ALL
+  },
+]);
+const { count, consume: countConsume } = useDozerCount('airports');
+const { records, consume: queryConsume } = useDozerQuery('airports');
+stream.on('data', (operation: types_pb.Operation) => {
+  countConsume(operation);
+  queryConsume(operation);
+});
+</script>
+
+<template>
+  <h3>Total count: <small>* automagic updates</small></h3>
+  <div>{count}</div>
+  <h3>Records length:  <small>* automagic updates</small></h3>
+  <div v-for="record of records" :key="record.__dozer_record_id">{{JSON.stringify(record)}}</div>
+</template>
+```
+
+### multiple endpoints with event
+`useDozerEndpoints(options: DozerOnEventOption[])`
+
+This hook can get data for multiple endpoints. Can also automagic updates if you set `eventType`.
+
+```vue
+<script setup lang="ts">
+import { types_pb } from '@dozerjs/dozer';
+import { useDozerEndpoints } from "@dozerjs/dozer-vue";
+
+const options = [
+  {
+    endpoint: 'airports',
+    eventType: types_pb.EventType.ALL
+  },
+  {
+    endpoint: 'airports_count',
+    eventType: types_pb.EventType.All,
+  },
+];
+const data = useDozerEndpoints(options);
+</script>
+
+<template>
+  <div v-for="(option, index) in options">
+    <h3>{{ option.endpoint }}</h3>
+    <div v-if="data[index]">
+      <div v-for="record of records" :key="record.__dozer_record_id">{{JSON.stringify(record)}}</div>
+    </div>
+  </div>
 </template>
 ```
