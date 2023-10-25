@@ -29,7 +29,12 @@ This repository is a react helpers for using [Dozer](https://github.com/getdozer
 ## Installation
 
 ```bash
+# npm
+npm install @dozerjs/dozer-react
+# yarn
 yarn add @dozerjs/dozer-react
+# pnpm
+pnpm add @dozerjs/dozer-react
 ```
 
 ## Usage
@@ -67,7 +72,7 @@ function AirportComponent() {
   }
   const { records, fields } = useDozerQuery('airports', query);
 
-  return <>{records.map(r => <div>{r.name}</div>)}</>
+  return <>{records.map(record => <div key={record.__dozer_record_id}>{JSON.stringify(record)}</div>)}</>
 }
 ```
 
@@ -132,8 +137,8 @@ const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operatio
   connect(stream);
   return (
     <div>
-      <div>Total count: {count}</div>
-      <div>* automagic updates</div>
+      <h3>Total count: <small>* automagic updates</small></h3>
+      <div>{count}</div>
     </div>
   )
 }
@@ -142,17 +147,19 @@ const QueryComponent = (props: { stream?: ClientReadableStream<types_pb.Operatio
   connect(stream);
   return (
     <div>
-      <div>Records length: {records.length}</div>
-      <div>* automagic updates</div>
+      <h3>Records length: <small>* automagic updates</small></h3>
+      <div>{records.map(record => <div key={record.__dozer_record_id}>{JSON.stringify(record)}</div>)}</div>
     </div>
   )
 }
 
 const AirportComponent = () => {
-  const { stream } = useDozerEvent({
-    endpoint: 'airports',
-    eventType: types_pb.EventType.ALL
-  });
+  const { stream } = useDozerEvent([
+    {
+      endpoint: 'airports',
+      eventType: types_pb.EventType.ALL
+    },
+  ]);
 
   return (
     <div>
@@ -187,8 +194,8 @@ const CountComponent = (props: { stream?: ClientReadableStream<types_pb.Operatio
 
   return (
     <div>
-      <div>Total count: {count}</div>
-      <div>* automagic updates</div>
+      <h3>Total count: <small>* automagic updates</small></h3>
+      <div>{count}</div>
     </div>
   )
 }
@@ -207,8 +214,8 @@ const QueryComponent = (props: { stream?: ClientReadableStream<types_pb.Operatio
 
   return (
     <div>
-      <div>Records length: {records.length}</div>
-      <div>* automagic updates</div>
+      <h3>Records length: <small>* automagic updates</small></h3>
+      <div>{records.map(record => <div key={record.__dozer_record_id}>{JSON.stringify(record)}</div>)}</div>
     </div>
   )
 }
@@ -256,7 +263,7 @@ const AirportsComponent = () => {
       <h3>Endpoint: {option.endpoint}</h3>
       <div>
         {
-          data[index].records.map((record, idx) => <div key={idx}>{JSON.stringify(record)}</div>)
+          data[index].records?.map((record) => <div key={record.__dozer_record_id}>{JSON.stringify(record)}</div>)
         }
       </div>
     </>
