@@ -1017,7 +1017,7 @@ proto.dozer.common.QueryResponse.toObject = function(includeInstance, msg) {
     fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
     types_pb.FieldDefinition.toObject, includeInstance),
     recordsList: jspb.Message.toObjectList(msg.getRecordsList(),
-    types_pb.RecordWithId.toObject, includeInstance)
+    types_pb.Record.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1060,8 +1060,8 @@ proto.dozer.common.QueryResponse.deserializeBinaryFromReader = function(msg, rea
       msg.addFields(value);
       break;
     case 2:
-      var value = new types_pb.RecordWithId;
-      reader.readMessage(value,types_pb.RecordWithId.deserializeBinaryFromReader);
+      var value = new types_pb.Record;
+      reader.readMessage(value,types_pb.Record.deserializeBinaryFromReader);
       msg.addRecords(value);
       break;
     default:
@@ -1106,7 +1106,7 @@ proto.dozer.common.QueryResponse.serializeBinaryToWriter = function(message, wri
     writer.writeRepeatedMessage(
       2,
       f,
-      types_pb.RecordWithId.serializeBinaryToWriter
+      types_pb.Record.serializeBinaryToWriter
     );
   }
 };
@@ -1151,17 +1151,17 @@ proto.dozer.common.QueryResponse.prototype.clearFieldsList = function() {
 
 
 /**
- * repeated dozer.types.RecordWithId records = 2;
- * @return {!Array<!proto.dozer.types.RecordWithId>}
+ * repeated dozer.types.Record records = 2;
+ * @return {!Array<!proto.dozer.types.Record>}
  */
 proto.dozer.common.QueryResponse.prototype.getRecordsList = function() {
-  return /** @type{!Array<!proto.dozer.types.RecordWithId>} */ (
-    jspb.Message.getRepeatedWrapperField(this, types_pb.RecordWithId, 2));
+  return /** @type{!Array<!proto.dozer.types.Record>} */ (
+    jspb.Message.getRepeatedWrapperField(this, types_pb.Record, 2));
 };
 
 
 /**
- * @param {!Array<!proto.dozer.types.RecordWithId>} value
+ * @param {!Array<!proto.dozer.types.Record>} value
  * @return {!proto.dozer.common.QueryResponse} returns this
 */
 proto.dozer.common.QueryResponse.prototype.setRecordsList = function(value) {
@@ -1170,12 +1170,12 @@ proto.dozer.common.QueryResponse.prototype.setRecordsList = function(value) {
 
 
 /**
- * @param {!proto.dozer.types.RecordWithId=} opt_value
+ * @param {!proto.dozer.types.Record=} opt_value
  * @param {number=} opt_index
- * @return {!proto.dozer.types.RecordWithId}
+ * @return {!proto.dozer.types.Record}
  */
 proto.dozer.common.QueryResponse.prototype.addRecords = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.dozer.types.RecordWithId, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.dozer.types.Record, opt_index);
 };
 
 

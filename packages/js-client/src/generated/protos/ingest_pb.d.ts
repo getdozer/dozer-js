@@ -10,15 +10,15 @@ export class IngestRequest extends jspb.Message {
   getTyp(): types_pb.OperationType;
   setTyp(value: types_pb.OperationType): IngestRequest;
 
-  getOld(): types_pb.Record | undefined;
-  setOld(value?: types_pb.Record): IngestRequest;
-  hasOld(): boolean;
-  clearOld(): IngestRequest;
+  getOldList(): Array<types_pb.Value>;
+  setOldList(value: Array<types_pb.Value>): IngestRequest;
+  clearOldList(): IngestRequest;
+  addOld(value?: types_pb.Value, index?: number): types_pb.Value;
 
-  getNew(): types_pb.Record | undefined;
-  setNew(value?: types_pb.Record): IngestRequest;
-  hasNew(): boolean;
-  clearNew(): IngestRequest;
+  getNewList(): Array<types_pb.Value>;
+  setNewList(value: Array<types_pb.Value>): IngestRequest;
+  clearNewList(): IngestRequest;
+  addNew(value?: types_pb.Value, index?: number): types_pb.Value;
 
   getSeqNo(): number;
   setSeqNo(value: number): IngestRequest;
@@ -35,14 +35,9 @@ export namespace IngestRequest {
   export type AsObject = {
     schemaName: string,
     typ: types_pb.OperationType,
-    old?: types_pb.Record.AsObject,
-    pb_new?: types_pb.Record.AsObject,
+    oldList: Array<types_pb.Value.AsObject>,
+    newList: Array<types_pb.Value.AsObject>,
     seqNo: number,
-  }
-
-  export enum OldCase { 
-    _OLD_NOT_SET = 0,
-    OLD = 3,
   }
 }
 

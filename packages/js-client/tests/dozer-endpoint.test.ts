@@ -2,7 +2,7 @@ import { expect } from '@jest/globals';
 import { DozerClient, DozerEndpoint, DozerEndpointEvent } from "../src/client";
 import { CommonGrpcServiceClient } from '../src/generated/protos/CommonServiceClientPb';
 import { GetFieldsRequest, OnEventRequest, QueryRequest } from '../src/generated/protos/common_pb';
-import { EventFilter, EventType, Value } from '../src/generated/protos/types_pb';
+import { EventFilter, EventType, Record, Value } from '../src/generated/protos/types_pb';
 import { RecordMapper } from '../src/helper';
 import { DozerFilter, DozerQuery, FilterOperator, Order, QueryHelper } from '../src/query_helper';
 import { fieldsMockData, primaryIndexList, recordMockData } from './__mock__/common.data';
@@ -67,31 +67,37 @@ describe('DozerEndpoint', () => {
 
   it('should called correct: count', async () => {
     const response = await endpoint.count(query);
-    
+
     const req = new QueryRequest();
     req.setEndpoint(endpointName);
     const queryStr = QueryHelper.convertSchema(query);
     req.setQuery(queryStr);
     expect(countMock).toHaveBeenCalledWith(req, { "Authorization": `Bearer ${authToken}`, ...headers });
-    
-    expect((response.toObject()).count).toEqual(recordMockData.length);
+
+    expect(response).toEqual(recordMockData.length);
   });
 
   it('should called correct: query', async () => {
     const [ fields, records ] = await endpoint.query(query);
-    
+
     const req = new QueryRequest();
     req.setEndpoint(endpointName);
     const queryStr = QueryHelper.convertSchema(query);
     req.setQuery(queryStr);
     expect(countMock).toHaveBeenCalledWith(req, { "Authorization": `Bearer ${authToken}`, ...headers });
-    
+
 
     expect(fields.map(field => field.toObject())).toEqual(fieldsMockData);
-    expect(recordMockData.map(record => {
-      const values = record.record.values.map((v) => new Value().setIntValue(v.intValue));
+    expect(recordMockData.map(data => {
+      const record = new Record();
+      record.setId(data.id);
+      record.setVersion(data.version);
+      const values = data.values.map((v) => new Value().setIntValue(v.intValue));
+      record.setValuesList(values)
       const mapper = new RecordMapper(fields);
-      return mapper.mapRecord(values);
+      const resp = mapper.mapRecord(record);
+      console.log(resp)
+      return resp;
     })).toEqual(records);
   });
 
@@ -100,21 +106,20 @@ describe('DozerEndpoint', () => {
     const eventCallback = (evt: DozerEndpointEvent) => {
       expect(evt.operation.getTyp()).toEqual(evt.data.typ);
       expect(evt.operation.getEndpointName()).toEqual(evt.data.endpointName);
-      
-      if(evt.operation.hasNew()) {
+
+      const newRecord = evt.operation.getNew();
+      const oldRecord = evt.operation.getOld();
+
+      if(newRecord) {
         expect(evt.data.new).toBeDefined();
-        expect(evt.data.new).toEqual(evt.mapper.mapRecord(evt.operation.getNew()?.getValuesList() || []));
+        expect(evt.data.new).toEqual(evt.mapper.mapRecord(newRecord));
       }
 
-      if (evt.operation.hasOld()) {
+      if (oldRecord) {
         expect(evt.data.old).toBeDefined();
-        expect(evt.data.old).toEqual(evt.mapper.mapRecord(evt.operation.getOld()?.getValuesList() || []));
+        expect(evt.data.old).toEqual(evt.mapper.mapRecord(oldRecord));
       }
 
-      if (evt.operation.hasNewId()) {
-        expect(evt.data.newId).toBeDefined();
-        expect(evt.data.newId).toEqual(evt.operation.getNewId());
-      }
     };
 
     const stream = endpoint.onEvent(eventCallback, EventType.ALL, filter);
@@ -130,7 +135,7 @@ describe('DozerEndpoint', () => {
       .set(endpointName, eventFilter);
 
     expect(eventMock).toHaveBeenCalledWith(request, { "Authorization": `Bearer ${authToken}`, ...headers });
-    
+
     stream?.cancel();
     expect(cancelEventMock).toHaveBeenCalled();
   });

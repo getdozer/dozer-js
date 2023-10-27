@@ -3,7 +3,7 @@ import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { EventFilter, FieldDefinition, Operation, RecordWithId } from "./types";
+import { EventFilter, FieldDefinition, Operation, Record } from "./types";
 
 export const protobufPackage = "dozer.common";
 
@@ -53,7 +53,7 @@ export interface QueryResponse {
   /** The list of field definitions. */
   fields: FieldDefinition[];
   /** The list of record data. */
-  records: RecordWithId[];
+  records: Record[];
 }
 
 /** Request for `getEndpoints`. */
@@ -509,7 +509,7 @@ export const QueryResponse = {
       FieldDefinition.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     for (const v of message.records) {
-      RecordWithId.encode(v!, writer.uint32(18).fork()).ldelim();
+      Record.encode(v!, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -533,7 +533,7 @@ export const QueryResponse = {
             break;
           }
 
-          message.records.push(RecordWithId.decode(reader, reader.uint32()));
+          message.records.push(Record.decode(reader, reader.uint32()));
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -547,7 +547,7 @@ export const QueryResponse = {
   fromJSON(object: any): QueryResponse {
     return {
       fields: Array.isArray(object?.fields) ? object.fields.map((e: any) => FieldDefinition.fromJSON(e)) : [],
-      records: Array.isArray(object?.records) ? object.records.map((e: any) => RecordWithId.fromJSON(e)) : [],
+      records: Array.isArray(object?.records) ? object.records.map((e: any) => Record.fromJSON(e)) : [],
     };
   },
 
@@ -557,7 +557,7 @@ export const QueryResponse = {
       obj.fields = message.fields.map((e) => FieldDefinition.toJSON(e));
     }
     if (message.records?.length) {
-      obj.records = message.records.map((e) => RecordWithId.toJSON(e));
+      obj.records = message.records.map((e) => Record.toJSON(e));
     }
     return obj;
   },
@@ -568,7 +568,7 @@ export const QueryResponse = {
   fromPartial<I extends Exact<DeepPartial<QueryResponse>, I>>(object: I): QueryResponse {
     const message = createBaseQueryResponse();
     message.fields = object.fields?.map((e) => FieldDefinition.fromPartial(e)) || [];
-    message.records = object.records?.map((e) => RecordWithId.fromPartial(e)) || [];
+    message.records = object.records?.map((e) => Record.fromPartial(e)) || [];
     return message;
   },
 };

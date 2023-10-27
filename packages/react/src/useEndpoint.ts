@@ -66,7 +66,7 @@ function useDozerEndpointCommon(name: string, options?: {
 
   useEffect(() => {
     options?.onlyQuery || endpoint.count(options?.query).then((response) => {
-      setCount(response.getCount())
+      setCount(response)
     }).catch(error => {
       setError(error);
     });
