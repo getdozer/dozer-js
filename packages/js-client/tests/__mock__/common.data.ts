@@ -32,72 +32,66 @@ export const primaryIndexList = [0, 1];
 export const recordMockData = [
   {
     "id": 1,
-    "record": {
-      "values": [
-        {
-          "intValue": 76
-        },
-        {
-          "intValue": 76
-        },
-        {
-          "intValue": 2353
-        },
-        {
-          "intValue": 71
-        },
-        {
-          "intValue": 4548
-        }
-      ],
-      "version": 1
-    }
+    "values": [
+      {
+        "intValue": 76
+      },
+      {
+        "intValue": 76
+      },
+      {
+        "intValue": 2353
+      },
+      {
+        "intValue": 71
+      },
+      {
+        "intValue": 4548
+      }
+    ],
+    "version": 1
   },
   {
     "id": 2,
-    "record": {
-      "values": [
-        {
-          "intValue": 7
-        },
-        {
-          "intValue": 7
-        },
-        {
-          "intValue": 1278
-        },
-        {
-          "intValue": 31
-        },
-        {
-          "intValue": 4534
-        }
-      ],
-      "version": 1
-    }
+    "values": [
+      {
+        "intValue": 7
+      },
+      {
+        "intValue": 7
+      },
+      {
+        "intValue": 1278
+      },
+      {
+        "intValue": 31
+      },
+      {
+        "intValue": 4534
+      }
+    ],
+    "version": 1
   },
   {
     "id": 3,
-    "record": {
-      "values": [
-        {
-          "intValue": 61
-        },
-        {
-          "intValue": 61
-        },
-        {
-          "intValue": 1344
-        },
-        {
-          "intValue": 10
-        },
-        {
-          "intValue": 7662
-        }
-      ],
-      "version": 1
-    }
+    "values": [
+      {
+        "intValue": 61
+      },
+      {
+        "intValue": 61
+      },
+      {
+        "intValue": 1344
+      },
+      {
+        "intValue": 10
+      },
+      {
+        "intValue": 7662
+      }
+    ],
+    "version": 1
   },
 ];
 
@@ -106,6 +100,7 @@ export const eventMockData = [
   {
     "typ": 0,
     "new": {
+      "id": 4,
       "values": [
         {
           "intValue": 138
@@ -125,13 +120,13 @@ export const eventMockData = [
       ],
       "version": 1
     },
-    "newId": 4,
     "endpointName": "trips_cache"
   },
   // delete 1
   {
     "typ": 1,
     "old": {
+      "id": 1,
       "values": [
         {
           "intValue": 76
@@ -151,13 +146,13 @@ export const eventMockData = [
       ],
       "version": 2
     },
-    "new": undefined,
     "endpointName": "trips_cache"
   },
   // update 2
   {
     "typ": 2,
     "old": {
+      "id": 2,
       "values": [
         {
           "intValue": 7
@@ -178,6 +173,7 @@ export const eventMockData = [
       "version": 2
     },
     "new": {
+      "id": 2,
       "values": [
         {
           "intValue": 7
@@ -203,6 +199,7 @@ export const eventMockData = [
   {
     "typ": 2,
     "old": {
+      "id": 2,
       "values": [
         {
           "intValue": 7
@@ -223,6 +220,7 @@ export const eventMockData = [
       "version": 1
     },
     "new": {
+      "id": 2,
       "values": [
         {
           "intValue": 7
@@ -248,6 +246,7 @@ export const eventMockData = [
   {
     "typ": 2,
     "old": {
+      "id": 3,
       "values": [
         {
           "intValue": 61
@@ -268,6 +267,7 @@ export const eventMockData = [
       "version": 1
     },
     "new": {
+      "id": 3,
       "values": [
         {
           "intValue": 61

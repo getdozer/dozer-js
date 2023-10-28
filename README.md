@@ -14,7 +14,7 @@
 </p>
 
 ## Overview
-This repository provides client libraries for [Dozer](http://github.com/getdozer/dozer). 
+This repository provides client libraries for [Dozer](http://github.com/getdozer/dozer).
 
 
 ### Libraries
@@ -25,7 +25,12 @@ This repository provides client libraries for [Dozer](http://github.com/getdozer
 Typescript wrapper over several gRPC services generated automatically when you run Dozer.
 
 ```bash
+# npm
+npm install @dozerjs/dozer
+# yarn
 yarn add @dozerjs/dozer
+# pnpm
+pnpm add @dozerjs/dozer
 ```
 You can find usage instructions [here](./packages/js-client/README.md)
 
@@ -34,9 +39,29 @@ You can find usage instructions [here](./packages/js-client/README.md)
 React component library that makes it convenient to create views using Dozer APIs.
 
 ```bash
+# npm
+npm install @dozerjs/dozer-react
+# yarn
 yarn add @dozerjs/dozer-react
+# pnpm
+pnpm add @dozerjs/dozer-react
 ```
 You can find usage instructions [here](./packages/react/README.md)
+
+
+####  Dozer Vue
+
+Vue component library that makes it convenient to create views using Dozer APIs.
+
+```bash
+# npm
+npm install @dozerjs/dozer-vue
+# yarn
+yarn add @dozerjs/dozer-vue
+# pnpm
+pnpm add @dozerjs/dozer-vue
+```
+You can find usage instructions [here](./packages/vue/README.md)
 
 
 

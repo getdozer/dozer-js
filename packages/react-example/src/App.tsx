@@ -1,63 +1,30 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box } from '@mui/material';
-import { DozerProvider, useDozerEndpoint } from "@dozerjs/dozer-react"
-import { types_pb } from '@dozerjs/dozer';
-
-
-function DozerTable () {
-  const { fields, records, error } = useDozerEndpoint('trips_cache', { watch: 0 })
-
-  if (error) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-      }}>
-        <Alert severity="error">{error.message}</Alert>
-      </Box>
-    )
-  }
-  
-  return (
-    <TableContainer component={Paper} sx={{ height: '100%' }}>
-      <Table aria-label="dozer table">
-        <TableHead>
-          <TableRow>
-            {fields?.map((field, idx) => (
-              <TableCell key={idx}>{field.getName()}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {records.map((row: any, idx) => {
-            return (
-              <TableRow key={idx}>
-                {fields?.map(field => {
-                  let val = row[field.getName()]
-                  if (field.getTyp() === types_pb.Type.JSON) {
-                    val = JSON.stringify(val);
-                  } else {
-                    val = val?.toString()
-                  }
-                  return (<TableCell component="th" scope="row" key={field.getName()}>
-                    {val}
-                  </TableCell>)
-                })}
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
-}
-
+import { DozerProvider } from '@dozerjs/dozer-react';
+import { Box } from '@mui/material';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { NavBar } from './components/NavBar';
+import { CountEvent } from './routes/CountEvent';
+import { Endpoints } from './routes/Endpoints';
+import { Common } from './routes/Common';
+import { QueryEvent } from './routes/QueryEvent';
 
 function App() {
   return (
-    <DozerProvider>
-      <DozerTable />
+    <DozerProvider value={{
+      serverAddress: 'http://127.0.0.1:62998'
+    }}>
+      <BrowserRouter>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <NavBar />
+          <Box sx={{ flex: '1', minHeight: '0', padding: '1.5rem' }}>
+            <Routes>
+              <Route element={<Common />} index />
+              <Route element={<CountEvent />} path={'count-event'} />
+              <Route element={<QueryEvent />} path={'query-event'} />
+              <Route element={<Endpoints />} path={'endpoints'} />
+            </Routes>
+          </Box>
+        </Box>
+      </BrowserRouter>
     </DozerProvider>
   )
 }

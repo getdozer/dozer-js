@@ -2,14 +2,13 @@ import { CommonGrpcServiceClient } from "./generated/protos/CommonServiceClientP
 import { EventFilter, EventType, FieldDefinition, Operation, OperationType } from "./generated/protos/types_pb.js";
 import { RecordMapper } from "./helper";
 import {
-  CountResponse,
   GetEndpointsRequest,
   GetFieldsRequest,
   GetFieldsResponse,
   OnEventRequest,
   QueryRequest
 } from "./generated/protos/common_pb";
-import { DozerFilter, DozerQuery, QueryHelper } from "./query_helper";
+import { DozerFilter, DozerOnEventOption, DozerQuery, DozerRecord, QueryHelper } from "./query_helper";
 import { HealthGrpcServiceClient } from "./generated/protos/HealthServiceClientPb";
 import { HealthCheckRequest, HealthCheckResponse } from "./generated/protos/health_pb";
 import { ClientReadableStream, Metadata } from "grpc-web";
@@ -20,19 +19,18 @@ export interface DozerClientOptions {
   headers?: Record<string, string>;
 }
 
-export interface DozerEndpointEvent {
-  data: DozerEndpointEventData;
+export interface DozerEndpointEvent<T = any> {
+  data: DozerEndpointEventData<T>;
   fields: FieldDefinition[];
   primaryIndexKeys: string[];
   operation: Operation;
   mapper: RecordMapper;
 }
 
-export interface DozerEndpointEventData {
+export interface DozerEndpointEventData<T = any> {
   typ: OperationType,
-  old?: Object,
-  new?: Object,
-  newId?: number;
+  old?: DozerRecord<T>,
+  new?: DozerRecord<T>,
   endpointName: string;
 }
 
@@ -47,8 +45,9 @@ export class DozerClient {
   service: CommonGrpcServiceClient;
   healthService: HealthGrpcServiceClient;
   authMetadata: Metadata = {};
+  private fieldsResponseCache = new Map<string, Promise<GetFieldsResponse>>();
 
-  constructor(options: DozerClientOptions) {
+  constructor(options?: DozerClientOptions) {
     this.options = { ...defaultDozerClientOptions, ...options };
     this.authMetadata = (this.options.authToken ? { Authorization: 'Bearer ' + this.options.authToken } : {}) as Metadata;
     Object.assign(this.authMetadata, this.options.headers);
@@ -86,30 +85,57 @@ export class DozerClient {
   getEndpoint(endpoint: string): DozerEndpoint {
     return new DozerEndpoint(endpoint, this);
   }
+
+  ensureFields(endpoint: string): Promise<GetFieldsResponse> {
+    let cache = this.fieldsResponseCache.get(endpoint);
+
+    if (cache === undefined) {
+      cache = this.service.getFields(new GetFieldsRequest().setEndpoint(endpoint), this.authMetadata);
+      this.fieldsResponseCache.set(endpoint, cache);
+    }
+
+    return cache;
+  }
+
+  onEvent(options: DozerOnEventOption[]) {
+    const onEventRequest = new OnEventRequest()
+    const endpointsMap = onEventRequest.getEndpointsMap();
+
+    options.forEach(option => {
+      const eventFilter = new EventFilter()
+        .setType(option.eventType ?? EventType.ALL);
+
+      if (option.filter) {
+        eventFilter.setFilter(QueryHelper.convertFilter(option.filter));
+      }
+      endpointsMap.set(option.endpoint, eventFilter);
+    });
+
+    return this.service.onEvent(onEventRequest, this.authMetadata);
+  }
 }
 
 export class DozerEndpoint {
   private endpoint: string;
   private client: DozerClient;
-  private fieldsResponse?: GetFieldsResponse;
-  private fieldsResponseLoading: boolean = false;
-  private fieldsResponseCallback: Function[] = [];
   constructor(endpoint: string, client: DozerClient) {
     this.endpoint = endpoint;
     this.client = client;
   }
 
-  async count(query?: DozerQuery): Promise<CountResponse> {
+  async count(query?: DozerQuery): Promise<number> {
     // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
       request.setQuery(QueryHelper.convertSchema(query));
     }
 
-    return this.client.service.count(request, this.client.authMetadata);
+    return this.client.service.count(request, this.client.authMetadata).then((response) => {
+      return response.getCount();
+    });
   }
 
-  async query(query?: DozerQuery): Promise<[FieldDefinition[], Object[]]> {
+  async query<T = any>(query?: DozerQuery): Promise<[FieldDefinition[], DozerRecord<T>[]]> {
     // await this.client.waitForHealthCheck();
     const request = new QueryRequest().setEndpoint(this.endpoint);
     if (query) {
@@ -121,7 +147,7 @@ export class DozerEndpoint {
 
       return [
         response.getFieldsList(),
-        response.getRecordsList().map(v => mapper.mapRecord(v.getRecord()?.getValuesList() ?? [])),
+        response.getRecordsList().map(v => mapper.mapRecord(v)),
       ];
     });
   }
@@ -132,41 +158,19 @@ export class DozerEndpoint {
   }
 
   async ensureFields(): Promise<GetFieldsResponse> {
-    if (this.fieldsResponse) {
-      return Promise.resolve(this.fieldsResponse);
-    }
-    if (this.fieldsResponseLoading) {
-      return new Promise((resolve) => {
-        this.fieldsResponseCallback.push(resolve);
-      });
-    }
-    this.fieldsResponseLoading = true;
-    return this.getFields().then((response) => {
-      this.fieldsResponse = response;
-      this.fieldsResponseLoading = false;
-      this.fieldsResponseCallback.forEach((cb) => cb(this.fieldsResponse));
-      return this.fieldsResponse;
-    });
+    return this.client.ensureFields(this.endpoint);
   }
 
-  onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> | null {
-    let stream: ClientReadableStream<Operation> | null = null;
+  onEvent(callback: (evt: DozerEndpointEvent) => void, eventType = EventType.ALL, filter?: DozerFilter): ClientReadableStream<Operation> {
+    const stream = this.client.onEvent([
+      {
+        endpoint: this.endpoint,
+        eventType,
+        filter,
+      },
+    ]);
 
-    const eventFilter = new EventFilter()
-      .setType(eventType);
-
-    if (filter) {
-      eventFilter.setFilter(QueryHelper.convertFilter(filter));
-    }
-
-    const onEventRequest = new OnEventRequest()
-    onEventRequest
-      .getEndpointsMap()
-      .set(this.endpoint, eventFilter);
-
-
-    stream = this.client.service.onEvent(onEventRequest, this.client.authMetadata);
-    stream.on('data', (operation) => {
+    stream.on('data', (operation: Operation) => {
       this.ensureFields().then((fieldsResponse) => {
         const fields = fieldsResponse.getFieldsList();
         const mapper = new RecordMapper(fields);
@@ -177,9 +181,8 @@ export class DozerEndpoint {
 
         const data = {
           typ: operation.getTyp(),
-          old: oldValue ? mapper.mapRecord(oldValue.getValuesList()) : undefined,
-          new: newValue ? mapper.mapRecord(newValue.getValuesList()) : undefined,
-          newId: operation.getNewId() ?? undefined,
+          old: oldValue ? mapper.mapRecord(oldValue) : undefined,
+          new: newValue ? mapper.mapRecord(newValue) : undefined,
           endpointName: operation.getEndpointName(),
         };
 

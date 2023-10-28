@@ -6,7 +6,7 @@ import {
   OperationType as OperationType1,
   operationTypeFromJSON as operationTypeFromJSON2,
   operationTypeToJSON as operationTypeToJSON3,
-  Record,
+  Value,
 } from "./types";
 
 export const protobufPackage = "dozer.ingest";
@@ -59,11 +59,9 @@ export interface IngestRequest {
   /** The operation type. */
   typ: OperationType1;
   /** Old record data, only applicable for UPDATE type. */
-  old?:
-    | Record
-    | undefined;
+  old: Value[];
   /** New record data. */
-  new: Record | undefined;
+  new: Value[];
   seqNo: number;
 }
 
@@ -92,7 +90,7 @@ export interface IngestMetadata {
 }
 
 function createBaseIngestRequest(): IngestRequest {
-  return { schemaName: "", typ: 0, old: undefined, new: undefined, seqNo: 0 };
+  return { schemaName: "", typ: 0, old: [], new: [], seqNo: 0 };
 }
 
 export const IngestRequest = {
@@ -103,11 +101,11 @@ export const IngestRequest = {
     if (message.typ !== 0) {
       writer.uint32(16).int32(message.typ);
     }
-    if (message.old !== undefined) {
-      Record.encode(message.old, writer.uint32(26).fork()).ldelim();
+    for (const v of message.old) {
+      Value.encode(v!, writer.uint32(26).fork()).ldelim();
     }
-    if (message.new !== undefined) {
-      Record.encode(message.new, writer.uint32(34).fork()).ldelim();
+    for (const v of message.new) {
+      Value.encode(v!, writer.uint32(34).fork()).ldelim();
     }
     if (message.seqNo !== 0) {
       writer.uint32(40).uint32(message.seqNo);
@@ -141,14 +139,14 @@ export const IngestRequest = {
             break;
           }
 
-          message.old = Record.decode(reader, reader.uint32());
+          message.old.push(Value.decode(reader, reader.uint32()));
           continue;
         case 4:
           if (tag !== 34) {
             break;
           }
 
-          message.new = Record.decode(reader, reader.uint32());
+          message.new.push(Value.decode(reader, reader.uint32()));
           continue;
         case 5:
           if (tag !== 40) {
@@ -170,8 +168,8 @@ export const IngestRequest = {
     return {
       schemaName: isSet(object.schemaName) ? String(object.schemaName) : "",
       typ: isSet(object.typ) ? operationTypeFromJSON2(object.typ) : 0,
-      old: isSet(object.old) ? Record.fromJSON(object.old) : undefined,
-      new: isSet(object.new) ? Record.fromJSON(object.new) : undefined,
+      old: Array.isArray(object?.old) ? object.old.map((e: any) => Value.fromJSON(e)) : [],
+      new: Array.isArray(object?.new) ? object.new.map((e: any) => Value.fromJSON(e)) : [],
       seqNo: isSet(object.seqNo) ? Number(object.seqNo) : 0,
     };
   },
@@ -184,11 +182,11 @@ export const IngestRequest = {
     if (message.typ !== 0) {
       obj.typ = operationTypeToJSON3(message.typ);
     }
-    if (message.old !== undefined) {
-      obj.old = Record.toJSON(message.old);
+    if (message.old?.length) {
+      obj.old = message.old.map((e) => Value.toJSON(e));
     }
-    if (message.new !== undefined) {
-      obj.new = Record.toJSON(message.new);
+    if (message.new?.length) {
+      obj.new = message.new.map((e) => Value.toJSON(e));
     }
     if (message.seqNo !== 0) {
       obj.seqNo = Math.round(message.seqNo);
@@ -203,8 +201,8 @@ export const IngestRequest = {
     const message = createBaseIngestRequest();
     message.schemaName = object.schemaName ?? "";
     message.typ = object.typ ?? 0;
-    message.old = (object.old !== undefined && object.old !== null) ? Record.fromPartial(object.old) : undefined;
-    message.new = (object.new !== undefined && object.new !== null) ? Record.fromPartial(object.new) : undefined;
+    message.old = object.old?.map((e) => Value.fromPartial(e)) || [];
+    message.new = object.new?.map((e) => Value.fromPartial(e)) || [];
     message.seqNo = object.seqNo ?? 0;
     return message;
   },

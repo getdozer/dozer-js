@@ -1,4 +1,5 @@
-import { FieldDefinition, Type, Value } from "./generated/protos/types_pb.js";
+import { FieldDefinition, Type, Value, Record } from "./generated/protos/types_pb.js";
+import { DozerRecord } from "./query_helper.js";
 
 function convertValue(typ: Type, object: Value): any {
     switch (typ) {
@@ -38,11 +39,15 @@ export class RecordMapper {
         this.fields = fields;
     }
 
-     mapRecord(values: Value[]): Object {
-         let result: any = {};
-         values.forEach((_, index) => {
-             result[this.fields[index].getName()] = convertValue(this.fields[index].getTyp(), values[index]);
-         });
-         return result;
-     }
+    mapRecord<T>(record: Record): DozerRecord<T> {
+        const result = {
+            __dozer_record_id: record.getId(),
+            __dozer_record_version: record.getVersion(),
+        };
+        const values = record.getValuesList();
+        values.forEach((_, index) => {
+            result[this.fields[index].getName()] = convertValue(this.fields[index].getTyp(), values[index]);
+        });
+        return result as DozerRecord<T>;
+    }
 }
