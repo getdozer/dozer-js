@@ -1,12 +1,12 @@
 import { DozerEndpoint, DozerQuery, Order } from '@dozerjs/dozer';
 import { EventType, FieldDefinition } from '@dozerjs/dozer/lib/cjs/generated/protos/types_pb';
 import { RecordMapper } from '@dozerjs/dozer/lib/cjs/helper';
-import { Value } from '@dozerjs/dozer/src/generated/protos/types_pb';
+import { Record, Value } from '@dozerjs/dozer/src/generated/protos/types_pb';
+import { fieldsMockData, recordMockData } from '@dozerjs/dozer/tests/__mock__/common.data';
+import { countMock, eventMock, fieldsMock, queryMock } from '@dozerjs/dozer/tests/__mock__/common.mock';
 import { expect, jest } from '@jest/globals';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import { fieldsMockData, recordMockData } from '../../js-client/tests/__mock__/common.data';
-import { countMock, eventMock, fieldsMock, queryMock } from '../../js-client/tests/__mock__/common.mock';
 import { DozerProvider } from '../src/context';
 import { useDozerEndpoint, useDozerEndpointCount, useDozerEndpointFields, useDozerEndpointQuery } from '../src/useEndpoint';
 
@@ -134,14 +134,17 @@ describe('useDozerEndpoint', () => {
 function converMockDataToRecord(fields: FieldDefinition[] = [], data: any[] = []) {
     const mapper = new RecordMapper(fields);
     return data.map(v => {
-        const values = v.record.values.map((item: any) => {
+        const record = new Record();
+        record.setId(v.id);
+        record.setVersion(v.version);
+        v.values.forEach((item: Value.AsObject) => {
             const value = new Value();
             Object.keys(item).forEach(key => {
                 const method = `set${key.charAt(0).toUpperCase() + key.slice(1)}`;
                 value[method](item[key]);
             });
-            return value;
-        })
-        return mapper.mapRecord(values);
+            record.addValues(value);
+        });
+        return mapper.mapRecord(record);
     });
 }

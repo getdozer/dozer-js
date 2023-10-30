@@ -1,5 +1,5 @@
 import { DozerOnEventOption } from "@dozerjs/dozer";
-import { Operation } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { Operation } from "@dozerjs/dozer/lib/cjs/generated/protos/types_pb";
 import { ClientReadableStream } from "grpc-web";
 import { useEffect, useState } from "react";
 import { DozerConsumer } from "./context";
