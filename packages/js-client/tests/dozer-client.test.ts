@@ -1,10 +1,12 @@
 import { expect, jest } from '@jest/globals';
-import { Metadata } from 'grpc-web';
+import { ClientReadableStream } from 'grpc-web';
 import { DozerClient } from "../src/client";
 import { CommonGrpcServiceClient } from "../src/generated/protos/CommonServiceClientPb";
 import { HealthGrpcServiceClient } from "../src/generated/protos/HealthServiceClientPb";
+import { GetEndpointsRequest, OnEventRequest } from '../src/generated/protos/common_pb';
 import { HealthCheckRequest } from '../src/generated/protos/health_pb';
-import { GetEndpointsRequest } from '../src/generated/protos/common_pb';
+import { EventFilter, EventType } from '../src/generated/protos/types_pb';
+import { QueryHelper } from '../src/query_helper';
 
 jest.mock("../src/generated/protos/CommonServiceClientPb");
 jest.mock("../src/generated/protos/HealthServiceClientPb");
@@ -14,11 +16,7 @@ const authToken = "test-token";
 const headers = { 'x-dozer-app-id': 'test-app-id', 'x-extra-info': 'test-extra-info' };
 
 describe('DozerClient', () => {
-  beforeEach(() => {
-    (CommonGrpcServiceClient as jest.Mock).mockClear();
-    (HealthGrpcServiceClient as jest.Mock).mockClear();
-  });
-  
+
   it('should instantialte with server address', () => {
     new DozerClient({ serverAddress });
     expect(CommonGrpcServiceClient).toHaveBeenCalledWith(serverAddress, {});
@@ -39,24 +37,14 @@ describe('DozerClient', () => {
 
   it('should called correct: healthCheck', async () => {
     const client = new DozerClient({ serverAddress, authToken, headers });
-    (jest.mocked(HealthGrpcServiceClient) as any).mockImplementation(() => ({
-      healthCheck: jest.fn((request: HealthCheckRequest, metadata: Metadata | null) => {
-        expect(request.toObject()).toEqual({});
-        expect(metadata).toEqual({ "Authorization": `Bearer ${authToken}`, ...headers });
-      })
-    }));
     client.healthCheck();
+    expect(HealthGrpcServiceClient.prototype.healthCheck).toBeCalledWith(new HealthCheckRequest(), { "Authorization": `Bearer ${authToken}`, ...headers });
   });
 
   it('should called correct: getEndpoints', async () => {
     const client = new DozerClient({ serverAddress, authToken, headers });
-    (jest.mocked(CommonGrpcServiceClient) as any).mockImplementation(() => ({
-      getEndpoints: jest.fn((request: GetEndpointsRequest, metadata: Metadata | null) => {
-        expect(request.toObject()).toEqual({});
-        expect(metadata).toEqual({ "Authorization": `Bearer ${authToken}`, ...headers });
-      })
-    }));
     client.getEndpoints();
+    expect(CommonGrpcServiceClient.prototype.getEndpoints).toBeCalledWith(new GetEndpointsRequest(), { "Authorization": `Bearer ${authToken}`, ...headers })
   });
 
   it('should called correct: getEndpoint', async () => {
@@ -65,6 +53,37 @@ describe('DozerClient', () => {
     const endpoint = client.getEndpoint(endpointName);
     expect(endpoint['endpoint']).toEqual(endpointName);
     expect(endpoint['client']).toEqual(client);
+  });
+
+  it('should called correct: onEvent', async () => {
+    const client = new DozerClient({ serverAddress, authToken, headers });
+    const options = [
+      {
+        endpoint: 'test-endpoint-1',
+      },
+      {
+        endpoint: 'test-endpoint-2',
+        eventType: EventType.INSERT_ONLY,
+        filter: {
+          'key': 'keyword'
+        }
+      }
+    ];
+    const stream = client.onEvent(options);
+
+    const onEventRequest = new OnEventRequest();
+    const endpointsMap = onEventRequest.getEndpointsMap();
+
+    options.forEach(option => {
+      const eventFilter = new EventFilter().setType(option.eventType ?? EventType.ALL);
+      if (option.filter) {
+        eventFilter.setFilter(QueryHelper.convertFilter(option.filter));
+      }
+      endpointsMap.set(option.endpoint, eventFilter);
+    })
+
+    expect(CommonGrpcServiceClient.prototype.onEvent).toBeCalledWith(onEventRequest, client.authMetadata);
+    expect(stream).toStrictEqual(ClientReadableStream);
   });
 })
 
