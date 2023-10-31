@@ -1,5 +1,4 @@
-import { DozerQuery, DozerRecord } from "@dozerjs/dozer";
-import { FieldDefinition, Operation } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { DozerQuery, DozerRecord, types_pb } from "@dozerjs/dozer";
 import { ClientReadableStream } from "grpc-web";
 import { Ref, onMounted, ref } from "vue";
 import { DozerConsumer } from "./context";
@@ -8,14 +7,14 @@ import { merge } from "./util";
 export function useDozerQuery<T>(name: string, query?: DozerQuery) {
   const { client } = DozerConsumer();
   const endpoint = client.getEndpoint(name);
-  const fields: Ref<FieldDefinition[]> = ref([]);
+  const fields: Ref<types_pb.FieldDefinition[]> = ref([]);
   const records: Ref<DozerRecord<T>[]> = ref([]);
   const error: Ref<Error | undefined> = ref();
 
-  const cache: Ref<Operation[]> = ref([]);
-  const _stream: Ref<ClientReadableStream<Operation> | undefined> = ref();
+  const cache: Ref<types_pb.Operation[]> = ref([]);
+  const _stream: Ref<ClientReadableStream<types_pb.Operation> | undefined> = ref();
 
-  const consume = (operation: Operation) => {
+  const consume = (operation: types_pb.Operation) => {
     if (operation.getEndpointName() !== name) {
       return;
     }
@@ -32,7 +31,7 @@ export function useDozerQuery<T>(name: string, query?: DozerQuery) {
     }
   };
 
-  const connect = (stream: ClientReadableStream<Operation>) => {
+  const connect = (stream: ClientReadableStream<types_pb.Operation>) => {
     if (_stream.value === stream) {
       return;
     }

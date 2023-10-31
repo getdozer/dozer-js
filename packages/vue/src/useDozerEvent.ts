@@ -14,7 +14,6 @@ export function useDozerEvent(options: DozerOnEventOption[]) {
   });
 
   onUnmounted(() => {
-    console.log('stream cancel');
     stream.value.cancel();
   });
 
