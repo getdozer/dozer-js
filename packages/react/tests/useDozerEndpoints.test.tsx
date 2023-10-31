@@ -3,7 +3,7 @@ import { cancelEventMock, countMock, eventMock, fieldsMock, onEventMock, queryMo
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { DozerProvider } from '../src/context';
-import { useDozerEvent } from '../src/useDozerEvent';
+import { useDozerEndpoints } from '../src/useDozerEndpoints';
 
 jest.mock("@dozerjs/dozer/lib/cjs/generated/protos/CommonServiceClientPb", () => ({
   CommonGrpcServiceClient: jest.fn().mockImplementation(() => ({
@@ -25,32 +25,43 @@ const ProviderWrapper = ({ children }: { children: React.ReactNode }) => (
 const options = [
   {
     endpoint: 'test-endpoint-1',
-    eventType: types_pb.EventType.ALL
+    eventType: types_pb.EventType.ALL,
+    filter: {
+      'col': 'testcol',
+    }
   },
   {
     endpoint: 'test-endpoint-2',
   },
 ];
 
-describe('useDozerEvent', () => {
+describe('useDozerEndpoints', () => {
   it('should called correct', async () => {
-    renderHook(() => useDozerEvent(options), { wrapper: ProviderWrapper });
+    renderHook(() => useDozerEndpoints(options), { wrapper: ProviderWrapper });
     await waitFor(() => {
-      expect(DozerClient.prototype.onEvent).toBeCalledWith(options);
+      expect(queryMock).toBeCalledTimes(options.length);
       expect(onEventMock).toBeCalledWith('error', expect.any(Function));
     });
   });
 
   it('should cancel if unmount', async () => {
-    const { unmount } = renderHook(() => useDozerEvent(options), { wrapper: ProviderWrapper });
+    const { unmount } = renderHook(() => useDozerEndpoints(options), { wrapper: ProviderWrapper });
     unmount();
     await waitFor(() => {
       expect(cancelEventMock).toBeCalled();
     });
   });
 
+  it('should return correct', async () => {
+    const { result } = renderHook(() => useDozerEndpoints(options), { wrapper: ProviderWrapper });
+    await waitFor(() => {
+      expect(result.current).toStrictEqual(expect.any(Array));
+      expect(result.current.length).toBe(options.length);
+    });
+  });
+
   it('should share connection', async () => {
-    renderHook(() => useDozerEvent(options), { wrapper: ProviderWrapper });
+    renderHook(() => useDozerEndpoints(options), { wrapper: ProviderWrapper });
     await waitFor(() => {
       expect(eventMock).toBeCalledTimes(1);
     });
