@@ -42,7 +42,6 @@ export function useDozerQuery<T>(name: string, query?: DozerQuery) {
 
   onMounted(() => {
     endpoint.query<T>(query).then((response) => {
-      console.log(response)
       fields.value = response[0];
       records.value = response[1];
       while (cache.value.length) {
