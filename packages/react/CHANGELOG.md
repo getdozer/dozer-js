@@ -1,5 +1,14 @@
 # @dozerjs/dozer-react
 
+## 0.0.8
+
+### Patch Changes
+
+- 38af08f: refactor dozer library
+  update dozer protos
+- Updated dependencies [38af08f]
+  - @dozerjs/dozer@0.0.10
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @dozerjs/dozer-vue
 
+## 0.0.6
+
+### Patch Changes
+
+- 38af08f: refactor dozer library
+  update dozer protos
+- Updated dependencies [38af08f]
+  - @dozerjs/dozer@0.0.10
+
 ## 0.0.5
 
 ### Patch Changes
