@@ -1,5 +1,12 @@
 # @dozerjs/dozer
 
+## 0.0.10
+
+### Patch Changes
+
+- 38af08f: refactor dozer library
+  update dozer protos
+
 ## 0.0.9
 
 ### Patch Changes
