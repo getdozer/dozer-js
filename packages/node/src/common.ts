@@ -62,7 +62,7 @@ export class CommonClient {
         if (error) {
           reject(error);
         } else {
-          resolve(response.getFieldsList());
+          resolve(response.getFieldsList().map(item => item.toObject()));
         }
       });
     });
