@@ -40,8 +40,8 @@ export class AuthClient {
     }
   }
 
-  getAuthToken(): Promise<string> {
-    const request = new GetAuthTokenRequest();
+  getAuthToken(filter: string): Promise<string> {
+    const request = new GetAuthTokenRequest().setAccessFilter(filter);
     return new Promise((resolve, reject) => {
       this.service.getAuthToken(request, this.metadata, (error, response) => {
         if (error) {
