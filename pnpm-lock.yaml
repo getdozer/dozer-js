@@ -87,6 +87,18 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
+  packages/node-example:
+    dependencies:
+      '@dozerjs/node':
+        specifier: workspace:^
+        version: link:../node
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.3.1
+      google-protobuf:
+        specifier: ^3.21.2
+        version: 3.21.2
+
   packages/react:
     dependencies:
       '@changesets/cli':
@@ -3297,6 +3309,11 @@ packages:
     dependencies:
       webidl-conversions: 7.0.0
     dev: true
+
+  /dotenv@16.3.1:
+    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /download@8.0.0:
     resolution: {integrity: sha512-ASRY5QhDk7FK+XrQtQyvhpDKanLluEEQtWl/J7Lxuf/b+i8RYh997QeXvL85xitrmRKVlx9c7eTrcRdq2GS4eA==}
