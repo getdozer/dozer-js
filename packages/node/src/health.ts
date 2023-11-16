@@ -29,7 +29,7 @@ export class HealthClient {
     }
 
     if (options?.authToken) {
-      this.metadata.set('Healthorization', `Bearer ${options.authToken}`);
+      this.metadata.set('Authorization', `Bearer ${options.authToken}`);
     }
     if (options?.appId) {
       this.metadata.set('X-App-Id', options.appId);

@@ -68,7 +68,7 @@ export class QueryHelper {
     return JSON.stringify(jsonObject);
   }
 }
-function convertValue(typ: Type, object: Value): any {
+export function convertValue(typ: Type, object: Value): any {
   switch (typ) {
     case Type.UINT:
       return object.getUintValue();
