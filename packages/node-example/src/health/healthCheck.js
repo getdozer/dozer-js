@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { HealthClient } = require('@dozerjs/node');
 
 const client = new HealthClient();

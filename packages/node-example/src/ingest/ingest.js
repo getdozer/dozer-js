@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { CommonClient, IngestClient, RecordMapper } = require('@dozerjs/node');
 const { IngestRequest } = require('@dozerjs/node/gen/ingest_pb');
 const { EventType, OperationType, Value } = require('@dozerjs/node/gen/types_pb');

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { CommonClient, RecordMapper } = require('@dozerjs/node');
 const { EventType } = require('@dozerjs/node/gen/types_pb');
 
@@ -6,8 +7,8 @@ const client = new CommonClient({
 });
 
 const options = [
-  { endpoint: 'airports_count', eventType: EventType.ALL },
-  { endpoint: 'departures_count', eventType: EventType.ALL },
+  { endpoint: 'produce', eventType: EventType.ALL },
+  { endpoint: 'stock', eventType: EventType.ALL },
 ];
 
 const fieldsMap = options.reduce((map, option) => {

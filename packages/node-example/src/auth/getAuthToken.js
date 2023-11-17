@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { AuthClient } = require('@dozerjs/node');
 
 const client = new AuthClient({
@@ -6,7 +7,7 @@ const client = new AuthClient({
 
 client.getAuthToken(JSON.stringify({
   Custom: {
-    airports_count: {
+    stock: {
       $filter: {},
     },
   }

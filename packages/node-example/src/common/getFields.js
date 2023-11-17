@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { CommonClient } = require('@dozerjs/node');
 
 const client = new CommonClient({

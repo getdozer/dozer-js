@@ -1,4 +1,4 @@
-require('dotenv');
+require('dotenv').config();
 const { CommonClient } = require('@dozerjs/node');
 const client = new CommonClient({
   authToken: process.env.MASTER_TOKEN,
@@ -14,7 +14,7 @@ client.count('produce')
 
 client.count('stock')
   .then((count) => {
-    console.log('count:', count);
+    console.log('stock:', count);
   })
   .catch((error) => {
     console.error(error);
