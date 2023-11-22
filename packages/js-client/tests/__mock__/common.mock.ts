@@ -41,33 +41,54 @@ export const queryMock = jest.fn<(request: QueryRequest, metadata: Metadata | nu
   return Promise.resolve(resp);
 })
 
-export const onEventMock = jest.fn((event: string, callback: (operation?: Operation) => void) => {
+export const onEventDataMock = jest.fn((callback: (operation: Operation) => void) => {
+  eventMockData.forEach((item) => {
+    const operation = new Operation();
+    operation.setEndpointName(item.endpointName);
+    operation.setTyp(item.typ);
+
+    if (item.new) {
+      const newRecord = new Record();
+      newRecord.setId(item.new.id);
+      newRecord.setVersion(item.new.version);
+      newRecord.setValuesList(item.new.values.map(v => new Value().setIntValue(v.intValue)));
+      operation.setNew(newRecord);
+    }
+
+    if (item.old) {
+      const oldRecord = new Record();
+      oldRecord.setId(item.old.id);
+      oldRecord.setVersion(item.old.version);
+      oldRecord.setValuesList(item.old.values.map(v => new Value().setIntValue(v.intValue)));
+      operation.setNew(oldRecord);
+    }
+
+    callback(operation);
+  });
+});
+
+export const onEventErrorMock = jest.fn();
+
+export const onEventMock = jest.fn((event: string, callback: (operation: Operation) => void) => {
   if (event === "data") {
-    eventMockData.forEach((item) => {
-      const operation = new Operation();
-      operation.setEndpointName(item.endpointName);
-      operation.setTyp(item.typ);
+    onEventDataMock(callback);
+  } else if (event === 'error') {
+    onEventErrorMock();
+  }
+});
 
-      if (item.new) {
-        const newRecord = new Record();
-        newRecord.setId(item.new.id);
-        newRecord.setVersion(item.new.version);
-        newRecord.setValuesList(item.new.values.map(v => new Value().setIntValue(v.intValue)));
-        operation.setNew(newRecord);
-      }
+export const removeEventDataMock = jest.fn((callback: (operation: Operation) => void) => {
+  const operation = new Operation();
+  callback(operation);
+});
 
-      if (item.old) {
-        const oldRecord = new Record();
-        oldRecord.setId(item.old.id);
-        oldRecord.setVersion(item.old.version);
-        oldRecord.setValuesList(item.old.values.map(v => new Value().setIntValue(v.intValue)));
-        operation.setNew(oldRecord);
-      }
+export const removeEventErrorMock = jest.fn();
 
-      callback(operation);
-    });
-  } else if (event === "end") {
-    callback();
+export const removeEventMock = jest.fn((event: string, callback: (operation: Operation) => void) => {
+  if (event === 'data') {
+    removeEventDataMock(callback);
+  } else if (event === 'error') {
+    removeEventErrorMock();
   }
 });
 
@@ -76,6 +97,7 @@ export const cancelEventMock = jest.fn();
 export const eventMock = jest.fn<(request: OnEventRequest, metadata: Metadata | null) => ClientReadableStream<Operation>>(() => {
   return {
     on: onEventMock,
+    removeListener: removeEventMock,
     cancel: cancelEventMock,
   } as unknown as ClientReadableStream<Operation>;
 });

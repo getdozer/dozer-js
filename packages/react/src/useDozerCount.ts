@@ -1,5 +1,5 @@
-import { Operation, OperationType } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
-import { DozerQuery } from "@dozerjs/dozer/lib/esm/query_helper";
+import { Operation, OperationType } from "@dozerjs/dozer/lib/cjs/generated/protos/types_pb";
+import { DozerQuery } from "@dozerjs/dozer/lib/cjs/query_helper";
 import { ClientReadableStream } from "grpc-web";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DozerConsumer } from "./context";

@@ -1,5 +1,5 @@
 import { DozerEndpointEvent, DozerQuery } from "@dozerjs/dozer";
-import { EventType, FieldDefinition, OperationType, Record, Type } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { EventType, FieldDefinition, OperationType, Record, Type } from "@dozerjs/dozer/lib/cjs/generated/protos/types_pb";
 import { useEffect, useState } from "react";
 import { DozerConsumer } from "./context";
 

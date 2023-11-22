@@ -120,7 +120,7 @@ export const eventMockData = [
       ],
       "version": 1
     },
-    "endpointName": "trips_cache"
+    "endpointName": "test-endpoint"
   },
   // delete 1
   {
@@ -146,7 +146,7 @@ export const eventMockData = [
       ],
       "version": 2
     },
-    "endpointName": "trips_cache"
+    "endpointName": "test-endpoint"
   },
   // update 2
   {
@@ -193,7 +193,7 @@ export const eventMockData = [
       ],
       "version": 3
     },
-    "endpointName": "trips_cache"
+    "endpointName": "test-endpoint"
   },
   // update 2 ignore
   {
@@ -240,7 +240,7 @@ export const eventMockData = [
       ],
       "version": 2
     },
-    "endpointName": "trips_cache"
+    "endpointName": "test-endpoint"
   },
   // update 3
   {
@@ -287,6 +287,6 @@ export const eventMockData = [
       ],
       "version": 2
     },
-    "endpointName": "trips_cache"
+    "endpointName": "test-endpoint"
   },
 ]

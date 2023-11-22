@@ -1,5 +1,5 @@
 import { DozerQuery } from "@dozerjs/dozer";
-import { FieldDefinition, Operation } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
+import { FieldDefinition, Operation } from "@dozerjs/dozer/lib/cjs/generated/protos/types_pb";
 import { ClientReadableStream } from "grpc-web";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DozerConsumer } from "./context";

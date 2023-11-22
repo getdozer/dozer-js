@@ -1,6 +1,6 @@
-import { Operation, FieldDefinition, OperationType } from "@dozerjs/dozer/lib/esm/generated/protos/types_pb";
-import { RecordMapper } from "@dozerjs/dozer/lib/esm/helper";
-import { DozerRecord } from "@dozerjs/dozer/lib/esm/query_helper";
+import { Operation, FieldDefinition, OperationType } from "@dozerjs/dozer/lib/cjs/generated/protos/types_pb";
+import { RecordMapper } from "@dozerjs/dozer/lib/cjs/helper";
+import { DozerRecord } from "@dozerjs/dozer/lib/cjs/query_helper";
 
 export function merge<T>(prev: DozerRecord<T>[], operation: Operation, fields: FieldDefinition[]) {
   const newRecord = operation.getNew();

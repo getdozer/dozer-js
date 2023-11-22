@@ -36,6 +36,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Package Build
+        run: pnpm build
+
       - name: Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:

@@ -96,7 +96,6 @@ describe('DozerEndpoint', () => {
       record.setValuesList(values)
       const mapper = new RecordMapper(fields);
       const resp = mapper.mapRecord(record);
-      console.log(resp)
       return resp;
     })).toEqual(records);
   });
