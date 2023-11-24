@@ -31,6 +31,10 @@ export class IngestClient {
     });
   }
 
+  ingest_stream(): grpc.ClientWritableStream<IngestRequest> {
+    return this.service.ingest_stream(this.metadata, () => {});
+  }
+
   ingest_arrow(request: IngestArrowRequest): Promise<IngestResponse> {
     return new Promise((resolve, reject) => {
       this.service.ingest_arrow(request, this.metadata, (error, response) => {
