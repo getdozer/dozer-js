@@ -9,14 +9,23 @@ connections:
   - name: factory
     config: !Grpc
       adapter: default
-      schemas: !Path "factory.json"
+      schemas: !Path "data/factory.json"
       port: 8085
+  - config: !Grpc
+      adapter: arrow
+      schemas: !Path "data/trips_arrow.json"
+      port: 10005
+    name: trips_arrow
     
 
 sources:
   - name: produce
     table_name: produce
     connection: factory
+  - name: trips_arrow
+    table_name: trips_arrow
+    connection: trips_arrow
+
 
 sql: |
   -- stock
@@ -39,4 +48,7 @@ endpoints:
     index:
       primary_key:
         - name
+  - name: trips_arrow
+    path: /trips_arrow
+    table_name: trips_arrow
 
