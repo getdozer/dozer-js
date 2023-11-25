@@ -176,3 +176,26 @@ request.addNew(new Value().setIntValue(Math.ceil(Math.random() * 10)));
 request.addNew(new Value().setTimestampValue(Timestamp.fromDate(new Date())));
 client.ingest(request);
 ```
+
+### `ingest_stream(): Promise<IngestResponse>`
+Ingest dat on Dozer pushing data to a gRPC endpoint in a streaming fashion [more detail](https://getdozer.io/docs/sources/grpc)
+
+```typescript
+import { IngestClient } from '@dozerjs/node';
+import { OperationType } from '@dozerjs/node/gen/types_pb';
+import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
+
+const client = new IngestClient();
+const stream = client.ingest_stream();
+
+const request = new IngestRequest();
+
+request.setSchemaName('produce');
+request.setTyp(OperationType.INSERT);
+request.addNew(new Value().setStringValue('hats'));
+request.addNew(new Value().setIntValue(Math.ceil(Math.random() * 10)));
+request.addNew(new Value().setTimestampValue(Timestamp.fromDate(new Date())));
+stream.write(request);
+
+stream.end();
+```
