@@ -47,4 +47,8 @@ export class IngestClient {
     });
   }
 
+  ingest_arrow_stream(): grpc.ClientWritableStream<IngestArrowRequest> {
+    return this.service.ingest_arrow_stream(this.metadata, () => {});
+  }
+
 }
