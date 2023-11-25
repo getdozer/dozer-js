@@ -39,18 +39,14 @@ function ingest () {
     serverAddress: 'localhost:10005',
   });
   const df = pl.readParquet(path.join(__dirname, '../../data/trips_small.parquet'));
-  let data = df.shift();
-  while(data) {
-    const ipc = data.writeIPC();
-    const table = tableFromIPC(ipc);
-    const writer = new RecordBatchFileWriter();
-    writer.writeAll(table);
-    const request = new IngestArrowRequest();
-    request.setSchemaName('trips_arrow');
-    request.setRecords(writer.toUint8Array());
-    client.ingest_arrow(request);
-    data = df.shift();
-  }
+  const ipc = df.writeIPC();
+  const table = tableFromIPC(ipc);
+  const writer = new RecordBatchFileWriter();
+  writer.writeAll(table);
+  const request = new IngestArrowRequest();
+  request.setSchemaName('trips_arrow');
+  request.setRecords(writer.toUint8Array());
+  client.ingest_arrow(request);
 }
 
 common();
