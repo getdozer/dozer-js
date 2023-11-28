@@ -1,0 +1,23 @@
+{
+  "produce": {
+    "schema": {
+      "fields": [
+        {
+          "typ": "String",
+          "name": "name",
+          "nullable": false
+        },
+        {
+          "typ": "Int",
+          "name": "num",
+          "nullable": false
+        },
+        {
+          "typ": "Timestamp",
+          "name": "datetime",
+          "nullable": false
+        }
+      ]
+    }
+  }
+}

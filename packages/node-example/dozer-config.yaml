@@ -1,0 +1,42 @@
+version: 1
+app_name: factory 
+api:
+  default_max_num_records: 1000
+  api_security: 
+    !Jwt
+
+connections:
+  - name: factory
+    config: !Grpc
+      adapter: default
+      schemas: !Path "factory.json"
+      port: 8085
+    
+
+sources:
+  - name: produce
+    table_name: produce
+    connection: factory
+
+sql: |
+  -- stock
+  SELECT name, COUNT(num) as num
+  INTO stock
+  FROM TTL(produce, datetime, '2 SECONDS')
+  GROUP BY name;
+
+endpoints:
+  - name: produce
+    path: /produce
+    table_name: produce
+    index:
+      primary_key:
+        - name
+        - datetime
+  - name: stock
+    path: /stock
+    table_name: stock
+    index:
+      primary_key:
+        - name
+
